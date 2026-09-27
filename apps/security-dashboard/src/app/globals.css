@@ -1,0 +1,117 @@
+@import '@autional-cn/tailwind-preset/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ant Design v6 dark mode overrides — security-dashboard slate palette */
+.dark .ant-layout-sider {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .ant-layout-header {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .ant-menu {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  border-inline-end: none !important;
+}
+
+.dark .ant-menu-item,
+.dark .ant-menu-submenu-title {
+  color: #94a3b8 !important;
+}
+
+.dark .ant-menu-item:hover,
+.dark .ant-menu-submenu-title:hover {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-menu-item-selected {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.dark .ant-table {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-table-thead > tr > th {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+.dark .ant-table-tbody > tr > td {
+  border-color: #334155 !important;
+}
+
+.dark .ant-table-tbody > tr:hover > td {
+  background: #334155 !important;
+}
+
+.dark .ant-input,
+.dark .ant-select-selector,
+.dark .ant-picker {
+  background: #0f172a !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-input::placeholder {
+  color: #64748b !important;
+}
+
+.dark .ant-breadcrumb a,
+.dark .ant-breadcrumb span {
+  color: #94a3b8 !important;
+}
+
+.dark .ant-breadcrumb li:last-child span {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-statistic-title {
+  color: #94a3b8 !important;
+}
+
+.dark .ant-statistic-content {
+  color: #e2e8f0 !important;
+}
+
+/* 路由切换淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* 表格操作列按钮间距 */
+.ant-table-cell .ant-btn-link {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* 卡片标题字体 */
+.ant-card-head-title {
+  font-weight: 500;
+}

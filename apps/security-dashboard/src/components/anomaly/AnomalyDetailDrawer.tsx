@@ -1,0 +1,417 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import {
+	Drawer,
+	Tabs,
+	Spin,
+	Descriptions,
+	Tag,
+	Timeline,
+	List,
+	Badge,
+	Empty,
+	Alert,
+	Card,
+	Statistic,
+	Row,
+	Col,
+} from 'antd';
+import {
+	FileSearchOutlined,
+	WarningOutlined,
+	LinkOutlined,
+	CommentOutlined,
+	SafetyOutlined,
+	ClusterOutlined,
+} from '@ant-design/icons';
+import dayjs from 'dayjs';
+import { getAnomalyById, getAnomalyTimeline, getRelatedAnomalies } from '@/lib/api.generated';
+import { message } from '@/lib/antd-app';
+import { useTranslation } from 'react-i18next';
+import type {
+	AnomalyResponse,
+	AnomalyTimelineResponse,
+	AuditLogResponse,
+} from '@autional-cn/shared/generated/types';
+import AnomalyComments from './AnomalyComments';
+
+interface AnomalyDetailDrawerProps {
+	anomalyId: string | null;
+	visible: boolean;
+	onClose: () => void;
+	onStatusChange?: () => void;
+}
+
+const severityColors: Record<string, string> = {
+	low: 'blue',
+	medium: 'gold',
+	high: 'orange',
+	critical: 'red',
+};
+
+const statusColors: Record<string, string> = {
+	open: 'red',
+	investigating: 'orange',
+	resolved: 'green',
+	false_positive: 'default',
+};
+
+export default function AnomalyDetailDrawer({
+	anomalyId,
+	visible,
+	onClose,
+	onStatusChange,
+}: AnomalyDetailDrawerProps) {
+	const { t } = useTranslation();
+
+	const statusLabels: Record<string, string> = {
+		open: t('anomalies.statusOpen'),
+		investigating: t('anomalies.statusInvestigating'),
+		resolved: t('anomalies.statusResolved'),
+		false_positive: t('anomalies.statusFalsePositive'),
+	};
+
+	const typeLabels: Record<string, string> = {
+		brute_force: t('anomalyTypes.brute_force'),
+		impossible_travel: t('anomalyTypes.impossible_travel'),
+		unusual_location: t('anomalyTypes.unusual_location'),
+		unusual_time: t('anomalyTypes.unusual_time'),
+		privilege_escalation: t('anomalyTypes.privilege_escalation'),
+	};
+
+	const [detail, setDetail] = useState<AnomalyResponse | null>(null);
+	const [timeline, setTimeline] = useState<AnomalyTimelineResponse | null>(null);
+	const [related, setRelated] = useState<AnomalyResponse[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [activeTab, setActiveTab] = useState('overview');
+
+	useEffect(() => {
+		if (visible && anomalyId) {
+			fetchDetail(anomalyId);
+		}
+	}, [visible, anomalyId]);
+
+	const fetchDetail = async (id: string) => {
+		setLoading(true);
+		try {
+			const res = await getAnomalyById(id);
+			setDetail(res?.data || null);
+		} catch {
+			message.error(t('anomalies.fetchDetailFailed'));
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchTimeline = async (id: string) => {
+		setLoading(true);
+		try {
+			const res = await getAnomalyTimeline(id);
+			setTimeline(res?.data || null);
+		} catch {
+			message.error(t('anomalies.fetchTimelineFailed'));
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchRelated = async (id: string) => {
+		setLoading(true);
+		try {
+			const res = await getRelatedAnomalies(id);
+			setRelated(res?.items || []);
+		} catch {
+			message.error(t('anomalies.fetchRelatedFailed'));
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleTabChange = (key: string) => {
+		setActiveTab(key);
+		if (!anomalyId) return;
+		if (key === 'timeline' && !timeline) {
+			fetchTimeline(anomalyId);
+		}
+		if (key === 'related' && related.length === 0) {
+			fetchRelated(anomalyId);
+		}
+	};
+
+	const renderOverview = () => {
+		if (!detail) return <Empty description={t('anomalies.noDetailData')} />;
+
+		return (
+			<div className="space-y-4">
+				<Alert
+					message={`${t('anomalies.columnType')}：${typeLabels[detail.type ?? ''] || detail.type}`}
+					description={detail.description}
+					type={
+						detail.severity === 'critical'
+							? 'error'
+							: detail.severity === 'high'
+								? 'warning'
+								: 'info'
+					}
+					showIcon
+				/>
+
+				<Row gutter={[16, 16]}>
+					<Col span={12}>
+						<Card size="small">
+							<Statistic
+								title={t('anomalies.columnSeverity')}
+								value={detail.severity?.toUpperCase() || '-'}
+								valueStyle={{
+									color: severityColors[detail.severity || ''] === 'red' ? '#ef4444' : '#f59e0b',
+								}}
+							/>
+						</Card>
+					</Col>
+					<Col span={12}>
+						<Card size="small">
+							<Statistic
+								title={t('anomalies.columnStatus')}
+								value={statusLabels[detail.status || ''] || detail.status}
+								valueStyle={{
+									color:
+										statusColors[detail.status || ''] === 'red'
+											? '#ef4444'
+											: statusColors[detail.status || ''] === 'green'
+												? '#10b981'
+												: '#f59e0b',
+								}}
+							/>
+						</Card>
+					</Col>
+				</Row>
+
+				<Descriptions bordered column={1} size="small">
+					<Descriptions.Item label={t('anomalies.columnId')}>{detail.id}</Descriptions.Item>
+					<Descriptions.Item label={t('anomalies.columnUser')}>{detail.userId}</Descriptions.Item>
+					<Descriptions.Item label={t('anomalies.columnTenant')}>
+						{detail.tenantId}
+					</Descriptions.Item>
+					<Descriptions.Item label={t('anomalies.columnDetectedAt')}>
+						{detail.detectedAt ? dayjs(detail.detectedAt).format('YYYY-MM-DD HH:mm:ss') : '-'}
+					</Descriptions.Item>
+					<Descriptions.Item label={t('hashChain.columnValidatedAt')}>
+						{detail.updatedAt ? dayjs(detail.updatedAt).format('YYYY-MM-DD HH:mm:ss') : '-'}
+					</Descriptions.Item>
+					<Descriptions.Item label={t('alerts.columnAssignee')}>
+						{detail.assignee || t('overview.notConfigured')}
+					</Descriptions.Item>
+					<Descriptions.Item label="MITRE">{detail.mitreTactic || '-'}</Descriptions.Item>
+					<Descriptions.Item label={t('anomalies.relatedTab')}>
+						{detail.relatedCaseId || '-'}
+					</Descriptions.Item>
+					<Descriptions.Item label={t('overview.recentEvents')}>
+						{detail.eventIds && detail.eventIds.length > 0 ? detail.eventIds.join(', ') : '-'}
+					</Descriptions.Item>
+					{detail.resolvedBy && (
+						<>
+							<Descriptions.Item label={t('alerts.detailResolvedBy')}>
+								{detail.resolvedBy}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('alerts.detailResolvedAt')}>
+								{detail.resolvedAt ? dayjs(detail.resolvedAt).format('YYYY-MM-DD HH:mm:ss') : '-'}
+							</Descriptions.Item>
+						</>
+					)}
+				</Descriptions>
+			</div>
+		);
+	};
+
+	const renderTimeline = () => {
+		if (!timeline) return <Empty description={t('anomalies.noTimelineData')} />;
+
+		const events = timeline.events || [];
+		const context = timeline.context;
+		const devices = timeline.loginSessions || [];
+
+		return (
+			<div className="space-y-4">
+				{context && (
+					<Row gutter={[16, 16]} className="mb-4">
+						<Col span={8}>
+							<Card size="small">
+								<Statistic
+									title={t('anomalies.timeWindowSeconds')}
+									value={context.timeSpanSeconds || 0}
+								/>
+							</Card>
+						</Col>
+						<Col span={8}>
+							<Card size="small">
+								<Statistic
+									title={t('anomalies.totalEvents')}
+									value={context.totalEvents || 0}
+									prefix={<FileSearchOutlined />}
+								/>
+							</Card>
+						</Col>
+						<Col span={8}>
+							<Card size="small">
+								<Statistic
+									title={t('anomalies.uniqueDevices')}
+									value={context.uniqueDevices || 0}
+									prefix={<ClusterOutlined />}
+								/>
+							</Card>
+						</Col>
+					</Row>
+				)}
+
+				{devices.length > 0 && (
+					<Card size="small" title={t('anomalies.deviceFingerprint')} className="mb-4">
+						<List
+							size="small"
+							dataSource={devices}
+							renderItem={(d: any) => (
+								<List.Item>
+									<div className="text-xs">
+										<div>
+											<strong>IP:</strong> {d.ip}
+										</div>
+										<div>
+											<strong>UA:</strong> {d.userAgent}
+										</div>
+										<div>
+											<strong>{t('anomalies.totalEvents')}:</strong> {d.eventCount}
+										</div>
+									</div>
+								</List.Item>
+							)}
+						/>
+					</Card>
+				)}
+
+				{events.length > 0 ? (
+					<Timeline
+						mode="left"
+						items={events.map((evt: AuditLogResponse) => ({
+							label: (
+								<span className="text-xs text-gray-400">
+									{evt.timestamp ? dayjs(evt.timestamp).format('HH:mm:ss') : '-'}
+								</span>
+							),
+							color: evt.level === 'error' ? 'red' : evt.level === 'warning' ? 'orange' : 'blue',
+							dot: <FileSearchOutlined />,
+							children: (
+								<div>
+									<div className="text-sm font-medium">{evt.action}</div>
+									<div className="text-xs text-gray-500">{evt.message}</div>
+									<div className="text-xs text-gray-400 mt-1">
+										{evt.ip} · {evt.module} · {evt.operatorId}
+									</div>
+								</div>
+							),
+						}))}
+					/>
+				) : (
+					<Empty description={t('anomalies.noEventData')} />
+				)}
+			</div>
+		);
+	};
+
+	const renderRelated = () => {
+		if (related.length === 0) return <Empty description={t('anomalies.noRelatedData')} />;
+
+		return (
+			<List
+				dataSource={related}
+				renderItem={(item: AnomalyResponse) => (
+					<List.Item>
+						<div className="w-full">
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Tag color={severityColors[item.severity || '']}>{item.severity}</Tag>
+									<span className="font-medium">{typeLabels[item.type ?? ''] || item.type}</span>
+								</div>
+								<Badge
+									status={
+										item.status === 'open'
+											? 'error'
+											: item.status === 'investigating'
+												? 'warning'
+												: 'success'
+									}
+									text={statusLabels[item.status || ''] || item.status}
+								/>
+							</div>
+							<div className="text-sm text-gray-600 mt-1">{item.description}</div>
+							<div className="text-xs text-gray-400 mt-1">
+								{item.detectedAt ? dayjs(item.detectedAt).format('YYYY-MM-DD HH:mm:ss') : '-'} ·{' '}
+								{item.userId}
+							</div>
+						</div>
+					</List.Item>
+				)}
+			/>
+		);
+	};
+
+	const tabItems = [
+		{
+			key: 'overview',
+			label: (
+				<span>
+					<SafetyOutlined /> {t('anomalies.overviewTab')}
+				</span>
+			),
+			children: renderOverview(),
+		},
+		{
+			key: 'timeline',
+			label: (
+				<span>
+					<FileSearchOutlined /> {t('anomalies.timelineTab')}
+				</span>
+			),
+			children: renderTimeline(),
+		},
+		{
+			key: 'related',
+			label: (
+				<span>
+					<LinkOutlined /> {t('anomalies.relatedTab')} ({related.length})
+				</span>
+			),
+			children: renderRelated(),
+		},
+		{
+			key: 'comments',
+			label: (
+				<span>
+					<CommentOutlined /> {t('anomalies.commentsTab')} ({detail?.comments?.length || 0})
+				</span>
+			),
+			children: anomalyId ? (
+				<AnomalyComments
+					anomalyId={anomalyId}
+					initialComments={detail?.comments || []}
+					onRefresh={fetchDetail}
+				/>
+			) : (
+				<Empty description={t('anomalies.selectAnomaly')} />
+			),
+		},
+	];
+
+	return (
+		<Drawer
+			title={`${t('anomalies.detailTitle')} ${anomalyId ? `(${anomalyId.slice(0, 12)}...)` : ''}`}
+			width={700}
+			open={visible}
+			onClose={onClose}
+			destroyOnClose
+		>
+			<Spin spinning={loading}>
+				<Tabs activeKey={activeTab} onChange={handleTabChange} items={tabItems} />
+			</Spin>
+		</Drawer>
+	);
+}
