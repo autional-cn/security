@@ -8,6 +8,9 @@ import {
 	useBootstrap,
 	TenantSlugProvider,
 	TenantIndexGuard,
+	TenantRootRedirect,
+	useBranding,
+	BrandingInitializer,
 } from '@autional-cn/shared';
 import { ErrorBoundary } from '@autional-cn/ui';
 import ScrollToTop from './components/ScrollToTop';
@@ -77,15 +80,22 @@ function PageLoader() {
 }
 
 export default function App() {
+	useBranding();
+
 	return (
 		<ErrorBoundary devMode={false}>
+			<BrandingInitializer />
 			<ScrollToTop />
 			{/* 外层 Suspense 为 lazy NotFoundPage（顶层 * / TenantIndexGuard notFound）提供边界 */}
 			<Suspense fallback={<PageLoader />}>
 				<Routes>
 					<Route path="/oauth/callback" element={<OAuthCallbackPage />} />
 
-					{/* 顶层未匹配（如裸 "/"）→ NotFoundPage（AC-002：无 slug 裸路径 404） */}
+					{/* 裸根漏斗：有会话直达 /<slug>，否则整页跳 brand 选品牌（2026-09-28 起
+					    裸 "/" 不再是 404；无 slug 的其它路径仍按 AC-002 → NotFoundPage） */}
+					<Route path="/" element={<TenantRootRedirect />} />
+
+					{/* 顶层未匹配（如无 slug 的深链）→ NotFoundPage（AC-002） */}
 					<Route path="*" element={<NotFoundPage />} />
 
 					<Route
