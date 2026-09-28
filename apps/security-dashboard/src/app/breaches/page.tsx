@@ -168,7 +168,7 @@ export default function BreachesPage() {
 							<Statistic
 								title={t('breaches.statOpen')}
 								value={openCount}
-								valueStyle={{ color: '#cf1322' }}
+								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<ExclamationCircleOutlined />}
 							/>
 						</Card>
@@ -178,7 +178,7 @@ export default function BreachesPage() {
 							<Statistic
 								title={t('breaches.statCritical')}
 								value={criticalCount}
-								valueStyle={{ color: '#cf1322' }}
+								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<WarningOutlined />}
 							/>
 						</Card>

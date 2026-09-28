@@ -282,7 +282,7 @@ export default function AlertsPage() {
 							title={t('alerts.statsOpen')}
 							value={stats.open}
 							prefix={<WarningOutlined className="text-red-500" />}
-							valueStyle={{ color: stats.open > 0 ? '#cf1322' : undefined }}
+							valueStyle={{ color: stats.open > 0 ? 'var(--color-danger-text)' : undefined }}
 						/>
 					</Card>
 				</Col>

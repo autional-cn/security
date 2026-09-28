@@ -192,7 +192,7 @@ export default function AuditFindingsPage() {
 							<Statistic
 								title={t('auditFindings.statOpen')}
 								value={openCount}
-								valueStyle={{ color: '#cf1322' }}
+								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<WarningOutlined />}
 							/>
 						</Card>
@@ -202,7 +202,7 @@ export default function AuditFindingsPage() {
 							<Statistic
 								title={t('auditFindings.statOverdue')}
 								value={overdueCount}
-								valueStyle={{ color: '#cf1322' }}
+								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<FileSearchOutlined />}
 							/>
 						</Card>

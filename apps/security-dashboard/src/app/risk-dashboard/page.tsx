@@ -113,7 +113,7 @@ export default function RiskDashboardPage() {
 						<Statistic
 							title="严重事件"
 							value={criticalCount}
-							valueStyle={{ color: '#cf1322' }}
+							valueStyle={{ color: 'var(--color-danger-text)' }}
 							prefix={<WarningOutlined />}
 						/>
 					</Card>
