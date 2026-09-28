@@ -181,7 +181,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 				/>
 			</Sider>
 			<Layout>
-				<Header className="flex items-center justify-between bg-[var(--color-bg-surface)] px-6 border-b border-[var(--color-border)]">
+				<Header className="sticky top-0 z-10 flex items-center justify-between h-[var(--layout-header-height)] bg-[var(--color-bg-surface)] px-6 border-b border-[var(--color-border)]">
 					<div className="flex items-center gap-4">
 						<Button
 							type="text"
