@@ -89,7 +89,7 @@ function buildEventsFromData(
 	return events;
 }
 
-const PIE_COLORS = ['var(--color-primary-700)', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const PIE_COLORS = ['var(--color-chart-1)', 'var(--color-chart-2)', 'var(--color-chart-3)', 'var(--color-chart-4)', 'var(--color-chart-5)', 'var(--color-chart-6)'];
 const SEVERITY_COLORS: Record<string, string> = {
 	critical: '#ef4444',
 	high: '#f97316',

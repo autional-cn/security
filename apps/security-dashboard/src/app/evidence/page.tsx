@@ -160,7 +160,7 @@ export default function EvidencePage() {
 						<Statistic
 							title={t('evidence.statGdpr')}
 							value={items.filter((i) => i.controlType === 'gdpr').length}
-							valueStyle={{ color: '#722ed1' }}
+							valueStyle={{ color: 'var(--color-chart-7)' }}
 						/>
 					</Card>
 				</Col>

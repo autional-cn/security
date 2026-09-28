@@ -49,7 +49,7 @@ export default function SocKpiPage() {
 			title: t('socKpi.mttd', 'MTTD (est.)'),
 			value: stats?.mttd_minutes ? `${stats.mttd_minutes}m` : 'N/A',
 			icon: <BugOutlined />,
-			color: '#722ed1',
+			color: 'var(--color-chart-7)',
 		},
 	];
 

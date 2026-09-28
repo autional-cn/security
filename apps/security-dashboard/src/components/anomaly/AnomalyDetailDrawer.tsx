@@ -164,7 +164,7 @@ export default function AnomalyDetailDrawer({
 								title={t('anomalies.columnSeverity')}
 								value={detail.severity?.toUpperCase() || '-'}
 								valueStyle={{
-									color: severityColors[detail.severity || ''] === 'red' ? '#ef4444' : '#f59e0b',
+									color: severityColors[detail.severity || ''] === 'red' ? 'var(--color-danger)' : 'var(--color-warning)',
 								}}
 							/>
 						</Card>
@@ -177,10 +177,10 @@ export default function AnomalyDetailDrawer({
 								valueStyle={{
 									color:
 										statusColors[detail.status || ''] === 'red'
-											? '#ef4444'
+											? 'var(--color-danger)'
 											: statusColors[detail.status || ''] === 'green'
-												? '#10b981'
-												: '#f59e0b',
+												? 'var(--color-success)'
+												: 'var(--color-warning)',
 								}}
 							/>
 						</Card>

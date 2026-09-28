@@ -34,11 +34,12 @@ const {
 	adminCommunicationPlatformStats,
 } = GeneratedApi;
 
-const PIE_COLORS = ['#10b981', '#ef4444', '#f59e0b'];
+// delivered / failed / pending 是语义分类，不是并列数据系列 —— 按 $chart-note 的规矩用语义色
+const PIE_COLORS = ['var(--color-success)', 'var(--color-danger)', 'var(--color-warning)'];
 const CHANNEL_COLORS: Record<string, string> = {
-	email: 'var(--color-primary-700)',
-	sms: '#f59e0b',
-	push: '#8b5cf6',
+	email: 'var(--color-chart-1)',
+	sms: 'var(--color-chart-2)',
+	push: 'var(--color-chart-3)',
 };
 
 export default function DeliveryStatsPage() {
@@ -82,9 +83,9 @@ export default function DeliveryStatsPage() {
 		const pending = Math.max(0, total - delivered - failed);
 		if (total === 0 && delivered === 0) return [];
 		return [
-			{ name: t('notification.delivered'), value: delivered, color: '#10b981' },
-			{ name: t('notification.failed'), value: failed, color: '#ef4444' },
-			{ name: t('notification.pending'), value: pending, color: '#f59e0b' },
+			{ name: t('notification.delivered'), value: delivered, color: 'var(--color-success)' },
+			{ name: t('notification.failed'), value: failed, color: 'var(--color-danger)' },
+			{ name: t('notification.pending'), value: pending, color: 'var(--color-warning)' },
 		].filter((d) => d.value > 0);
 	}, [notifStats, t]);
 
