@@ -155,7 +155,7 @@ export default function DSARsPage() {
 							<Statistic
 								title={t('dsars.statPending')}
 								value={pendingCount}
-								valueStyle={{ color: '#faad14' }}
+								valueStyle={{ color: 'var(--color-warning)' }}
 								prefix={<FileSearchOutlined />}
 							/>
 						</Card>
@@ -165,7 +165,7 @@ export default function DSARsPage() {
 							<Statistic
 								title={t('dsars.statProcessing')}
 								value={processingCount}
-								valueStyle={{ color: '#1890ff' }}
+								valueStyle={{ color: 'var(--color-info)' }}
 								prefix={<SyncOutlined spin />}
 							/>
 						</Card>

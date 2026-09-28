@@ -169,7 +169,7 @@ export default function EvidencePage() {
 						<Statistic
 							title={t('evidence.statIso')}
 							value={items.filter((i) => i.controlType === 'iso27001').length}
-							valueStyle={{ color: '#1890ff' }}
+							valueStyle={{ color: 'var(--color-info)' }}
 						/>
 					</Card>
 				</Col>

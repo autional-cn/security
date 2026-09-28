@@ -351,7 +351,7 @@ export default function NhiPage() {
 							<Statistic
 								title={t('nhi.activeAgents', 'Active Agents')}
 								value={agentActive}
-								valueStyle={{ color: '#52c41a' }}
+								valueStyle={{ color: 'var(--color-success)' }}
 								prefix={<CheckCircleOutlined />}
 							/>
 						</Card>

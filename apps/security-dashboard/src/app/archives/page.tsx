@@ -131,7 +131,7 @@ export default function ArchivesPage() {
 							<Statistic
 								title={t('archives.statArchivedBatches')}
 								value={archivedCount}
-								valueStyle={{ color: '#52c41a' }}
+								valueStyle={{ color: 'var(--color-success)' }}
 								prefix={<FileZipOutlined />}
 							/>
 						</Card>
@@ -150,7 +150,7 @@ export default function ArchivesPage() {
 							<Statistic
 								title={t('archives.statPending')}
 								value={archives.filter((a: any) => a.status === 'pending').length}
-								valueStyle={{ color: '#faad14' }}
+								valueStyle={{ color: 'var(--color-warning)' }}
 								prefix={<CloudUploadOutlined />}
 							/>
 						</Card>
@@ -160,7 +160,7 @@ export default function ArchivesPage() {
 							<Statistic
 								title={t('archives.statVerificationPassed')}
 								value={verifications.filter((v: any) => v.result === 'valid' || v.valid).length}
-								valueStyle={{ color: '#52c41a' }}
+								valueStyle={{ color: 'var(--color-success)' }}
 								prefix={<SafetyOutlined />}
 							/>
 						</Card>

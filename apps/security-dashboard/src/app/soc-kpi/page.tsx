@@ -42,7 +42,7 @@ export default function SocKpiPage() {
 			title: t('socKpi.totalAlerts', 'Total Alerts'),
 			value: alertCount,
 			icon: <AlertOutlined />,
-			color: '#ff4d4f',
+			color: 'var(--color-danger)',
 		},
 		{
 			key: 'mttd',

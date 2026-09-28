@@ -195,7 +195,7 @@ export default function ReportsPage() {
 													: t('reports.statusFail')
 										}
 										valueStyle={{
-											color: complianceReport.overallStatus === 'pass' ? '#52c41a' : '#f5222d',
+											color: complianceReport.overallStatus === 'pass' ? 'var(--color-success)' : '#f5222d',
 										}}
 									/>
 								</Card>

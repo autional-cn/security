@@ -201,7 +201,7 @@ export default function UserSecurityProfilePage() {
 						<Statistic
 							value={anomalyCount}
 							suffix={<span className="text-sm">{t('usersProfile.anomalyCountSuffix')}</span>}
-							valueStyle={{ color: anomalyCount > 0 ? '#ff4d4f' : '#52c41a', fontSize: 32 }}
+							valueStyle={{ color: anomalyCount > 0 ? 'var(--color-danger)' : 'var(--color-success)', fontSize: 32 }}
 						/>
 					</Card>
 				</Col>

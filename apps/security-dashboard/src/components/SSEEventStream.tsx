@@ -120,7 +120,7 @@ export default function SSEEventStream() {
 									description: data.message,
 									icon: (
 										<ThunderboltOutlined
-											style={{ color: data.severity === 'critical' ? '#ff4d4f' : '#faad14' }}
+											style={{ color: data.severity === 'critical' ? 'var(--color-danger)' : 'var(--color-warning)' }}
 										/>
 									),
 									placement: 'bottomRight',
@@ -163,10 +163,10 @@ export default function SSEEventStream() {
 		<Badge
 			count={eventCount}
 			overflowCount={99}
-			style={{ backgroundColor: connected ? '#52c41a' : '#d9d9d9' }}
+			style={{ backgroundColor: connected ? 'var(--color-success)' : '#d9d9d9' }}
 		>
 			<ThunderboltOutlined
-				style={{ color: connected ? '#52c41a' : '#d9d9d9', fontSize: 16 }}
+				style={{ color: connected ? 'var(--color-success)' : '#d9d9d9', fontSize: 16 }}
 				title={connected ? t('sse.connected') : t('sse.disconnected')}
 			/>
 		</Badge>

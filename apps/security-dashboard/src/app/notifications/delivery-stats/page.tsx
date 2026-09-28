@@ -36,7 +36,7 @@ const {
 
 const PIE_COLORS = ['#10b981', '#ef4444', '#f59e0b'];
 const CHANNEL_COLORS: Record<string, string> = {
-	email: '#003153',
+	email: 'var(--color-primary-700)',
 	sms: '#f59e0b',
 	push: '#8b5cf6',
 };
@@ -234,7 +234,7 @@ export default function DeliveryStatsPage() {
 										<Line
 											type="monotone"
 											dataKey="readRate"
-											stroke="#003153"
+											stroke="var(--color-primary-700)"
 											strokeWidth={2}
 											dot={false}
 											name={t('notification.readRate')}

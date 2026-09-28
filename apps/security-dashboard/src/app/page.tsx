@@ -89,12 +89,12 @@ function buildEventsFromData(
 	return events;
 }
 
-const PIE_COLORS = ['#003153', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+const PIE_COLORS = ['var(--color-primary-700)', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 const SEVERITY_COLORS: Record<string, string> = {
 	critical: '#ef4444',
 	high: '#f97316',
 	medium: '#f59e0b',
-	low: '#003153',
+	low: 'var(--color-primary-700)',
 };
 const EVENT_TYPE_CONFIG: Record<string, { color: string; icon: React.ReactNode }> = {
 	anomaly: { color: 'red', icon: <WarningOutlined /> },
@@ -361,7 +361,7 @@ export default function OverviewPage() {
 										<Line
 											type="monotone"
 											dataKey="count"
-											stroke="#003153"
+											stroke="var(--color-primary-700)"
 											strokeWidth={2}
 											dot={false}
 										/>
@@ -413,7 +413,7 @@ export default function OverviewPage() {
 											{severityData.map((entry, index) => (
 												<Cell
 													key={`cell-${index}`}
-													fill={SEVERITY_COLORS[entry.name] || '#003153'}
+													fill={SEVERITY_COLORS[entry.name] || 'var(--color-primary-700)'}
 												/>
 											))}
 										</Bar>
