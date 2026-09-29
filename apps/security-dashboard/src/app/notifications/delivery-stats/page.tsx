@@ -102,7 +102,9 @@ export default function DeliveryStatsPage() {
 		return Object.entries(channels).map(([name, value]) => ({
 			name,
 			value: value as number,
-			fill: CHANNEL_COLORS[name] || '#6b7280',
+			// 兜底色改用设计系统的弱化文字色（原来的 #6b7280 是 Tailwind gray-500，
+			// 与设计系统里任何一档都不对应——中性灰正好落在颜色闸门的取舍之外）。
+			fill: CHANNEL_COLORS[name] || 'var(--color-text-muted)',
 		}));
 	}, [commStats]);
 

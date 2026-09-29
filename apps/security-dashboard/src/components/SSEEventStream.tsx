@@ -163,10 +163,10 @@ export default function SSEEventStream() {
 		<Badge
 			count={eventCount}
 			overflowCount={99}
-			style={{ backgroundColor: connected ? 'var(--color-success)' : '#d9d9d9' }}
+			style={{ backgroundColor: connected ? 'var(--color-success)' : 'var(--color-neutral-300)' }}
 		>
 			<ThunderboltOutlined
-				style={{ color: connected ? 'var(--color-success)' : '#d9d9d9', fontSize: 16 }}
+				style={{ color: connected ? 'var(--color-success)' : 'var(--color-neutral-300)', fontSize: 16 }}
 				title={connected ? t('sse.connected') : t('sse.disconnected')}
 			/>
 		</Badge>
