@@ -101,7 +101,8 @@ export default function App() {
 					<Route
 						path="/:tenantSlug"
 						element={
-							<SecurityGuard>
+							/* notFound：确定性未知 slug（by-slug 404）原地渲染 404，不发弹跳（F-W6） */
+							<SecurityGuard notFound={<NotFoundPage />}>
 								<LayoutWrapper />
 							</SecurityGuard>
 						}
