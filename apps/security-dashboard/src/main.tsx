@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@autional-cn/ui';
 import { AntdAppProvider } from './lib/antd-app';
 import App from './App';
+import './non-tenant-segments';
 import './i18n';
 import './app/globals.css';
 
