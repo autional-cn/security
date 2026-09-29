@@ -16,7 +16,7 @@ import { useTheme } from '@/hooks/useTheme';
 // 此前这里只设了 algorithm、没有 token，因此 antd 组件渲染的是出厂配色
 // （实测侧边栏选中项 .ant-menu-item-selected 是 antd 出厂蓝 rgb(22,119,255)），
 // 而 admin 控制台是品牌蓝——同一个产品两个控制台主色不是一个（ui 仓库 KI-011）。
-import antdTheme from '@autional-cn/tailwind-preset/antd-theme.mjs';
+import antdTheme from '@autional-cn/tokens/antd-theme';
 
 export let message: MessageInstance;
 export let modal: any;
