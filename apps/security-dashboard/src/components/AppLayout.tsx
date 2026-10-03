@@ -11,7 +11,6 @@ import {
 	ClusterOutlined,
 	FileTextOutlined,
 	SettingOutlined,
-	LogoutOutlined,
 	MenuFoldOutlined,
 	MenuUnfoldOutlined,
 	SecurityScanOutlined,
@@ -24,9 +23,9 @@ import {
 	FundOutlined,
 	BugOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, Avatar, Dropdown, Space, Typography, Breadcrumb } from 'antd';
-import { useLogout, useTenantSlug } from '@autional-cn/shared';
-import { LanguageSwitcher, ThemeToggle } from '@autional-cn/ui';
+import { Layout, Menu, Button, Typography, Breadcrumb } from 'antd';
+import { useAuth, useLogout, usePortalCatalog, useTenantSlug } from '@autional-cn/shared';
+import { LanguageSwitcher, PortalSwitcher, ThemeToggle, UserMenu } from '@autional-cn/ui';
 import SSEEventStream from './SSEEventStream';
 
 const { Header, Sider, Content } = Layout;
@@ -39,9 +38,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const pathname = location.pathname;
 	const [collapsed, setCollapsed] = useState(false);
 	const handleLogout = useLogout();
+	const { user, currentTenantId } = useAuth();
 	// basename 恒 "/" 后 pathname 含租户 slug（如 /acme-corp/audit-logs），
 	// slug 用于导航拼接 + 内部路径匹配（菜单高亮/面包屑）剥离前缀。
 	const slug = useTenantSlug();
+	// 管理面平面（audiences [admin, platform]）：安全控制台走 admin 受众端点
+	const { portals } = usePortalCatalog({ tenantId: currentTenantId, slug, audience: 'admin' });
 	const internalPath = slug ? pathname.replace(new RegExp(`^/${slug}`), '') || '/' : pathname;
 
 	const menuItems = [
@@ -136,15 +138,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		return crumbs;
 	}
 
-	const userMenuItems = [
-		{
-			key: 'logout',
-			icon: <LogoutOutlined />,
-			label: t('common.logout'),
-			onClick: handleLogout,
-		},
-	];
-
 	return (
 		<Layout className="min-h-screen">
 			<Sider
@@ -191,6 +184,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 						<Breadcrumb items={buildBreadcrumbs()} />
 					</div>
 					<div className="flex items-center gap-3">
+						<PortalSwitcher portals={portals} currentPortal="security" />
 						<SSEEventStream />
 						<LanguageSwitcher />
 						<ThemeToggle />
@@ -200,12 +194,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 							onClick={() => window.location.reload()}
 							title={t('common.refresh')}
 						/>
-						<Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-							<Space className="cursor-pointer">
-								<Avatar style={{ backgroundColor: '#ef4444' }}>S</Avatar>
-								<Text>{t('app.user')}</Text>
-							</Space>
-						</Dropdown>
+						<UserMenu
+							user={user}
+							items={[{ key: 'logout', type: 'logout', onClick: handleLogout }]}
+						/>
 					</div>
 				</Header>
 				<Content className="m-6 p-6 bg-[var(--color-bg-surface)] rounded-lg min-h-[calc(100vh-112px)]">
