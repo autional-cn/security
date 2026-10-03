@@ -35,11 +35,12 @@ import {
 	useAuditStats,
 	useAnomaliesPreview,
 	useComplianceStatus,
-	useVerificationResults,
 	useActiveSessionCount,
 	useGatewayStatus,
 } from '@/hooks/use-overview';
+import { useHashChain } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@autional-cn/shared';
 import { ConsolePageHeader } from '@autional-cn/ui';
 
 interface SecurityEvent {
@@ -106,10 +107,11 @@ const EVENT_TYPE_CONFIG: Record<string, { color: string; icon: React.ReactNode }
 
 export default function OverviewPage() {
 	const { t, i18n } = useTranslation();
+	const { currentTenantId } = useAuth();
 	const { data: auditData, isLoading: auditLoading } = useAuditStats();
 	const { data: anomalyData, isLoading: anomalyLoading } = useAnomaliesPreview();
 	const { data: complianceData, isLoading: complianceLoading } = useComplianceStatus();
-	const { data: verifyData, isLoading: verifyLoading } = useVerificationResults();
+	const { data: chain, isLoading: verifyLoading } = useHashChain(currentTenantId);
 	const { data: sessionData, isLoading: sessionLoading } = useActiveSessionCount();
 	const { data: gatewayData, isLoading: gatewayLoading } = useGatewayStatus();
 
@@ -122,12 +124,9 @@ export default function OverviewPage() {
 		const complianceScore = complianceData?.complianceScore || 0;
 		const activeSessions = sessionData?.count || sessionData?.data?.count || 0;
 
-		let hashChainValid = true;
-		let criticalAlerts = 0;
-		if (verifyData?.items) {
-			hashChainValid = verifyData.items.every((v: any) => v.valid);
-			criticalAlerts = verifyData.items.filter((v: any) => !v.valid).length;
-		}
+		// 本租户链快照：无数据（未加载/未生成链）不误报；快照断裂计 1 项
+		const hashChainValid = chain?.isValid !== false;
+		const criticalAlerts = chain?.isValid === false ? 1 : 0;
 
 		return {
 			totalLogs,
@@ -137,7 +136,7 @@ export default function OverviewPage() {
 			hashChainValid,
 			criticalAlerts,
 		};
-	}, [auditData, anomalyData, complianceData, sessionData, verifyData]);
+	}, [auditData, anomalyData, complianceData, sessionData, chain]);
 
 	const recentAnomalies = useMemo(() => {
 		return anomalyData?.items?.slice(0, 5) || [];

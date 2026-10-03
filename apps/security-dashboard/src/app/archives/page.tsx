@@ -12,7 +12,8 @@ import {
 	PlayCircleOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useArchives, useTriggerArchive, useVerificationResults } from '@/hooks/use-security-queries';
+import { useAuth } from '@autional-cn/shared';
+import { useArchives, useTriggerArchive, useHashChain } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
 
@@ -43,8 +44,10 @@ export default function ArchivesPage() {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [triggerLoading, setTriggerLoading] = useState(false);
 
+	const { currentTenantId } = useAuth();
 	const { data: archives = [], isLoading } = useArchives();
-	const { data: verifications = [] } = useVerificationResults();
+	// A1/S-01（2026-10-04）：链快照改本租户端点，不再消费全平台验证列表。
+	const { data: chain } = useHashChain(currentTenantId);
 	const triggerMutation = useTriggerArchive();
 
 	const archivedCount = archives.filter((a: any) => a.status === 'archived').length;
@@ -144,7 +147,7 @@ export default function ArchivesPage() {
 						<Card>
 							<Statistic
 								title={t('archives.statVerificationPassed')}
-								value={verifications.filter((v: any) => v.result === 'valid' || v.valid).length}
+								value={chain?.isValid === undefined ? '-' : chain.isValid ? 1 : 0}
 								valueStyle={{ color: 'var(--color-success)' }}
 								prefix={<SafetyOutlined />}
 							/>
@@ -187,33 +190,33 @@ export default function ArchivesPage() {
 					/>
 				</Card>
 
-				{verifications.length > 0 && (
+				{chain && (
 					<Card title={t('archives.recentVerifications')} className="mt-4">
 						<Timeline
-							items={verifications.slice(0, 5).map((v: any) => ({
-								color:
-									v.result === 'valid' || v.valid
-										? 'green'
-										: v.result === 'invalid'
-											? 'red'
-											: 'orange',
-								children: (
-									<div>
-										<Text strong>
-											{v.result === 'valid' || v.valid
-												? t('archives.verificationPassed')
-												: v.result === 'invalid'
+							items={[
+								{
+									color: chain.isValid === false ? 'red' : 'green',
+									children: (
+										<div>
+											<Text strong>
+												{chain.isValid === false
 													? t('archives.verificationFailed')
-													: t('archives.verificationWarning')}
-										</Text>
-										<div className="text-xs text-neutral-600">
-											{new Date(v.verifiedAt || v.validatedAt).toLocaleString()} ·{' '}
-											{t('archives.columnTenantId')} {v.tenantId}
+													: t('archives.verificationPassed')}
+											</Text>
+											<div className="text-xs text-neutral-600">
+												{chain.verifiedAt
+													? new Date(chain.verifiedAt).toLocaleString()
+													: '-'}{' '}
+												· {t('archives.columnTenantId')}{' '}
+												{chain.tenantId || currentTenantId || '-'}
+											</div>
+											{chain.message && (
+												<div className="text-xs mt-1">{chain.message}</div>
+											)}
 										</div>
-										{v.details && <div className="text-xs mt-1">{v.details}</div>}
-									</div>
-								),
-							}))}
+									),
+								},
+							]}
 						/>
 					</Card>
 				)}

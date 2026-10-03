@@ -30,8 +30,7 @@ import {
 	getISOControls,
 	getSOXControls,
 	getPenTestReports,
-	getVerificationResults,
-	verifyAuditChain,
+	getHashChain,
 	getMerkleRoot,
 	getMerkleProof,
 	getRetentionPolicy,
@@ -381,22 +380,28 @@ export function usePenTestReportsTab() {
 // ============================================================
 // Hash Chain / Merkle
 // ============================================================
-export function useVerificationResults() {
-	return useQuery({
-		queryKey: ['verification-results'],
-		queryFn: async () => {
-			const res = await getVerificationResults();
-			return (res as any)?.items || [];
-		},
-		staleTime: 10_000,
-	});
+
+/** 租户级链快照（GET /admin/audit/hashchain/:tenant_id，实时校验、响应以路径租户为准）。 */
+export interface HashChainSnapshot {
+	tenantId?: string;
+	chainId?: string;
+	startHash?: string;
+	endHash?: string;
+	logCount?: number;
+	isValid?: boolean;
+	message?: string;
+	verifiedAt?: number;
 }
 
-export function useVerifyAuditChain() {
-	const qc = useQueryClient();
-	return useMutation({
-		mutationFn: (params: { tenantId: string }) => verifyAuditChain(params),
-		onSuccess: () => qc.invalidateQueries({ queryKey: ['verification-results'] }),
+// A1/S-01（2026-10-04）：全平台验证快照端点（GET /verifications）已挂平台租户门禁，
+// 租户面统一走本租户快照端点。
+export function useHashChain(tenantId: string | null | undefined) {
+	return useQuery({
+		queryKey: ['hash-chain', tenantId],
+		queryFn: async (): Promise<HashChainSnapshot> =>
+			(await getHashChain(tenantId!)) as HashChainSnapshot,
+		enabled: !!tenantId,
+		staleTime: 10_000,
 	});
 }
 

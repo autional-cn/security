@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
@@ -15,57 +15,38 @@ import {
 } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
+import { useAuth } from '@autional-cn/shared';
 import {
-	useVerificationResults,
-	useVerifyAuditChain,
+	useHashChain,
 	useMerkleRoot,
 	useMerkleProof,
 } from '@/hooks/use-security-queries';
+import type { HashChainSnapshot } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 
-interface VerificationItem {
-	tenantId: string;
-	valid: boolean;
-	lastSequence: number;
-	lastHash: string;
-	entriesChecked: number;
-	errorMessage?: string;
-	validatedAt: number;
-}
-
+// A1/S-01（2026-10-04）：本页只呈现当前租户的链快照；
+// 全平台聚合视图（GET /verifications）为平台面端点，租户面不再调取。
 export default function HashChainPage() {
 	const { t } = useTranslation();
-	const [tenantId, setTenantId] = useState('');
+	const { currentTenantId } = useAuth();
 	const [activeTab, setActiveTab] = useState('hashchain');
 	const [merkleProofId, setMerkleProofId] = useState('');
 	const [merkleProofResult, setMerkleProofResult] = useState<any>(null);
 
-	const { data: verificationItems = [], isLoading } = useVerificationResults();
-	const verifyMutation = useVerifyAuditChain();
+	const { data: chain, isLoading, isFetching, refetch } = useHashChain(currentTenantId);
 	const { data: merkleRoot, isLoading: merkleLoading, refetch: refetchMerkle } = useMerkleRoot();
 	const proofMutation = useMerkleProof();
 
-	const stats = useMemo(() => {
-		const items = verificationItems as VerificationItem[];
-		return {
-			total: items.length,
-			valid: items.filter((i) => i.valid).length,
-			invalid: items.filter((i) => !i.valid).length,
-		};
-	}, [verificationItems]);
+	const chainRows: HashChainSnapshot[] = chain ? [chain] : [];
 
-	const handleVerify = async () => {
-		if (!tenantId.trim()) {
-			message.warning(t('hashChain.verifyInputWarning'));
+	const handleRefresh = async () => {
+		const res = await refetch();
+		if (res.isError) {
+			message.error(t('hashChain.verifyFailed'));
 			return;
 		}
-		try {
-			await verifyMutation.mutateAsync({ tenantId });
-			message.success(t('hashChain.verifySubmitted'));
-		} catch {
-			message.error(t('hashChain.verifyFailed'));
-		}
+		message.success(t('hashChain.refreshDone'));
 	};
 
 	const fetchMerkleRoot = async () => {
@@ -81,9 +62,13 @@ export default function HashChainPage() {
 			message.warning(t('hashChain.merkleProofInputWarning'));
 			return;
 		}
+		if (!currentTenantId) {
+			message.warning(t('hashChain.tenantMissing'));
+			return;
+		}
 		try {
 			const res = await proofMutation.mutateAsync({
-				tenantId: tenantId || 'default',
+				tenantId: currentTenantId,
 				entryId: merkleProofId,
 			});
 			setMerkleProofResult(res);
@@ -93,14 +78,23 @@ export default function HashChainPage() {
 		}
 	};
 
-	const columns: DataTableColumns<VerificationItem> = [
-		{ title: t('hashChain.columnTenantId'), dataIndex: 'tenantId', width: 200 },
+	const columns: DataTableColumns<HashChainSnapshot> = [
+		{ title: t('hashChain.columnTenantId'), dataIndex: 'tenantId', width: 200, ellipsis: true },
+		{
+			title: t('hashChain.columnChainId'),
+			dataIndex: 'chainId',
+			width: 180,
+			ellipsis: true,
+			render: (v?: string) => v || '-',
+		},
 		{
 			title: t('hashChain.columnStatus'),
-			dataIndex: 'valid',
+			dataIndex: 'isValid',
 			width: 120,
-			render: (v: boolean) =>
-				v ? (
+			render: (v?: boolean) =>
+				v === undefined ? (
+					'-'
+				) : v ? (
 					<Tag color="success" icon={<CheckCircleOutlined />}>
 						{t('hashChain.statusValid')}
 					</Tag>
@@ -110,27 +104,37 @@ export default function HashChainPage() {
 					</Tag>
 				),
 		},
-		{ title: t('hashChain.columnLastSequence'), dataIndex: 'lastSequence', width: 140 },
-		{ title: t('hashChain.columnLastHash'), dataIndex: 'lastHash', ellipsis: true },
-		{ title: t('hashChain.columnEntriesChecked'), dataIndex: 'entriesChecked', width: 120 },
+		{
+			title: t('hashChain.statLogCount'),
+			dataIndex: 'logCount',
+			width: 120,
+			render: (v?: number) => v ?? '-',
+		},
+		{
+			title: t('hashChain.columnLastHash'),
+			dataIndex: 'endHash',
+			ellipsis: true,
+			render: (v?: string) => v || '-',
+		},
 		{
 			title: t('hashChain.columnValidatedAt'),
-			dataIndex: 'validatedAt',
+			dataIndex: 'verifiedAt',
 			width: 180,
-			render: (v: number) => (v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : '-'),
+			render: (v?: number) => (v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : '-'),
 		},
 		{
 			title: t('hashChain.columnErrorMessage'),
-			dataIndex: 'errorMessage',
+			dataIndex: 'message',
 			render: (v?: string) => (v ? <span className="text-danger-text">{v}</span> : '-'),
 		},
 	];
 
 	const hashChainTab = (
 		<div>
-			{stats.invalid > 0 && (
+			{chain?.isValid === false && (
 				<Alert
-					message={t('hashChain.alertAbnormal', { count: stats.invalid })}
+					message={t('hashChain.alertBroken')}
+					description={chain.message}
 					type="error"
 					showIcon
 					className="mb-4"
@@ -141,8 +145,29 @@ export default function HashChainPage() {
 				<Col xs={24} sm={8}>
 					<Card>
 						<Statistic
-							title={t('hashChain.statTotalTenants')}
-							value={stats.total}
+							title={t('hashChain.statChainState')}
+							value={
+								chain?.isValid === undefined
+									? '-'
+									: chain.isValid
+										? t('hashChain.statusValid')
+										: t('hashChain.statusAbnormal')
+							}
+							prefix={
+								chain?.isValid === false ? (
+									<CloseCircleOutlined className="text-danger" />
+								) : (
+									<CheckCircleOutlined className="text-success" />
+								)
+							}
+						/>
+					</Card>
+				</Col>
+				<Col xs={24} sm={8}>
+					<Card>
+						<Statistic
+							title={t('hashChain.statLogCount')}
+							value={chain?.logCount ?? '-'}
 							prefix={<SafetyCertificateOutlined className="text-info" />}
 						/>
 					</Card>
@@ -150,18 +175,10 @@ export default function HashChainPage() {
 				<Col xs={24} sm={8}>
 					<Card>
 						<Statistic
-							title={t('hashChain.statVerified')}
-							value={stats.valid}
-							prefix={<CheckCircleOutlined className="text-success" />}
-						/>
-					</Card>
-				</Col>
-				<Col xs={24} sm={8}>
-					<Card>
-						<Statistic
-							title={t('hashChain.statAbnormal')}
-							value={stats.invalid}
-							prefix={<CloseCircleOutlined className="text-danger" />}
+							title={t('hashChain.statVerifiedAt')}
+							value={
+								chain?.verifiedAt ? dayjs(chain.verifiedAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+							}
 						/>
 					</Card>
 				</Col>
@@ -169,14 +186,11 @@ export default function HashChainPage() {
 
 			<Card className="mb-4">
 				<Space>
-					<Input
-						placeholder={t('hashChain.verifyInputPlaceholder')}
-						value={tenantId}
-						onChange={(e) => setTenantId(e.target.value)}
-						style={{ width: 300 }}
-					/>
-					<Button type="primary" loading={verifyMutation.isPending} onClick={handleVerify}>
-						{t('hashChain.verifyBtn')}
+					<Typography.Text type="secondary">
+						{t('hashChain.currentTenant', { tenant: currentTenantId || '-' })}
+					</Typography.Text>
+					<Button icon={<ReloadOutlined />} loading={isFetching} onClick={handleRefresh}>
+						{t('hashChain.refreshBtn')}
 					</Button>
 				</Space>
 			</Card>
@@ -184,9 +198,9 @@ export default function HashChainPage() {
 			<Spin spinning={isLoading}>
 				<DataTable
 					columns={columns}
-					dataSource={verificationItems as VerificationItem[]}
+					dataSource={chainRows}
 					rowKey="tenantId"
-					pagination={{ pageSize: 20, showTotal: (cnt) => t('common.total', { count: cnt }) }}
+					pagination={false}
 					locale={{ emptyText: <Empty description={t('hashChain.empty')} /> }}
 				/>
 			</Spin>

@@ -3,7 +3,6 @@ import {
 	getAuditStats,
 	getAnomalies,
 	getComplianceStatus,
-	getVerificationResults,
 	getActiveSessionCount,
 	fetchGatewayStatusRaw,
 } from '@/lib/api.generated';
@@ -26,13 +25,6 @@ export function useComplianceStatus() {
 	return useQuery({
 		queryKey: ['overview', 'complianceStatus'],
 		queryFn: getComplianceStatus,
-	});
-}
-
-export function useVerificationResults() {
-	return useQuery({
-		queryKey: ['overview', 'verificationResults'],
-		queryFn: getVerificationResults,
 	});
 }
 

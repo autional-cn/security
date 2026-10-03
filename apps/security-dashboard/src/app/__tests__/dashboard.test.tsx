@@ -22,12 +22,20 @@ vi.mock('@/hooks/use-overview', () => ({
 	useAuditStats: vi.fn(),
 	useAnomaliesPreview: vi.fn(),
 	useComplianceStatus: vi.fn(),
-	useVerificationResults: vi.fn(),
 	useActiveSessionCount: vi.fn(),
 	useGatewayStatus: vi.fn(),
 }));
 
+vi.mock('@/hooks/use-security-queries', () => ({
+	useHashChain: vi.fn(),
+}));
+
 vi.mock('@autional-cn/shared', () => ({
+	useAuth: vi.fn(() => ({
+		user: { tenant_id: 'test-tenant' },
+		currentTenantId: 'test-tenant',
+		isAuthenticated: true,
+	})),
 	useAuthStore: vi.fn(() => ({
 		user: { tenant_id: 'test-tenant' },
 		currentTenantId: 'test-tenant',
@@ -53,6 +61,7 @@ vi.mock('@autional-cn/shared', () => ({
 }));
 
 import * as useOverview from '@/hooks/use-overview';
+import * as useSecurityQueries from '@/hooks/use-security-queries';
 import OverviewPage from '../page';
 
 function mockAllLoading() {
@@ -60,13 +69,16 @@ function mockAllLoading() {
 		'useAuditStats',
 		'useAnomaliesPreview',
 		'useComplianceStatus',
-		'useVerificationResults',
 		'useActiveSessionCount',
 		'useGatewayStatus',
 	] as const;
 	for (const h of hooks) {
 		vi.mocked(useOverview[h]).mockReturnValue({ data: null, isLoading: true } as any);
 	}
+	vi.mocked(useSecurityQueries.useHashChain).mockReturnValue({
+		data: null,
+		isLoading: true,
+	} as any);
 }
 
 function mockAllLoaded() {
@@ -86,8 +98,8 @@ function mockAllLoaded() {
 		data: { complianceScore: 85, checks: [] },
 		isLoading: false,
 	} as any);
-	vi.mocked(useOverview.useVerificationResults).mockReturnValue({
-		data: { items: [] },
+	vi.mocked(useSecurityQueries.useHashChain).mockReturnValue({
+		data: { tenantId: 'test-tenant', isValid: true, logCount: 123 },
 		isLoading: false,
 	} as any);
 	vi.mocked(useOverview.useActiveSessionCount).mockReturnValue({
@@ -118,6 +130,12 @@ describe('DashboardPage (overview)', () => {
 		expect(screen.getByText('待处理异常')).toBeInTheDocument();
 		expect(screen.getByText('活跃会话')).toBeInTheDocument();
 		expect(screen.getByText('合规评分')).toBeInTheDocument();
+	});
+
+	it('wires hash chain to current tenant (tenant-scoped, A1)', () => {
+		mockAllLoaded();
+		render(<OverviewPage />);
+		expect(useSecurityQueries.useHashChain).toHaveBeenCalledWith('test-tenant');
 	});
 
 	it('shows loading state', () => {
