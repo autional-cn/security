@@ -40,6 +40,7 @@ import {
 	useGatewayStatus,
 } from '@/hooks/use-overview';
 import { useTranslation } from 'react-i18next';
+import { ConsolePageHeader } from '@autional-cn/ui';
 
 interface SecurityEvent {
 	id: string;
@@ -254,9 +255,7 @@ export default function OverviewPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-6">
-				<h1 className="text-xl font-semibold">{t('overview.title')}</h1>
-			</div>
+			<ConsolePageHeader title={t('overview.title')} />
 
 			<Spin spinning={loading}>
 				<Row gutter={[16, 16]}>

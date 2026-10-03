@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Row, Col, Statistic, Spin } from 'antd';
 import {
 	ClockCircleOutlined,
@@ -56,9 +57,7 @@ export default function SocKpiPage() {
 
 	return (
 		<div>
-			<div className="mb-4">
-				<h1 className="text-xl font-semibold">{t('socKpi.title', 'SOC KPIs')}</h1>
-			</div>
+			<ConsolePageHeader title={t('socKpi.title', 'SOC KPIs')} />
 
 			<Row gutter={[16, 16]} className="mb-4">
 				{statCards.map((c) => (

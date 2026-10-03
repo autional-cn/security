@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Tag, Spin, Empty, Progress, Row, Col, Statistic, Tabs, Badge } from 'antd';
 import {
 	SafetyCertificateOutlined,
@@ -322,9 +323,7 @@ export default function CompliancePage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">{t('compliance.title')}</h1>
-			</div>
+			<ConsolePageHeader title={t('compliance.title')} />
 
 			<Spin spinning={tabLoadingMap[activeTab] || false}>
 				<Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />

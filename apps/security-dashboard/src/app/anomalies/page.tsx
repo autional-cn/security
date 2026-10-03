@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Select, Tag, Button, Spin, Empty, Space, Badge, Row, Col, Statistic, Segmented } from 'antd';
 import {
 	WarningOutlined,
@@ -191,12 +192,16 @@ export default function AnomaliesPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">{t('anomalies.title')}</h1>
-				<Button icon={<ReloadOutlined />} onClick={() => refetch()}>
-					{t('common.refresh')}
-				</Button>
-			</div>
+			<ConsolePageHeader
+				title={t('anomalies.title')}
+				actions={
+					<>
+						<Button icon={<ReloadOutlined />} onClick={() => refetch()}>
+							{t('common.refresh')}
+						</Button>
+					</>
+				}
+			/>
 
 			<Row gutter={[16, 16]} className="mb-4">
 				<Col xs={12} sm={6}>

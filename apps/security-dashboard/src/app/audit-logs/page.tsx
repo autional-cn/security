@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Input, Select, DatePicker, Button, Tag, Spin, Empty, Space, Drawer, Descriptions, Segmented } from 'antd';
 import { SearchOutlined, ReloadOutlined, ExportOutlined } from '@ant-design/icons';
 
@@ -168,9 +169,7 @@ export default function AuditLogsPage() {
 	return (
 		<Can denyAuditor>
 			<div>
-				<div className="flex items-center justify-between mb-4">
-					<h1 className="text-xl font-semibold">{t('auditLogs.title')}</h1>
-				</div>
+				<ConsolePageHeader title={t('auditLogs.title')} />
 
 				<Card className="mb-4">
 					<Space direction="vertical" className="w-full" size="middle">

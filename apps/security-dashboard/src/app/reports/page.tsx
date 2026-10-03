@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Select, Button, Spin, Empty, Tag, Row, Col, Statistic, List, Space, Progress } from 'antd';
 import {
 	FileTextOutlined,
@@ -29,43 +30,47 @@ export default function ReportsPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">{t('reports.title')}</h1>
-				<Space>
-					<Select
-						value={reportType}
-						onChange={(v) => setReportType(v)}
-						style={{ width: 140 }}
-						options={[
-							{ label: t('reports.securityReport'), value: 'security' },
-							{ label: t('reports.complianceReport'), value: 'compliance' },
-						]}
-					/>
-					{reportType === 'security' ? (
-						<Select
-							value={period}
-							onChange={(v) => setPeriod(v)}
-							style={{ width: 120 }}
-							options={[
-								{ label: t('reports.period7d'), value: '7d' },
-								{ label: t('reports.period30d'), value: '30d' },
-								{ label: t('reports.period90d'), value: '90d' },
-							]}
-						/>
-					) : (
-						<Select
-							value={standard}
-							onChange={(v) => setStandard(v)}
-							style={{ width: 140 }}
-							options={[
-								{ label: 'GDPR', value: 'GDPR' },
-								{ label: 'ISO 27001', value: 'ISO27001' },
-								{ label: 'SOX', value: 'SOX' },
-							]}
-						/>
-					)}
-				</Space>
-			</div>
+			<ConsolePageHeader
+				title={t('reports.title')}
+				actions={
+					<>
+						<Space>
+							<Select
+								value={reportType}
+								onChange={(v) => setReportType(v)}
+								style={{ width: 140 }}
+								options={[
+									{ label: t('reports.securityReport'), value: 'security' },
+									{ label: t('reports.complianceReport'), value: 'compliance' },
+								]}
+							/>
+							{reportType === 'security' ? (
+								<Select
+									value={period}
+									onChange={(v) => setPeriod(v)}
+									style={{ width: 120 }}
+									options={[
+										{ label: t('reports.period7d'), value: '7d' },
+										{ label: t('reports.period30d'), value: '30d' },
+										{ label: t('reports.period90d'), value: '90d' },
+									]}
+								/>
+							) : (
+								<Select
+									value={standard}
+									onChange={(v) => setStandard(v)}
+									style={{ width: 140 }}
+									options={[
+										{ label: 'GDPR', value: 'GDPR' },
+										{ label: 'ISO 27001', value: 'ISO27001' },
+										{ label: 'SOX', value: 'SOX' },
+									]}
+								/>
+							)}
+						</Space>
+					</>
+				}
+			/>
 
 			<Spin spinning={loading}>
 				{reportType === 'security' && securityReport && (

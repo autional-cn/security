@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Timeline, Tag, Spin, Alert } from 'antd';
@@ -129,12 +130,9 @@ export default function UserSecurityTimelinePage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">
-					{t('usersTimeline.title')}
-					{id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}
-				</h1>
-			</div>
+			<ConsolePageHeader
+				title={<>{t('usersTimeline.title')} {id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}</>}
+			/>
 
 			<Card
 				title={

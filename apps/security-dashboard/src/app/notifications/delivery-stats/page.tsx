@@ -27,6 +27,7 @@ import {
 } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { GeneratedApi } from '@autional-cn/shared';
+import { ConsolePageHeader } from '@autional-cn/ui';
 
 const {
 	adminNotificationsPlatformStats,
@@ -127,12 +128,16 @@ export default function DeliveryStatsPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-6">
-				<h1 className="text-xl font-semibold">{t('notification.deliveryStats')}</h1>
-				<Button icon={<ReloadOutlined />} onClick={fetchData} loading={loading}>
-					{t('common.refresh')}
-				</Button>
-			</div>
+			<ConsolePageHeader
+				title={t('notification.deliveryStats')}
+				actions={
+					<>
+						<Button icon={<ReloadOutlined />} onClick={fetchData} loading={loading}>
+							{t('common.refresh')}
+						</Button>
+					</>
+				}
+			/>
 
 			<Spin spinning={loading}>
 				<Row gutter={[16, 16]}>

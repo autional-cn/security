@@ -26,6 +26,7 @@ import {
 import NhiDetailDrawer from '@/components/nhi/NhiDetailDrawer';
 import { Can } from '@/components/Can';
 import { extractList } from '@autional-cn/shared';
+import { ConsolePageHeader } from '@autional-cn/ui';
 
 const STATUS_COLORS: Record<string, string> = {
 	active: 'green',
@@ -333,9 +334,7 @@ export default function NhiPage() {
 	return (
 		<Can denyAuditor>
 			<div>
-				<div className="flex items-center justify-between mb-4">
-					<h1 className="text-xl font-semibold">{t('nhi.title', 'NHI Monitoring')}</h1>
-				</div>
+				<ConsolePageHeader title={t('nhi.title', 'NHI Monitoring')} />
 
 				<Row gutter={[16, 16]} className="mb-4">
 					<Col xs={12} sm={6}>

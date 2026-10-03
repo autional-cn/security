@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Tag, Button, Space, Modal, Input, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -81,22 +82,26 @@ export default function IncidentsPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">{t('incidents.title', 'Incident Management')}</h1>
-				<Space>
-					<Input
-						placeholder={t('incidents.search', 'Search incidents...')}
-						prefix={<SearchOutlined />}
-						value={searchText}
-						onChange={(e) => setSearchText(e.target.value)}
-						style={{ width: 240 }}
-						allowClear
-					/>
-					<Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateOpen(true)}>
-						{t('incidents.create', 'New Incident')}
-					</Button>
-				</Space>
-			</div>
+			<ConsolePageHeader
+				title={t('incidents.title', 'Incident Management')}
+				actions={
+					<>
+						<Space>
+							<Input
+								placeholder={t('incidents.search', 'Search incidents...')}
+								prefix={<SearchOutlined />}
+								value={searchText}
+								onChange={(e) => setSearchText(e.target.value)}
+								style={{ width: 240 }}
+								allowClear
+							/>
+							<Button type="primary" icon={<PlusOutlined />} onClick={() => setIsCreateOpen(true)}>
+								{t('incidents.create', 'New Incident')}
+							</Button>
+						</Space>
+					</>
+				}
+			/>
 
 			<Card>
 				{filtered.length === 0 ? (

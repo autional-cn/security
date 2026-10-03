@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Row, Col, Statistic, Descriptions, Badge, Spin, Alert, Tag } from 'antd';
@@ -127,12 +128,9 @@ export default function UserSecurityProfilePage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">
-					{t('usersProfile.title')}
-					{id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}
-				</h1>
-			</div>
+			<ConsolePageHeader
+				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}</>}
+			/>
 
 			{partialErrors.length > 0 && (
 				<Alert

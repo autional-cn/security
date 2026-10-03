@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Alert, Input, Tabs, Descriptions, Typography } from 'antd';
 import {
 	CheckCircleOutlined,
@@ -266,9 +267,7 @@ export default function HashChainPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-4">
-				<h1 className="text-xl font-semibold">{t('hashChain.title')}</h1>
-			</div>
+			<ConsolePageHeader title={t('hashChain.title')} />
 
 			<Tabs
 				activeKey={activeTab}

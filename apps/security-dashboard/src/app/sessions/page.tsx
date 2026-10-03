@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal } from 'antd';
 import {
 	ClusterOutlined,
@@ -117,18 +118,22 @@ export default function SessionsPage() {
 	return (
 		<Can denyAuditor>
 			<div>
-				<div className="flex items-center justify-between mb-4">
-					<h1 className="text-xl font-semibold">{t('sessions.title')}</h1>
-					<Button
-						icon={<ReloadOutlined />}
-						onClick={() => {
-							refetch();
-							refetchActive();
-						}}
-					>
-						{t('common.refresh')}
-					</Button>
-				</div>
+				<ConsolePageHeader
+					title={t('sessions.title')}
+					actions={
+						<>
+							<Button
+								icon={<ReloadOutlined />}
+								onClick={() => {
+									refetch();
+									refetchActive();
+								}}
+							>
+								{t('common.refresh')}
+							</Button>
+						</>
+					}
+				/>
 
 				<Row gutter={[16, 16]} className="mb-4">
 					<Col xs={24} sm={8}>

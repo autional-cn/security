@@ -5,7 +5,7 @@ import { DataTable } from '@autional-cn/ui/antd';
 import { Card, Row, Col, Statistic, Tag, Spin, Typography } from 'antd';
 import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
 import { getRiskDashboard } from '@/lib/api';
-import { PageHeader } from '@autional-cn/ui';
+import { ConsolePageHeader } from '@autional-cn/ui';
 
 const { Title } = Typography;
 
@@ -98,9 +98,9 @@ export default function RiskDashboardPage() {
 
 	return (
 		<div>
-			<PageHeader
+			<ConsolePageHeader
 				title="风险仪表盘"
-				subtitle="租户风险全景视图 — 今日事件 / 评分分布 / 高风险用户 Top 5"
+				description="租户风险全景视图 — 今日事件 / 评分分布 / 高风险用户 Top 5"
 			/>
 
 			<Row gutter={16} style={{ marginBottom: 24 }}>

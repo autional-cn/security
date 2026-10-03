@@ -16,6 +16,7 @@ import {
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import type { ExportJobResponse, ExportJobRequest } from '@autional-cn/shared/generated/types';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
 
 export default function ExportJobsPage() {
@@ -161,14 +162,18 @@ export default function ExportJobsPage() {
 	return (
 		<Can denyAuditor>
 			<div>
-				<div className="flex items-center justify-between mb-4">
-					<h1 className="text-xl font-semibold">{t('exportJobs.title')}</h1>
-					<Space>
-						<Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateVisible(true)}>
-							{t('exportJobs.newJob')}
-						</Button>
-					</Space>
-				</div>
+				<ConsolePageHeader
+					title={t('exportJobs.title')}
+					actions={
+						<>
+							<Space>
+								<Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateVisible(true)}>
+									{t('exportJobs.newJob')}
+								</Button>
+							</Space>
+						</>
+					}
+				/>
 
 				<Spin spinning={isLoading}>
 					<DataTable

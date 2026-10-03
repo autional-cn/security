@@ -28,6 +28,7 @@ import {
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { AuditStatsOnly } from '@autional-cn/shared';
+import { ConsolePageHeader } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
 import type {
 	RetentionPolicyResponse,
@@ -509,9 +510,7 @@ export default function SettingsPage() {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-6">
-				<h1 className="text-xl font-semibold">{t('settings.title')}</h1>
-			</div>
+			<ConsolePageHeader title={t('settings.title')} />
 			<Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
 		</div>
 	);
