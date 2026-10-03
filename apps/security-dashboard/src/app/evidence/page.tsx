@@ -67,7 +67,7 @@ export default function EvidencePage() {
 		if (ext === 'pdf') return <FilePdfOutlined className="text-red-500" />;
 		if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || ''))
 			return <FileImageOutlined className="text-blue-500" />;
-		return <FileTextOutlined className="text-gray-500" />;
+		return <FileTextOutlined className="text-neutral-600" />;
 	}
 
 	const openDetail = (record: EvidenceItem) => {

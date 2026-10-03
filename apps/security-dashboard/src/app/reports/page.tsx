@@ -124,7 +124,7 @@ export default function ReportsPage() {
 													{item.severity}
 												</Tag>
 												<span className="font-medium">{item.type}</span>
-												<span className="text-gray-500 text-sm">{item.description}</span>
+												<span className="text-neutral-600 text-sm">{item.description}</span>
 											</div>
 											<span className="text-sm font-semibold">
 												{item.count} {t('reports.countSuffix')}

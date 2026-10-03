@@ -54,7 +54,7 @@ const severityIcons: Record<string, React.ReactNode> = {
 	high: <WarningOutlined className="text-orange-500" />,
 	medium: <ExclamationCircleOutlined className="text-yellow-500" />,
 	low: <ExclamationCircleOutlined className="text-blue-500" />,
-	info: <ExclamationCircleOutlined className="text-gray-400" />,
+	info: <ExclamationCircleOutlined className="text-neutral-500" />,
 };
 
 const statusColorMap: Record<string, string> = {

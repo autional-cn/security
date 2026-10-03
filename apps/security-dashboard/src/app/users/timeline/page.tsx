@@ -131,7 +131,7 @@ export default function UserSecurityTimelinePage() {
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<>{t('usersTimeline.title')} {id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}</>}
+				title={<>{t('usersTimeline.title')} {id && <span className="text-sm text-neutral-500 ml-2">ID: {id}</span>}</>}
 			/>
 
 			<Card
@@ -154,20 +154,20 @@ export default function UserSecurityTimelinePage() {
 								key: evt.id || String(i),
 								color: getEventColor(action),
 								dot: getEventIcon(action),
-								label: <span className="text-xs text-gray-400">{formatTime(time)}</span>,
+								label: <span className="text-xs text-neutral-500">{formatTime(time)}</span>,
 								children: (
 									<div>
 										<div className="text-sm font-medium capitalize">
 											{action.replace(/_/g, ' ')}
 										</div>
-										{message && <div className="text-xs text-gray-500">{message}</div>}
+										{message && <div className="text-xs text-neutral-600">{message}</div>}
 									</div>
 								),
 							};
 						})}
 					/>
 				) : (
-					<div className="text-center text-gray-400 py-8">{t('usersTimeline.noEvents')}</div>
+					<div className="text-center text-neutral-500 py-8">{t('usersTimeline.noEvents')}</div>
 				)}
 			</Card>
 
@@ -188,7 +188,7 @@ export default function UserSecurityTimelinePage() {
 						scroll={{ x: true }}
 					/>
 				) : (
-					<div className="text-center text-gray-400 py-4">{t('usersTimeline.noAnomalies')}</div>
+					<div className="text-center text-neutral-500 py-4">{t('usersTimeline.noAnomalies')}</div>
 				)}
 			</Card>
 		</div>

@@ -73,7 +73,7 @@ export default function AssignAnomalyModal({
 			]}
 		>
 			<div className="py-4">
-				<div className="mb-2 text-sm text-gray-500">
+				<div className="mb-2 text-sm text-neutral-600">
 					{t('anomalies.columnId')}: <span className="font-mono">{anomalyId || '-'}</span>
 				</div>
 				<Input

@@ -236,7 +236,7 @@ export default function OverviewPage() {
 			case 'unhealthy':
 				return 'bg-red-500';
 			default:
-				return 'bg-gray-400';
+				return 'bg-neutral-500';
 		}
 	};
 
@@ -290,7 +290,7 @@ export default function OverviewPage() {
 					<Col xs={24} sm={12} lg={4}>
 						<Card>
 							<div className="flex items-center justify-between mb-2">
-								<span className="text-sm text-gray-500">{t('overview.complianceScore')}</span>
+								<span className="text-sm text-neutral-600">{t('overview.complianceScore')}</span>
 								<SafetyCertificateOutlined className="text-green-500" />
 							</div>
 							<Progress
@@ -309,7 +309,7 @@ export default function OverviewPage() {
 					<Col xs={24} sm={12} lg={4}>
 						<Card>
 							<div className="flex items-center justify-between mb-2">
-								<span className="text-sm text-gray-500">{t('overview.hashChainIntegrity')}</span>
+								<span className="text-sm text-neutral-600">{t('overview.hashChainIntegrity')}</span>
 								{stats.hashChainValid ? (
 									<CheckCircleOutlined className="text-green-500" />
 								) : (
@@ -331,7 +331,7 @@ export default function OverviewPage() {
 					<Col xs={24} sm={12} lg={4}>
 						<Card>
 							<div className="flex items-center justify-between mb-2">
-								<span className="text-sm text-gray-500">{t('overview.riskLevel')}</span>
+								<span className="text-sm text-neutral-600">{t('overview.riskLevel')}</span>
 								<ExclamationCircleOutlined className="text-red-500" />
 							</div>
 							<div className="text-base font-semibold">
@@ -434,7 +434,7 @@ export default function OverviewPage() {
 										{serviceStatuses.map((svc: any) => (
 											<div
 												key={svc.name}
-												className="flex flex-col items-center p-2 rounded border border-gray-100 hover:bg-gray-50 transition-colors"
+												className="flex flex-col items-center p-2 rounded border border-neutral-200 hover:bg-neutral-50 transition-colors"
 											>
 												<div
 													className={`w-3 h-3 rounded-full mb-2 ${serviceStatusColor(svc.status)}`}
@@ -442,9 +442,9 @@ export default function OverviewPage() {
 												<div className="text-xs font-medium text-center truncate w-full">
 													{svc.name.replace('-service', '')}
 												</div>
-												<div className="text-xs text-gray-400">{serviceStatusText(svc.status)}</div>
+												<div className="text-xs text-neutral-500">{serviceStatusText(svc.status)}</div>
 												{svc.latency && svc.latency !== 'timeout' && (
-													<div className="text-xs text-gray-400">{svc.latency}</div>
+													<div className="text-xs text-neutral-500">{svc.latency}</div>
 												)}
 											</div>
 										))}
@@ -458,28 +458,28 @@ export default function OverviewPage() {
 					<Col xs={24} lg={8}>
 						<Card title={t('overview.alertChannelStatus')} className="h-full">
 							<div className="space-y-3">
-								<div className="flex items-center justify-between p-2 rounded border border-gray-100">
+								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<CloudServerOutlined className="text-blue-500" />
 										<span className="text-sm">{t('overview.emailAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-gray-100">
+								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<ThunderboltOutlined className="text-orange-500" />
 										<span className="text-sm">{t('overview.smsAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-gray-100">
+								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<ApiOutlined className="text-purple-500" />
 										<span className="text-sm">{t('overview.siemPush')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-gray-100">
+								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<RadarChartOutlined className="text-cyan-500" />
 										<span className="text-sm">{t('overview.webhook')}</span>
@@ -500,7 +500,7 @@ export default function OverviewPage() {
 									const cfg = EVENT_TYPE_CONFIG[evt.type];
 									return {
 										label: (
-											<span className="text-xs text-gray-400">
+											<span className="text-xs text-neutral-500">
 												{new Date(evt.time).toLocaleTimeString(i18n.language, {
 													hour: '2-digit',
 													minute: '2-digit',
@@ -512,7 +512,7 @@ export default function OverviewPage() {
 										children: (
 											<div>
 												<div className="text-sm font-medium">{evt.title}</div>
-												<div className="text-xs text-gray-500">{evt.description}</div>
+												<div className="text-xs text-neutral-600">{evt.description}</div>
 											</div>
 										),
 									};
@@ -534,7 +534,7 @@ export default function OverviewPage() {
 												<Tag color={severityColor(item.severity)}>{item.severity}</Tag>
 												<span className="font-medium text-sm">{anomalyTypeLabel(item.type)}</span>
 											</div>
-											<div className="text-xs text-gray-400">
+											<div className="text-xs text-neutral-500">
 												{item.detectedAt
 													? new Date(item.detectedAt).toLocaleString(i18n.language)
 													: '-'}

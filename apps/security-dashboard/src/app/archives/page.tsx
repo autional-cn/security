@@ -206,7 +206,7 @@ export default function ArchivesPage() {
 													? t('archives.verificationFailed')
 													: t('archives.verificationWarning')}
 										</Text>
-										<div className="text-xs text-gray-500">
+										<div className="text-xs text-neutral-600">
 											{new Date(v.verifiedAt || v.validatedAt).toLocaleString()} ·{' '}
 											{t('archives.columnTenantId')} {v.tenantId}
 										</div>

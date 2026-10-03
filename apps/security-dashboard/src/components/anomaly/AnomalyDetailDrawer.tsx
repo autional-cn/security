@@ -293,7 +293,7 @@ export default function AnomalyDetailDrawer({
 						mode="left"
 						items={events.map((evt: AuditLogResponse) => ({
 							label: (
-								<span className="text-xs text-gray-400">
+								<span className="text-xs text-neutral-500">
 									{evt.timestamp ? dayjs(evt.timestamp).format('HH:mm:ss') : '-'}
 								</span>
 							),
@@ -302,8 +302,8 @@ export default function AnomalyDetailDrawer({
 							children: (
 								<div>
 									<div className="text-sm font-medium">{evt.action}</div>
-									<div className="text-xs text-gray-500">{evt.message}</div>
-									<div className="text-xs text-gray-400 mt-1">
+									<div className="text-xs text-neutral-600">{evt.message}</div>
+									<div className="text-xs text-neutral-500 mt-1">
 										{evt.ip} · {evt.module} · {evt.operatorId}
 									</div>
 								</div>
@@ -342,8 +342,8 @@ export default function AnomalyDetailDrawer({
 									text={statusLabels[item.status || ''] || item.status}
 								/>
 							</div>
-							<div className="text-sm text-gray-600 mt-1">{item.description}</div>
-							<div className="text-xs text-gray-400 mt-1">
+							<div className="text-sm text-neutral-700 mt-1">{item.description}</div>
+							<div className="text-xs text-neutral-500 mt-1">
 								{item.detectedAt ? dayjs(item.detectedAt).format('YYYY-MM-DD HH:mm:ss') : '-'} ·{' '}
 								{item.userId}
 							</div>

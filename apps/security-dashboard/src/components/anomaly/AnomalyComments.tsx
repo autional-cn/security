@@ -91,12 +91,12 @@ export default function AnomalyComments({
 										<span className="text-sm font-medium">
 											{item.authorName || item.authorId || t('app.user')}
 										</span>
-										<span className="text-xs text-gray-400">
+										<span className="text-xs text-neutral-500">
 											{item.createdAt ? dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss') : '-'}
 										</span>
 									</div>
 								}
-								description={<div className="text-sm text-gray-700 mt-1">{item.content}</div>}
+								description={<div className="text-sm text-neutral-800 mt-1">{item.content}</div>}
 							/>
 						</List.Item>
 					)}

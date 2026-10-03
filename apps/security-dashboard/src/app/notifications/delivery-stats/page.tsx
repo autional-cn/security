@@ -171,7 +171,7 @@ export default function DeliveryStatsPage() {
 					<Col xs={24} sm={12} lg={6}>
 						<Card>
 							<div className="flex items-center justify-between mb-2">
-								<span className="text-sm text-gray-500">{t('notification.readRate')}</span>
+								<span className="text-sm text-neutral-600">{t('notification.readRate')}</span>
 								<CheckCircleOutlined className="text-blue-500" />
 							</div>
 							<div className="text-2xl font-semibold text-neutral-900 dark:text-white">
@@ -299,7 +299,7 @@ export default function DeliveryStatsPage() {
 													<div className="text-2xl mb-1">
 														{channelIcons[ch] || <SendOutlined />}
 													</div>
-													<div className="text-xs text-gray-500">{channelLabels[ch] || ch}</div>
+													<div className="text-xs text-neutral-600">{channelLabels[ch] || ch}</div>
 													<div className="text-xl font-bold mt-1">{count as number}</div>
 												</Card>
 											</Col>
@@ -310,7 +310,7 @@ export default function DeliveryStatsPage() {
 											<div className="text-2xl mb-1">
 												<CheckCircleOutlined className="text-emerald-500" />
 											</div>
-											<div className="text-xs text-gray-500">{t('notification.delivered')}</div>
+											<div className="text-xs text-neutral-600">{t('notification.delivered')}</div>
 											<div className="text-xl font-bold mt-1">{commStats.delivered || 0}</div>
 										</Card>
 									</Col>
@@ -319,14 +319,14 @@ export default function DeliveryStatsPage() {
 											<div className="text-2xl mb-1">
 												<CloseCircleOutlined className="text-red-500" />
 											</div>
-											<div className="text-xs text-gray-500">{t('notification.failed')}</div>
+											<div className="text-xs text-neutral-600">{t('notification.failed')}</div>
 											<div className="text-xl font-bold mt-1">{commStats.failed || 0}</div>
 										</Card>
 									</Col>
 								</Row>
 								{commStats.delivery_rate != null && (
 									<div className="mt-4 flex items-center gap-2">
-										<span className="text-sm text-gray-500">{t('notification.deliveryRate')}:</span>
+										<span className="text-sm text-neutral-600">{t('notification.deliveryRate')}:</span>
 										<Tag color={commStats.delivery_rate >= 0.95 ? 'success' : 'warning'}>
 											{(commStats.delivery_rate * 100).toFixed(1)}%
 										</Tag>

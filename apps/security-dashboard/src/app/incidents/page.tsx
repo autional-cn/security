@@ -110,7 +110,7 @@ export default function IncidentsPage() {
 						<h2 className="text-lg font-semibold text-neutral-600">
 							{t('incidents.noIncidents', 'No Incidents')}
 						</h2>
-						<p className="mt-2 text-sm text-neutral-500 max-w-md">
+						<p className="mt-2 text-sm text-neutral-600 max-w-md">
 							{t(
 								'incidents.noIncidentsDesc',
 								'Incident management is available in the audit-service. Backend endpoint integration is pending — incidents will sync automatically once the API is connected.',
@@ -144,7 +144,7 @@ export default function IncidentsPage() {
 				okText={t('common.create', 'Create')}
 				cancelText={t('common.cancel', 'Cancel')}
 			>
-				<p className="text-sm text-neutral-500 mb-4">
+				<p className="text-sm text-neutral-600 mb-4">
 					{t(
 						'incidents.createDesc',
 						'Incident backend API is being integrated. For now, incidents can be managed through the audit-service admin endpoints.',

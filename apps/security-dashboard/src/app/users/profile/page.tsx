@@ -129,7 +129,7 @@ export default function UserSecurityProfilePage() {
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-gray-400 ml-2">ID: {id}</span>}</>}
+				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-neutral-500 ml-2">ID: {id}</span>}</>}
 			/>
 
 			{partialErrors.length > 0 && (
@@ -154,7 +154,7 @@ export default function UserSecurityProfilePage() {
 						}
 					>
 						<div className="mb-4">
-							<div className="text-sm text-gray-500 mb-2">{t('usersProfile.accountStatus')}</div>
+							<div className="text-sm text-neutral-600 mb-2">{t('usersProfile.accountStatus')}</div>
 							{statusBadge(securityStatus.status || securityStatus.account_status || 'unknown')}
 						</div>
 						<Descriptions column={1} size="small" bordered>
@@ -228,7 +228,7 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-gray-400 py-4">{t('usersProfile.noDevices')}</div>
+							<div className="text-center text-neutral-500 py-4">{t('usersProfile.noDevices')}</div>
 						)}
 					</Card>
 				</Col>
@@ -254,7 +254,7 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-gray-400 py-4">{t('usersProfile.noSessions')}</div>
+							<div className="text-center text-neutral-500 py-4">{t('usersProfile.noSessions')}</div>
 						)}
 					</Card>
 				</Col>
