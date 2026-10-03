@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Drawer, Tabs, Spin, Descriptions, Tag, Empty, Alert } from 'antd';
+import { Tabs, Spin, Descriptions, Tag, Empty, Alert } from 'antd';
 import { SafetyOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgentById, useRobotById, useDeviceById } from '@/hooks/use-security-queries';
+import { Drawer } from '@autional-cn/ui/antd';
 
 interface NhiDetailDrawerProps {
 	entityType: 'agent' | 'robot' | 'device';
@@ -190,10 +191,10 @@ export default function NhiDetailDrawer({
 	return (
 		<Drawer
 			title={`${t('nhi.detailTitle', 'NHI Detail')} — ${titleLabel}`}
-			width={520}
+			size="sm"
 			open={visible}
 			onClose={onClose}
-			destroyOnClose
+			destroyOnHidden
 		>
 			{hasError && (
 				<Alert

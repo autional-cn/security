@@ -58,8 +58,8 @@ importers:
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
       '@autional-cn/ui':
-        specifier: 0.1.0-rc.27
-        version: 0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        specifier: 0.1.0-rc.28
+        version: 0.1.0-rc.28(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@tanstack/react-query':
         specifier: 5.100.9
         version: 5.100.9(react@19.2.5)
@@ -111,7 +111,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: 4.4.0
-        version: 4.4.0(vite@6.4.2(@types/node@26.1.2)(jiti@1.21.7))
+        version: 4.4.0(vite@6.4.2(@types/node@26.6.4)(jiti@1.21.7))
       autoprefixer:
         specifier: 10.5.0
         version: 10.5.0(postcss@8.5.14)
@@ -132,7 +132,7 @@ importers:
         version: 8.71.0(eslint@10.12.0(jiti@1.21.7))(typescript@5.8.3)
       vite:
         specifier: 6.4.2
-        version: 6.4.2(@types/node@26.1.2)(jiti@1.21.7)
+        version: 6.4.2(@types/node@26.6.4)(jiti@1.21.7)
 
 packages:
 
@@ -226,8 +226,8 @@ packages:
   '@autional-cn/tsconfig@0.1.0-rc':
     resolution: {integrity: sha512-XY7N2lbMlR1D+OlkxDAw9Pz9CleV4UZ14RfWkkhGTZbbHvxT/d69H8GXWhyc9/634RoEUyVajYmjT75cZbKF4A==}
 
-  '@autional-cn/ui@0.1.0-rc.27':
-    resolution: {integrity: sha512-GQbV6MNssw3zFP4QKEsFJxxvthSXv2FBeakFPohgjwFSO4D8K+VGvJ3Hh9TnO7ggE1nZncdFQg7lInSGXh5kig==}
+  '@autional-cn/ui@0.1.0-rc.28':
+    resolution: {integrity: sha512-Y5RQ84u/lW23bwmZKyQtSzbeCD9dpsYkBTb1YqCtLoTosbVyOmuDpm9+L8yrw8INgDx17N7y2/eSuD4IjtSzKQ==}
     peerDependencies:
       '@autional-cn/tokens': '>=0.1.0-rc'
       antd: '>=6.0.0'
@@ -2806,7 +2806,7 @@ snapshots:
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
-  '@autional-cn/ui@0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@autional-cn/ui@0.1.0-rc.28(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@autional-cn/tokens': 0.1.0-rc.5
       i18next: 26.0.10(typescript@5.8.3)
@@ -3820,14 +3820,14 @@ snapshots:
       '@typescript-eslint/types': 8.71.0
       eslint-visitor-keys: 5.0.1
 
-  '@vitejs/plugin-react@4.4.0(vite@6.4.2(@types/node@26.1.2)(jiti@1.21.7))':
+  '@vitejs/plugin-react@4.4.0(vite@6.4.2(@types/node@26.6.4)(jiti@1.21.7))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-transform-react-jsx-self': 7.29.7(@babel/core@7.29.7)
       '@babel/plugin-transform-react-jsx-source': 7.29.7(@babel/core@7.29.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 6.4.2(@types/node@26.1.2)(jiti@1.21.7)
+      vite: 6.4.2(@types/node@26.6.4)(jiti@1.21.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -5106,7 +5106,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite@6.4.2(@types/node@26.1.2)(jiti@1.21.7):
+  vite@6.4.2(@types/node@26.6.4)(jiti@1.21.7):
     dependencies:
       esbuild: 0.25.0
       fdir: 6.5.0(picomatch@4.0.7)
@@ -5115,7 +5115,7 @@ snapshots:
       rollup: 4.63.5
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.1.2
+      '@types/node': 26.6.4
       fsevents: 2.3.3
       jiti: 1.21.7
 

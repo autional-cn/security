@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Tag, Button, Space, Drawer, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic, Spin } from 'antd';
+import { DataTable, Drawer } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic, Spin } from 'antd';
 import {
 	EyeOutlined,
 	CheckCircleOutlined,
@@ -262,7 +262,7 @@ export default function AuditFindingsPage() {
 
 				<Drawer
 					title={`${t('auditFindings.detailTitle')} — ${detail?.id}`}
-					width={560}
+					size="md"
 					open={drawerVisible}
 					onClose={() => setDrawerVisible(false)}
 				>

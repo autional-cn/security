@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { DataTable } from '@autional-cn/ui/antd';
+import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Drawer, Descriptions, Modal, Input, Tooltip } from 'antd';
+import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Descriptions, Modal, Input, Tooltip } from 'antd';
 import {
 	WarningOutlined,
 	CheckCircleOutlined,
@@ -388,8 +388,7 @@ export default function AlertsPage() {
 
 			<Drawer
 				title={t('alerts.detailTitle')}
-				placement="right"
-				width={600}
+				size="md"
 				open={drawerVisible}
 				onClose={() => setDrawerVisible(false)}
 				extra={

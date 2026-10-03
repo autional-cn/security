@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Tag, Button, Space, Drawer, Descriptions, message, Typography, Row, Col, Statistic, Select, Spin } from 'antd';
+import { DataTable, Drawer } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, Descriptions, message, Typography, Row, Col, Statistic, Select, Spin } from 'antd';
 import {
 	EyeOutlined,
 	FilePdfOutlined,
@@ -213,7 +213,7 @@ export default function EvidencePage() {
 
 			<Drawer
 				title={`${t('evidence.detailTitle')} — ${detail?.id}`}
-				width={560}
+				size="md"
 				open={drawerVisible}
 				onClose={() => setDrawerVisible(false)}
 			>

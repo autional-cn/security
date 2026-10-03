@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { DataTable } from '@autional-cn/ui/antd';
+import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Input, Select, DatePicker, Button, Tag, Spin, Empty, Space, Drawer, Descriptions, Segmented } from 'antd';
+import { Card, Input, Select, DatePicker, Button, Tag, Spin, Empty, Space, Descriptions, Segmented } from 'antd';
 import { SearchOutlined, ReloadOutlined, ExportOutlined } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
@@ -252,10 +252,10 @@ export default function AuditLogsPage() {
 
 				<Drawer
 					title={t('auditLogs.detailTitle')}
-					width={600}
+					size="md"
 					open={drawerVisible}
 					onClose={handleDrawerClose}
-					destroyOnClose
+					destroyOnHidden
 				>
 					<Spin spinning={detailLoading}>
 						{detail && (

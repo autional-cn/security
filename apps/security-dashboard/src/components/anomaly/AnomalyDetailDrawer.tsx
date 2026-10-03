@@ -1,22 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-	Drawer,
-	Tabs,
-	Spin,
-	Descriptions,
-	Tag,
-	Timeline,
-	List,
-	Badge,
-	Empty,
-	Alert,
-	Card,
-	Statistic,
-	Row,
-	Col,
-} from 'antd';
+import { Tabs, Spin, Descriptions, Tag, Timeline, List, Badge, Empty, Alert, Card, Statistic, Row, Col } from 'antd';
 import {
 	FileSearchOutlined,
 	WarningOutlined,
@@ -35,6 +20,7 @@ import type {
 	AuditLogResponse,
 } from '@autional-cn/shared/generated/types';
 import AnomalyComments from './AnomalyComments';
+import { Drawer } from '@autional-cn/ui/antd';
 
 interface AnomalyDetailDrawerProps {
 	anomalyId: string | null;
@@ -404,10 +390,10 @@ export default function AnomalyDetailDrawer({
 	return (
 		<Drawer
 			title={`${t('anomalies.detailTitle')} ${anomalyId ? `(${anomalyId.slice(0, 12)}...)` : ''}`}
-			width={700}
+			size="lg"
 			open={visible}
 			onClose={onClose}
-			destroyOnClose
+			destroyOnHidden
 		>
 			<Spin spinning={loading}>
 				<Tabs activeKey={activeTab} onChange={handleTabChange} items={tabItems} />
