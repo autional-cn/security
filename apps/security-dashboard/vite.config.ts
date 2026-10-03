@@ -56,6 +56,7 @@ export default defineConfig({
           'vendor-ui': ['antd', '@ant-design/icons'],
           'vendor-charts': ['recharts'],
           'vendor-query': ['@tanstack/react-query'],
+          'vendor-i18n': ['i18next', 'react-i18next'],
           'shared-api': ['@autional-cn/shared'],
         },
       },
