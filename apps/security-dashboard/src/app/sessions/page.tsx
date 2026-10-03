@@ -24,7 +24,7 @@ import {
 } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useSessions, useActiveSessions, useTerminateSession } from '@/hooks/useSecurityQueries';
+import { useSessions, useActiveSessions, useTerminateSession } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';

@@ -21,7 +21,7 @@ import {
 	useDecommissionRobot,
 	useDeleteRobot,
 	useDeleteDevice,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import NhiDetailDrawer from '@/components/nhi/NhiDetailDrawer';
 import { Can } from '@/components/Can';
 import { extractList } from '@autional-cn/shared';

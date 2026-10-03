@@ -19,8 +19,8 @@ import {
 import { SearchOutlined, ReloadOutlined, ExportOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useAuditLogs, useAuditLogDetail, useCreateExportJob } from '@/hooks/useAuditLogs';
-import type { AuditLogFilters } from '@/hooks/useAuditLogs';
+import { useAuditLogs, useAuditLogDetail, useCreateExportJob } from '@/hooks/use-audit-logs';
+import type { AuditLogFilters } from '@/hooks/use-audit-logs';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';

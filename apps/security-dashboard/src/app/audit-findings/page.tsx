@@ -32,7 +32,7 @@ import {
 	useAuditFindings,
 	useAuditFindingDetail,
 	useUpdateAuditFinding,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
 

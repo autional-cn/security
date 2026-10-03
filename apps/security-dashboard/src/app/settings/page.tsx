@@ -40,7 +40,7 @@ import {
 	useUpdateSiemConnector,
 	useDeleteSiemConnector,
 	useTestSiemConnector,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { AuditStatsOnly } from '@autional-cn/shared';

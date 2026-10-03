@@ -24,7 +24,7 @@ import {
 } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useAnomalies, useUpdateAnomalyStatus } from '@/hooks/useSecurityQueries';
+import { useAnomalies, useUpdateAnomalyStatus } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import AnomalyDetailDrawer from '@/components/anomaly/AnomalyDetailDrawer';

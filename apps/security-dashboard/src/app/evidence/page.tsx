@@ -27,7 +27,7 @@ import {
 	LinkOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useEvidence, useEvidenceDetail } from '@/hooks/useSecurityQueries';
+import { useEvidence, useEvidenceDetail } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;

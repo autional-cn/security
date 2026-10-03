@@ -25,7 +25,7 @@ import {
 	useExportJobStatus,
 	useCreateExportJob,
 	useDownloadExport,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import type { ExportJobResponse, ExportJobRequest } from '@autional-cn/shared/generated/types';

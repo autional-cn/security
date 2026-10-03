@@ -18,7 +18,7 @@ vi.mock('recharts', () => ({
 	Legend: () => null,
 }));
 
-vi.mock('@/hooks/useOverview', () => ({
+vi.mock('@/hooks/use-overview', () => ({
 	useAuditStats: vi.fn(),
 	useAnomaliesPreview: vi.fn(),
 	useComplianceStatus: vi.fn(),
@@ -52,7 +52,7 @@ vi.mock('@autional-cn/shared', () => ({
 	useCurrentRole: () => 'security_admin',
 }));
 
-import * as useOverview from '@/hooks/useOverview';
+import * as useOverview from '@/hooks/use-overview';
 import OverviewPage from '../page';
 
 function mockAllLoading() {

@@ -38,7 +38,7 @@ const mockUseAgents = vi.fn();
 const mockUseRobots = vi.fn();
 const mockUseIots = vi.fn();
 
-vi.mock('@/hooks/useSecurityQueries', () => ({
+vi.mock('@/hooks/use-security-queries', () => ({
 	useAgents: (...args: any[]) => mockUseAgents(...args),
 	useRobots: (...args: any[]) => mockUseRobots(...args),
 	useIots: (...args: any[]) => mockUseIots(...args),

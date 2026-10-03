@@ -9,7 +9,7 @@ import {
 	BugOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useAuditStats, useAnomalies, useAlerts } from '@/hooks/useSecurityQueries';
+import { useAuditStats, useAnomalies, useAlerts } from '@/hooks/use-security-queries';
 
 export default function SocKpiPage() {
 	const { t } = useTranslation();

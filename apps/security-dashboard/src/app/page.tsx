@@ -38,7 +38,7 @@ import {
 	useVerificationResults,
 	useActiveSessionCount,
 	useGatewayStatus,
-} from '@/hooks/useOverview';
+} from '@/hooks/use-overview';
 import { useTranslation } from 'react-i18next';
 
 interface SecurityEvent {

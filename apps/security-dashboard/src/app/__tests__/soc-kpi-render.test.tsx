@@ -13,7 +13,7 @@ const mockUseAuditStats = vi.fn();
 const mockUseAnomalies = vi.fn();
 const mockUseAlerts = vi.fn();
 
-vi.mock('@/hooks/useSecurityQueries', () => ({
+vi.mock('@/hooks/use-security-queries', () => ({
 	useAuditStats: (...args: any[]) => mockUseAuditStats(...args),
 	useAnomalies: (...args: any[]) => mockUseAnomalies(...args),
 	useAlerts: (...args: any[]) => mockUseAlerts(...args),

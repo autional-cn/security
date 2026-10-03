@@ -28,7 +28,7 @@ import {
 	FileSearchOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useDSARs, useDSARDetail, useUpdateDSAR } from '@/hooks/useSecurityQueries';
+import { useDSARs, useDSARDetail, useUpdateDSAR } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
 

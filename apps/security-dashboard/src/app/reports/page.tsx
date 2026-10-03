@@ -22,7 +22,7 @@ import {
 	SafetyCertificateOutlined,
 	ReloadOutlined,
 } from '@ant-design/icons';
-import { useSecurityReport, useComplianceReport } from '@/hooks/useSecurityQueries';
+import { useSecurityReport, useComplianceReport } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 
 export default function ReportsPage() {

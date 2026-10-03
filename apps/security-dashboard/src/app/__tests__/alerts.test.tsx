@@ -5,7 +5,7 @@ import React from 'react';
 const mockUseAnomalies = vi.fn();
 const mockUseUpdateAnomalyStatus = vi.fn();
 
-vi.mock('@/hooks/useSecurityQueries', () => ({
+vi.mock('@/hooks/use-security-queries', () => ({
 	useAnomalies: (...args: any[]) => mockUseAnomalies(...args),
 	useUpdateAnomalyStatus: () => mockUseUpdateAnomalyStatus(),
 }));

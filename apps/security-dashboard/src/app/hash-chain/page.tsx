@@ -33,7 +33,7 @@ import {
 	useVerifyAuditChain,
 	useMerkleRoot,
 	useMerkleProof,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 

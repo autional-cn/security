@@ -20,7 +20,7 @@ import {
 	useISOControlsTab,
 	useSOXControlsTab,
 	usePenTestReportsTab,
-} from '@/hooks/useSecurityQueries';
+} from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 
 interface ComplianceCheckItem {

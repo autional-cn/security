@@ -4,7 +4,7 @@ import React from 'react';
 import { Drawer, Tabs, Spin, Descriptions, Tag, Empty, Alert } from 'antd';
 import { SafetyOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useAgentById, useRobotById, useDeviceById } from '@/hooks/useSecurityQueries';
+import { useAgentById, useRobotById, useDeviceById } from '@/hooks/use-security-queries';
 
 interface NhiDetailDrawerProps {
 	entityType: 'agent' | 'robot' | 'device';

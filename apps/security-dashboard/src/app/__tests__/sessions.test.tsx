@@ -6,7 +6,7 @@ const mockUseSessions = vi.fn();
 const mockUseActiveSessions = vi.fn();
 const mockUseTerminateSession = vi.fn();
 
-vi.mock('@/hooks/useSecurityQueries', () => ({
+vi.mock('@/hooks/use-security-queries', () => ({
 	useSessions: (...args: any[]) => mockUseSessions(...args),
 	useActiveSessions: () => mockUseActiveSessions(),
 	useTerminateSession: () => mockUseTerminateSession(),

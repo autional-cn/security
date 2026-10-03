@@ -32,7 +32,7 @@ import {
 } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useAlerts, useUpdateAlertStatus, useAssignAlert } from '@/hooks/useSecurityQueries';
+import { useAlerts, useUpdateAlertStatus, useAssignAlert } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { Can } from '@/components/Can';
 import { useTranslation } from 'react-i18next';
