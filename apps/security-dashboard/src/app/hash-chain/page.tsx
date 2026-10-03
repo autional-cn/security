@@ -1,23 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-	Card,
-	Table,
-	Button,
-	Tag,
-	Spin,
-	Empty,
-	Space,
-	Row,
-	Col,
-	Statistic,
-	Alert,
-	Input,
-	Tabs,
-	Descriptions,
-	Typography,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Alert, Input, Tabs, Descriptions, Typography } from 'antd';
 import {
 	CheckCircleOutlined,
 	CloseCircleOutlined,
@@ -26,7 +12,7 @@ import {
 	FileSearchOutlined,
 	ClusterOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import {
 	useVerificationResults,
@@ -106,7 +92,7 @@ export default function HashChainPage() {
 		}
 	};
 
-	const columns: TableColumnsType<VerificationItem> = [
+	const columns: DataTableColumns<VerificationItem> = [
 		{ title: t('hashChain.columnTenantId'), dataIndex: 'tenantId', width: 200 },
 		{
 			title: t('hashChain.columnStatus'),
@@ -195,7 +181,7 @@ export default function HashChainPage() {
 			</Card>
 
 			<Spin spinning={isLoading}>
-				<Table
+				<DataTable
 					columns={columns}
 					dataSource={verificationItems as VerificationItem[]}
 					rowKey="tenantId"

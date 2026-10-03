@@ -1,21 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Select,
-	Button,
-	Spin,
-	Empty,
-	Tag,
-	Row,
-	Col,
-	Statistic,
-	List,
-	Space,
-	Progress,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Select, Button, Spin, Empty, Tag, Row, Col, Statistic, List, Space, Progress } from 'antd';
 import {
 	FileTextOutlined,
 	WarningOutlined,
@@ -203,7 +190,7 @@ export default function ReportsPage() {
 						</Row>
 
 						<Card title={t('reports.checkResults')} className="mb-4">
-							<Table
+							<DataTable
 								columns={[
 									{ title: t('reports.columnItem'), dataIndex: 'item' },
 									{

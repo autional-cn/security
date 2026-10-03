@@ -1,22 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Tag,
-	Button,
-	Space,
-	Drawer,
-	Descriptions,
-	message,
-	Typography,
-	Row,
-	Col,
-	Statistic,
-	Select,
-	Spin,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, Drawer, Descriptions, message, Typography, Row, Col, Statistic, Select, Spin } from 'antd';
 import {
 	EyeOutlined,
 	FilePdfOutlined,
@@ -205,7 +191,7 @@ export default function EvidencePage() {
 					</Space>
 				}
 			>
-				<Table
+				<DataTable
 					rowKey="id"
 					columns={columns}
 					dataSource={items}

@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+import { DataTable } from '@autional-cn/ui/antd';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Timeline, Table, Tag, Spin, Alert } from 'antd';
+import { Card, Timeline, Tag, Spin, Alert } from 'antd';
 import {
 	SafetyOutlined,
 	FileTextOutlined,
@@ -181,7 +182,7 @@ export default function UserSecurityTimelinePage() {
 				}
 			>
 				{anomalies.length > 0 ? (
-					<Table
+					<DataTable
 						dataSource={anomalies.map((a: any, i: number) => ({ ...a, key: a.id || String(i) }))}
 						columns={anomalyColumns(t)}
 						pagination={false}

@@ -1,24 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Tag,
-	Button,
-	Space,
-	Drawer,
-	Descriptions,
-	Form,
-	Select,
-	Input,
-	message,
-	Typography,
-	Badge,
-	Row,
-	Col,
-	Statistic,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, Drawer, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic } from 'antd';
 import {
 	EyeOutlined,
 	CheckCircleOutlined,
@@ -238,7 +222,7 @@ export default function BreachesPage() {
 						</Space>
 					}
 				>
-					<Table
+					<DataTable
 						rowKey="id"
 						columns={columns}
 						dataSource={items}

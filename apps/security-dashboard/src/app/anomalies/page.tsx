@@ -1,28 +1,16 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-	Card,
-	Table,
-	Select,
-	Tag,
-	Button,
-	Spin,
-	Empty,
-	Space,
-	Badge,
-	Row,
-	Col,
-	Statistic,
-	Segmented,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Select, Tag, Button, Spin, Empty, Space, Badge, Row, Col, Statistic, Segmented } from 'antd';
 import {
 	WarningOutlined,
 	CheckCircleOutlined,
 	ExclamationCircleOutlined,
 	ReloadOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import { useAnomalies, useUpdateAnomalyStatus } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
@@ -125,7 +113,7 @@ export default function AnomaliesPage() {
 		{ label: t('anomalies.range30d'), value: '30d' },
 	];
 
-	const columns: TableColumnsType<AnomalyItem> = [
+	const columns: DataTableColumns<AnomalyItem> = [
 		{ title: t('anomalies.columnId'), dataIndex: 'id', width: 180 },
 		{
 			title: t('anomalies.columnType'),
@@ -304,7 +292,7 @@ export default function AnomaliesPage() {
 			</Card>
 
 			<Spin spinning={isLoading}>
-				<Table
+				<DataTable
 					columns={columns}
 					dataSource={items}
 					rowKey="id"

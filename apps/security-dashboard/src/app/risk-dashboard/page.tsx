@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, Row, Col, Statistic, Table, Tag, Spin, Typography } from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Row, Col, Statistic, Tag, Spin, Typography } from 'antd';
 import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
 import { getRiskDashboard } from '@/lib/api';
 import { PageHeader } from '@autional-cn/ui';
@@ -152,7 +153,7 @@ export default function RiskDashboardPage() {
 				</Col>
 				<Col span={12}>
 					<Card title="高频事件类型" style={{ marginBottom: 16 }}>
-						<Table
+						<DataTable
 							dataSource={data?.topEventTypes || []}
 							columns={eventColumns}
 							rowKey="eventType"
@@ -164,7 +165,7 @@ export default function RiskDashboardPage() {
 			</Row>
 
 			<Card title="高风险用户 Top 5 (近 7 天)" style={{ marginBottom: 16 }}>
-				<Table
+				<DataTable
 					dataSource={data?.topRiskUsers || []}
 					columns={userColumns}
 					rowKey="userId"

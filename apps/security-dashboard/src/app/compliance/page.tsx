@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Table, Tag, Spin, Empty, Progress, Row, Col, Statistic, Tabs, Badge } from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Tag, Spin, Empty, Progress, Row, Col, Statistic, Tabs, Badge } from 'antd';
 import {
 	SafetyCertificateOutlined,
 	CheckCircleOutlined,
@@ -11,7 +13,7 @@ import {
 	DatabaseOutlined,
 	BugOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import {
 	useComplianceDashboard,
@@ -52,7 +54,7 @@ export default function CompliancePage() {
 		pentest: penTestLoading,
 	};
 
-	const checkColumns: TableColumnsType<ComplianceCheckItem> = [
+	const checkColumns: DataTableColumns<ComplianceCheckItem> = [
 		{ title: t('compliance.columnItem'), dataIndex: 'item' },
 		{
 			title: t('compliance.columnStatus'),
@@ -143,7 +145,7 @@ export default function CompliancePage() {
 					</Row>
 
 					<Card title={t('compliance.checkDetail')} className="mt-4">
-						<Table
+						<DataTable
 							columns={checkColumns}
 							dataSource={(compliance as any).checks || []}
 							rowKey="item"
@@ -177,7 +179,7 @@ export default function CompliancePage() {
 				</span>
 			),
 			children: (
-				<Table
+				<DataTable
 					columns={[
 						{ title: t('dsars.columnId'), dataIndex: 'id' },
 						{ title: t('dsars.columnUserId'), dataIndex: 'userId' },
@@ -208,7 +210,7 @@ export default function CompliancePage() {
 				</span>
 			),
 			children: (
-				<Table
+				<DataTable
 					columns={[
 						{ title: t('settings.retentionDays'), dataIndex: 'retentionPeriodDays' },
 						{ title: t('settings.dataRetention'), dataIndex: 'dataType' },
@@ -235,7 +237,7 @@ export default function CompliancePage() {
 				</span>
 			),
 			children: (
-				<Table
+				<DataTable
 					columns={[
 						{ title: t('evidence.columnControlId'), dataIndex: 'controlId' },
 						{ title: t('settings.connectorName'), dataIndex: 'controlName' },
@@ -266,7 +268,7 @@ export default function CompliancePage() {
 				</span>
 			),
 			children: (
-				<Table
+				<DataTable
 					columns={[
 						{ title: t('evidence.columnControlId'), dataIndex: 'controlId' },
 						{ title: t('anomalies.columnDescription'), dataIndex: 'description' },
@@ -294,7 +296,7 @@ export default function CompliancePage() {
 				</span>
 			),
 			children: (
-				<Table
+				<DataTable
 					columns={[
 						{ title: t('reports.title'), dataIndex: 'reportId' },
 						{ title: t('alerts.columnTitle'), dataIndex: 'title' },

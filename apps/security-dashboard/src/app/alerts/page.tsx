@@ -1,24 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-	Card,
-	Table,
-	Select,
-	Tag,
-	Button,
-	Spin,
-	Empty,
-	Space,
-	Row,
-	Col,
-	Statistic,
-	Drawer,
-	Descriptions,
-	Modal,
-	Input,
-	Tooltip,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Drawer, Descriptions, Modal, Input, Tooltip } from 'antd';
 import {
 	WarningOutlined,
 	CheckCircleOutlined,
@@ -30,7 +15,7 @@ import {
 	UserSwitchOutlined,
 	EyeOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import { useAlerts, useUpdateAlertStatus, useAssignAlert } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
@@ -161,7 +146,7 @@ export default function AlertsPage() {
 		setAssignModalVisible(true);
 	};
 
-	const columns: TableColumnsType<AlertItem> = [
+	const columns: DataTableColumns<AlertItem> = [
 		{
 			title: t('alerts.columnSeverity'),
 			dataIndex: 'severity',
@@ -379,7 +364,7 @@ export default function AlertsPage() {
 			</Card>
 
 			<Spin spinning={isLoading}>
-				<Table
+				<DataTable
 					columns={columns}
 					dataSource={items}
 					rowKey="id"

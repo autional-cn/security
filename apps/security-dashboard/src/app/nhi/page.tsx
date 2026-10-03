@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Row, Col, Statistic, Table, Tag, Tabs, Button, Popconfirm, message } from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Row, Col, Statistic, Tag, Tabs, Button, Popconfirm, message } from 'antd';
 import {
 	RobotOutlined,
 	WifiOutlined,
@@ -110,7 +111,7 @@ function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	];
 
 	return (
-		<Table
+		<DataTable
 			rowKey="id"
 			columns={columns}
 			dataSource={items}
@@ -216,7 +217,7 @@ function RobotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	];
 
 	return (
-		<Table
+		<DataTable
 			rowKey="id"
 			columns={columns}
 			dataSource={items}
@@ -288,7 +289,7 @@ function IotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	];
 
 	return (
-		<Table
+		<DataTable
 			rowKey="id"
 			columns={columns}
 			dataSource={items}

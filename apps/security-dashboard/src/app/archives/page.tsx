@@ -1,23 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Tag,
-	Button,
-	Space,
-	message,
-	Typography,
-	Row,
-	Col,
-	Statistic,
-	Modal,
-	Form,
-	DatePicker,
-	Alert,
-	Timeline,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Alert, Timeline } from 'antd';
 import {
 	HistoryOutlined,
 	SafetyOutlined,
@@ -189,7 +174,7 @@ export default function ArchivesPage() {
 						</Space>
 					}
 				>
-					<Table
+					<DataTable
 						rowKey="id"
 						columns={columns}
 						dataSource={archives}

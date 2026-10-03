@@ -1,25 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Form,
-	Input,
-	Button,
-	Switch,
-	Select,
-	message as antdMessage,
-	Skeleton,
-	Tabs,
-	Table,
-	Space,
-	Tag,
-	Modal,
-	Spin,
-	Descriptions,
-	Badge,
-	Empty,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Form, Input, Button, Switch, Select, message as antdMessage, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty } from 'antd';
 import {
 	SaveOutlined,
 	PlusOutlined,
@@ -30,7 +14,7 @@ import {
 	SettingOutlined,
 	DatabaseOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import {
 	useRetentionPolicy,
@@ -335,7 +319,7 @@ function SiemConnectorsTab() {
 		setModalVisible(true);
 	};
 
-	const columns: TableColumnsType<SIEMConnectorResponse> = [
+	const columns: DataTableColumns<SIEMConnectorResponse> = [
 		{ title: t('settings.connectorName'), dataIndex: 'name' },
 		{
 			title: t('settings.connectorType'),
@@ -404,7 +388,7 @@ function SiemConnectorsTab() {
 				</Button>
 			</div>
 			<Spin spinning={isLoading}>
-				<Table
+				<DataTable
 					columns={columns}
 					dataSource={connectors as SIEMConnectorResponse[]}
 					rowKey="id"

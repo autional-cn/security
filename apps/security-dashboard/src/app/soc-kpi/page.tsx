@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Card, Row, Col, Statistic, Table, Spin } from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Row, Col, Statistic, Spin } from 'antd';
 import {
 	ClockCircleOutlined,
 	AlertOutlined,
@@ -80,7 +81,7 @@ export default function SocKpiPage() {
 			</Row>
 
 			<Card title={t('socKpi.auditStats', 'Audit Statistics')}>
-				<Table
+				<DataTable
 					rowKey="key"
 					dataSource={[
 						{

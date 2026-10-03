@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+import { DataTable } from '@autional-cn/ui/antd';
 import { useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Row, Col, Statistic, Descriptions, Table, Badge, Spin, Alert, Tag } from 'antd';
+import { Card, Row, Col, Statistic, Descriptions, Badge, Spin, Alert, Tag } from 'antd';
 import {
 	SafetyOutlined,
 	MobileOutlined,
@@ -218,7 +219,7 @@ export default function UserSecurityProfilePage() {
 						}
 					>
 						{devices.length > 0 ? (
-							<Table
+							<DataTable
 								dataSource={devices.map((d: any, i: number) => ({
 									...d,
 									key: d.deviceId || d.id || String(i),
@@ -244,7 +245,7 @@ export default function UserSecurityProfilePage() {
 						}
 					>
 						{sessions.length > 0 ? (
-							<Table
+							<DataTable
 								dataSource={sessions.map((s: any, i: number) => ({
 									...s,
 									key: s.sessionId || s.id || String(i),

@@ -1,23 +1,11 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-	Card,
-	Table,
-	Input,
-	Select,
-	DatePicker,
-	Button,
-	Tag,
-	Spin,
-	Empty,
-	Space,
-	Drawer,
-	Descriptions,
-	Segmented,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Input, Select, DatePicker, Button, Tag, Spin, Empty, Space, Drawer, Descriptions, Segmented } from 'antd';
 import { SearchOutlined, ReloadOutlined, ExportOutlined } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import { useAuditLogs, useAuditLogDetail, useCreateExportJob } from '@/hooks/use-audit-logs';
 import type { AuditLogFilters } from '@/hooks/use-audit-logs';
@@ -135,7 +123,7 @@ export default function AuditLogsPage() {
 		{ label: t('auditLogs.range30d'), value: '30d' },
 	];
 
-	const columns: TableColumnsType<AuditLogItem> = [
+	const columns: DataTableColumns<AuditLogItem> = [
 		{
 			title: t('auditLogs.columnTime'),
 			dataIndex: 'timestamp',
@@ -243,7 +231,7 @@ export default function AuditLogsPage() {
 				</Card>
 
 				<Spin spinning={isLoading}>
-					<Table
+					<DataTable
 						columns={columns}
 						dataSource={items}
 						rowKey="id"

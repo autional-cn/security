@@ -1,24 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Tag,
-	Button,
-	Spin,
-	Empty,
-	Space,
-	Badge,
-	Modal,
-	Form,
-	Select,
-	DatePicker,
-	Input,
-	Progress,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Spin, Empty, Space, Badge, Modal, Form, Select, DatePicker, Input, Progress } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import {
 	useExportJobs,
@@ -95,7 +82,7 @@ export default function ExportJobsPage() {
 		}
 	};
 
-	const columns: TableColumnsType<ExportJobResponse> = [
+	const columns: DataTableColumns<ExportJobResponse> = [
 		{ title: t('exportJobs.columnJobId'), dataIndex: 'jobId', width: 200 },
 		{
 			title: t('exportJobs.columnStatus'),
@@ -184,7 +171,7 @@ export default function ExportJobsPage() {
 				</div>
 
 				<Spin spinning={isLoading}>
-					<Table
+					<DataTable
 						columns={columns}
 						dataSource={items}
 						rowKey="jobId"

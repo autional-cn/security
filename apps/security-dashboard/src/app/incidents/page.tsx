@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Table, Tag, Button, Space, Modal, Input, Select } from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import { Card, Tag, Button, Space, Modal, Input, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
@@ -120,7 +121,7 @@ export default function IncidentsPage() {
 						</Button>
 					</div>
 				) : (
-					<Table
+					<DataTable
 						rowKey="id"
 						columns={columns}
 						dataSource={filtered}

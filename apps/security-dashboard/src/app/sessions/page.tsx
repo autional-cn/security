@@ -1,20 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-	Card,
-	Table,
-	Button,
-	Tag,
-	Spin,
-	Empty,
-	Space,
-	Row,
-	Col,
-	Statistic,
-	Input,
-	Modal,
-} from 'antd';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal } from 'antd';
 import {
 	ClusterOutlined,
 	StopOutlined,
@@ -22,7 +11,7 @@ import {
 	ReloadOutlined,
 	ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import type { TableColumnsType } from 'antd';
+
 import dayjs from 'dayjs';
 import { useSessions, useActiveSessions, useTerminateSession } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
@@ -82,7 +71,7 @@ export default function SessionsPage() {
 		return 'green';
 	};
 
-	const columns: TableColumnsType<SessionItem> = [
+	const columns: DataTableColumns<SessionItem> = [
 		{ title: t('sessions.columnId'), dataIndex: 'id', width: 200 },
 		{ title: t('sessions.columnUser'), dataIndex: 'username', width: 140 },
 		{ title: t('sessions.columnUserId'), dataIndex: 'userId', width: 140 },
@@ -195,7 +184,7 @@ export default function SessionsPage() {
 				</Card>
 
 				<Spin spinning={isLoading}>
-					<Table
+					<DataTable
 						columns={columns}
 						dataSource={items}
 						rowKey="id"
