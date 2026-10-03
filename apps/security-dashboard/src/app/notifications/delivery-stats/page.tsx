@@ -146,7 +146,7 @@ export default function DeliveryStatsPage() {
 							<Statistic
 								title={t('notification.totalSent')}
 								value={notifTotal}
-								prefix={<BellOutlined className="text-blue-500" />}
+								prefix={<BellOutlined className="text-info" />}
 							/>
 						</Card>
 					</Col>
@@ -155,7 +155,7 @@ export default function DeliveryStatsPage() {
 							<Statistic
 								title={t('notification.totalRead')}
 								value={readCount}
-								prefix={<CheckCircleOutlined className="text-emerald-500" />}
+								prefix={<CheckCircleOutlined className="text-success" />}
 							/>
 						</Card>
 					</Col>
@@ -172,7 +172,7 @@ export default function DeliveryStatsPage() {
 						<Card>
 							<div className="flex items-center justify-between mb-2">
 								<span className="text-sm text-neutral-600">{t('notification.readRate')}</span>
-								<CheckCircleOutlined className="text-blue-500" />
+								<CheckCircleOutlined className="text-info" />
 							</div>
 							<div className="text-2xl font-semibold text-neutral-900 dark:text-white">
 								{readRateVal != null ? `${(Number(readRateVal) * 100).toFixed(1)}%` : '--'}
@@ -308,7 +308,7 @@ export default function DeliveryStatsPage() {
 									<Col xs={24} sm={8} lg={4}>
 										<Card size="small" className="text-center">
 											<div className="text-2xl mb-1">
-												<CheckCircleOutlined className="text-emerald-500" />
+												<CheckCircleOutlined className="text-success" />
 											</div>
 											<div className="text-xs text-neutral-600">{t('notification.delivered')}</div>
 											<div className="text-xl font-bold mt-1">{commStats.delivered || 0}</div>
@@ -317,7 +317,7 @@ export default function DeliveryStatsPage() {
 									<Col xs={24} sm={8} lg={4}>
 										<Card size="small" className="text-center">
 											<div className="text-2xl mb-1">
-												<CloseCircleOutlined className="text-red-500" />
+												<CloseCircleOutlined className="text-danger" />
 											</div>
 											<div className="text-xs text-neutral-600">{t('notification.failed')}</div>
 											<div className="text-xl font-bold mt-1">{commStats.failed || 0}</div>

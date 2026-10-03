@@ -81,7 +81,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statTotalEvents')}
 										value={securityReport.summary?.totalEvents || 0}
-										prefix={<FileTextOutlined className="text-blue-500" />}
+										prefix={<FileTextOutlined className="text-info" />}
 									/>
 								</Card>
 							</Col>
@@ -90,7 +90,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statFailedLogins')}
 										value={securityReport.summary?.failedLogins || 0}
-										prefix={<WarningOutlined className="text-orange-500" />}
+										prefix={<WarningOutlined className="text-warning" />}
 									/>
 								</Card>
 							</Col>
@@ -99,7 +99,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statAnomaliesDetected')}
 										value={securityReport.summary?.anomaliesDetected || 0}
-										prefix={<WarningOutlined className="text-red-500" />}
+										prefix={<WarningOutlined className="text-danger" />}
 									/>
 								</Card>
 							</Col>
@@ -161,7 +161,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.complianceStandard')}
 										value={complianceReport.standard || standard}
-										prefix={<SafetyCertificateOutlined className="text-blue-500" />}
+										prefix={<SafetyCertificateOutlined className="text-info" />}
 									/>
 								</Card>
 							</Col>

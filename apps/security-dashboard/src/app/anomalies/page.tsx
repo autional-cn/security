@@ -209,7 +209,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={t('anomalies.statsOpen')}
 							value={stats.open}
-							prefix={<WarningOutlined className="text-red-500" />}
+							prefix={<WarningOutlined className="text-danger" />}
 						/>
 					</Card>
 				</Col>
@@ -218,7 +218,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={t('anomalies.statsInvestigating')}
 							value={stats.investigating}
-							prefix={<ExclamationCircleOutlined className="text-orange-500" />}
+							prefix={<ExclamationCircleOutlined className="text-warning" />}
 						/>
 					</Card>
 				</Col>
@@ -227,7 +227,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={t('anomalies.statsResolved')}
 							value={stats.resolved}
-							prefix={<CheckCircleOutlined className="text-green-500" />}
+							prefix={<CheckCircleOutlined className="text-success" />}
 						/>
 					</Card>
 				</Col>

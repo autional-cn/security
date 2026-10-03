@@ -64,9 +64,9 @@ export default function EvidencePage() {
 	function getFileIcon(url?: string) {
 		if (!url) return <FileUnknownOutlined />;
 		const ext = url.split('.').pop()?.toLowerCase();
-		if (ext === 'pdf') return <FilePdfOutlined className="text-red-500" />;
+		if (ext === 'pdf') return <FilePdfOutlined className="text-danger" />;
 		if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || ''))
-			return <FileImageOutlined className="text-blue-500" />;
+			return <FileImageOutlined className="text-info" />;
 		return <FileTextOutlined className="text-neutral-600" />;
 	}
 

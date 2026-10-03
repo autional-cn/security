@@ -230,11 +230,11 @@ export default function OverviewPage() {
 	const serviceStatusColor = (status: string) => {
 		switch (status) {
 			case 'healthy':
-				return 'bg-green-500';
+				return 'bg-success';
 			case 'degraded':
-				return 'bg-yellow-500';
+				return 'bg-warning';
 			case 'unhealthy':
-				return 'bg-red-500';
+				return 'bg-danger';
 			default:
 				return 'bg-neutral-500';
 		}
@@ -264,7 +264,7 @@ export default function OverviewPage() {
 							<Statistic
 								title={t('overview.totalAuditLogs')}
 								value={stats.totalLogs}
-								prefix={<FileSearchOutlined className="text-blue-500" />}
+								prefix={<FileSearchOutlined className="text-info" />}
 							/>
 						</Card>
 					</Col>
@@ -273,7 +273,7 @@ export default function OverviewPage() {
 							<Statistic
 								title={t('overview.pendingAnomalies')}
 								value={stats.openAnomalies}
-								prefix={<WarningOutlined className="text-orange-500" />}
+								prefix={<WarningOutlined className="text-warning" />}
 								valueStyle={{ color: stats.openAnomalies > 0 ? '#f97316' : undefined }}
 							/>
 						</Card>
@@ -283,7 +283,7 @@ export default function OverviewPage() {
 							<Statistic
 								title={t('overview.activeSessions')}
 								value={stats.activeSessions}
-								prefix={<ClusterOutlined className="text-cyan-500" />}
+								prefix={<ClusterOutlined className="text-info" />}
 							/>
 						</Card>
 					</Col>
@@ -291,7 +291,7 @@ export default function OverviewPage() {
 						<Card>
 							<div className="flex items-center justify-between mb-2">
 								<span className="text-sm text-neutral-600">{t('overview.complianceScore')}</span>
-								<SafetyCertificateOutlined className="text-green-500" />
+								<SafetyCertificateOutlined className="text-success" />
 							</div>
 							<Progress
 								percent={stats.complianceScore}
@@ -311,9 +311,9 @@ export default function OverviewPage() {
 							<div className="flex items-center justify-between mb-2">
 								<span className="text-sm text-neutral-600">{t('overview.hashChainIntegrity')}</span>
 								{stats.hashChainValid ? (
-									<CheckCircleOutlined className="text-green-500" />
+									<CheckCircleOutlined className="text-success" />
 								) : (
-									<CloseCircleOutlined className="text-red-500" />
+									<CloseCircleOutlined className="text-danger" />
 								)}
 							</div>
 							<div className="text-base font-semibold">
@@ -332,7 +332,7 @@ export default function OverviewPage() {
 						<Card>
 							<div className="flex items-center justify-between mb-2">
 								<span className="text-sm text-neutral-600">{t('overview.riskLevel')}</span>
-								<ExclamationCircleOutlined className="text-red-500" />
+								<ExclamationCircleOutlined className="text-danger" />
 							</div>
 							<div className="text-base font-semibold">
 								{stats.criticalAlerts > 0 ? (
@@ -460,14 +460,14 @@ export default function OverviewPage() {
 							<div className="space-y-3">
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<CloudServerOutlined className="text-blue-500" />
+										<CloudServerOutlined className="text-info" />
 										<span className="text-sm">{t('overview.emailAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<ThunderboltOutlined className="text-orange-500" />
+										<ThunderboltOutlined className="text-warning" />
 										<span className="text-sm">{t('overview.smsAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
@@ -481,7 +481,7 @@ export default function OverviewPage() {
 								</div>
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<RadarChartOutlined className="text-cyan-500" />
+										<RadarChartOutlined className="text-info" />
 										<span className="text-sm">{t('overview.webhook')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>
@@ -557,9 +557,9 @@ export default function OverviewPage() {
 										<List.Item className="flex justify-between">
 											<div className="flex items-center gap-2">
 												{item.passed ? (
-													<CheckCircleOutlined className="text-green-500" />
+													<CheckCircleOutlined className="text-success" />
 												) : (
-													<CloseCircleOutlined className="text-red-500" />
+													<CloseCircleOutlined className="text-danger" />
 												)}
 												<span className="text-sm">{item.item}</span>
 											</div>

@@ -141,7 +141,7 @@ export default function SessionsPage() {
 							<Statistic
 								title={t('sessions.activeSessions')}
 								value={activeCount}
-								prefix={<ClusterOutlined className="text-cyan-500" />}
+								prefix={<ClusterOutlined className="text-info" />}
 							/>
 						</Card>
 					</Col>
@@ -150,7 +150,7 @@ export default function SessionsPage() {
 							<Statistic
 								title={t('sessions.highRiskSessions')}
 								value={items.filter((s: any) => s.riskScore >= 80).length}
-								prefix={<StopOutlined className="text-red-500" />}
+								prefix={<StopOutlined className="text-danger" />}
 							/>
 						</Card>
 					</Col>
@@ -159,7 +159,7 @@ export default function SessionsPage() {
 							<Statistic
 								title={t('sessions.totalSessions')}
 								value={total}
-								prefix={<ClusterOutlined className="text-blue-500" />}
+								prefix={<ClusterOutlined className="text-info" />}
 							/>
 						</Card>
 					</Col>

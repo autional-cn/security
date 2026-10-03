@@ -122,7 +122,7 @@ export default function HashChainPage() {
 		{
 			title: t('hashChain.columnErrorMessage'),
 			dataIndex: 'errorMessage',
-			render: (v?: string) => (v ? <span className="text-red-500">{v}</span> : '-'),
+			render: (v?: string) => (v ? <span className="text-danger-text">{v}</span> : '-'),
 		},
 	];
 
@@ -143,7 +143,7 @@ export default function HashChainPage() {
 						<Statistic
 							title={t('hashChain.statTotalTenants')}
 							value={stats.total}
-							prefix={<SafetyCertificateOutlined className="text-blue-500" />}
+							prefix={<SafetyCertificateOutlined className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -152,7 +152,7 @@ export default function HashChainPage() {
 						<Statistic
 							title={t('hashChain.statVerified')}
 							value={stats.valid}
-							prefix={<CheckCircleOutlined className="text-green-500" />}
+							prefix={<CheckCircleOutlined className="text-success" />}
 						/>
 					</Card>
 				</Col>
@@ -161,7 +161,7 @@ export default function HashChainPage() {
 						<Statistic
 							title={t('hashChain.statAbnormal')}
 							value={stats.invalid}
-							prefix={<CloseCircleOutlined className="text-red-500" />}
+							prefix={<CloseCircleOutlined className="text-danger" />}
 						/>
 					</Card>
 				</Col>

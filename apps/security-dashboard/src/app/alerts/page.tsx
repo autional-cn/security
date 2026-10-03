@@ -50,10 +50,10 @@ const severityColors: Record<string, string> = {
 };
 
 const severityIcons: Record<string, React.ReactNode> = {
-	critical: <WarningOutlined className="text-red-500" />,
-	high: <WarningOutlined className="text-orange-500" />,
-	medium: <ExclamationCircleOutlined className="text-yellow-500" />,
-	low: <ExclamationCircleOutlined className="text-blue-500" />,
+	critical: <WarningOutlined className="text-danger" />,
+	high: <WarningOutlined className="text-warning" />,
+	medium: <ExclamationCircleOutlined className="text-warning" />,
+	low: <ExclamationCircleOutlined className="text-info" />,
 	info: <ExclamationCircleOutlined className="text-neutral-500" />,
 };
 
@@ -268,7 +268,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={t('alerts.statsOpen')}
 							value={stats.open}
-							prefix={<WarningOutlined className="text-red-500" />}
+							prefix={<WarningOutlined className="text-danger" />}
 							valueStyle={{ color: stats.open > 0 ? 'var(--color-danger-text)' : undefined }}
 						/>
 					</Card>
@@ -278,7 +278,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={t('alerts.statsAcknowledged')}
 							value={stats.acknowledged}
-							prefix={<CheckCircleOutlined className="text-blue-500" />}
+							prefix={<CheckCircleOutlined className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -287,7 +287,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={t('alerts.statsEscalated')}
 							value={stats.escalated}
-							prefix={<RiseOutlined className="text-orange-500" />}
+							prefix={<RiseOutlined className="text-warning" />}
 						/>
 					</Card>
 				</Col>
@@ -296,7 +296,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={t('alerts.statsResolvedToday')}
 							value={stats.resolvedToday}
-							prefix={<CheckCircleOutlined className="text-green-500" />}
+							prefix={<CheckCircleOutlined className="text-success" />}
 						/>
 					</Card>
 				</Col>

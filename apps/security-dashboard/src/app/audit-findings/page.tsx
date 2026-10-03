@@ -145,7 +145,7 @@ export default function AuditFindingsPage() {
 				if (!v) return '-';
 				const isOverdue = new Date(v) < new Date();
 				return (
-					<span className={isOverdue ? 'text-red-500' : ''}>
+					<span className={isOverdue ? 'text-danger-text' : ''}>
 						{new Date(v).toLocaleDateString()}
 					</span>
 				);

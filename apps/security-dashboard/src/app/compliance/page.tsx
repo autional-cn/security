@@ -126,9 +126,9 @@ export default function CompliancePage() {
 									}
 									prefix={
 										(compliance as any).overallStatus === 'pass' ? (
-											<CheckCircleOutlined className="text-green-500" />
+											<CheckCircleOutlined className="text-success" />
 										) : (
-											<CloseCircleOutlined className="text-red-500" />
+											<CloseCircleOutlined className="text-danger" />
 										)
 									}
 								/>
@@ -139,7 +139,7 @@ export default function CompliancePage() {
 								<Statistic
 									title={t('compliance.checksPassed')}
 									value={`${passedCount} / ${totalChecks}`}
-									prefix={<FileTextOutlined className="text-blue-500" />}
+									prefix={<FileTextOutlined className="text-info" />}
 								/>
 							</Card>
 						</Col>
