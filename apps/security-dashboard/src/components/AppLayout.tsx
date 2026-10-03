@@ -25,10 +25,9 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Button, Typography, Breadcrumb } from 'antd';
 import { useAuth, useLogout, usePortalCatalog, useTenantSlug } from '@autional-cn/shared';
-import { LanguageSwitcher, PortalSwitcher, ThemeToggle, UserMenu } from '@autional-cn/ui';
+import { AppShell, LanguageSwitcher, PortalSwitcher, ThemeToggle, UserMenu } from '@autional-cn/ui';
 import SSEEventStream from './SSEEventStream';
 
-const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
 	const pathname = location.pathname;
 	const [collapsed, setCollapsed] = useState(false);
+	const [mobileOpen, setMobileOpen] = useState(false);
 	const handleLogout = useLogout();
 	const { user, currentTenantId } = useAuth();
 	// basename 恒 "/" 后 pathname 含租户 slug（如 /acme-corp/audit-logs），
@@ -139,24 +139,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	}
 
 	return (
-		<Layout className="min-h-screen">
-			<Sider
-				trigger={null}
-				collapsible
-				collapsed={collapsed}
-				className="bg-white dark:bg-slate-800 border-r border-[var(--color-border)]"
-			>
-				<div className="flex h-16 items-center justify-center border-b border-[var(--color-border)]">
-					<Text strong className="text-lg text-neutral-900 dark:text-neutral-100">
-						{collapsed ? (
-							t('app.titleShort')
-						) : (
-							<span className="flex items-center gap-2">
-								<SecurityScanOutlined /> {t('app.title')}
-							</span>
-						)}
-					</Text>
-				</div>
+		<AppShell
+			brand={
+				<span className="flex items-center gap-2 text-lg font-bold">
+					{collapsed ? (
+						t('app.titleShort')
+					) : (
+						<>
+							<SecurityScanOutlined /> {t('app.title')}
+						</>
+					)}
+				</span>
+			}
+			sidebarCollapsed={collapsed}
+			nav={
 				<Menu
 					mode="inline"
 					selectedKeys={[internalPath]}
@@ -172,38 +168,51 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 					}}
 					className="border-r-0"
 				/>
-			</Sider>
-			<Layout>
-				<Header className="sticky top-0 z-10 flex items-center justify-between h-[var(--layout-header-height)] bg-[var(--color-bg-surface)] px-6 border-b border-[var(--color-border)]">
-					<div className="flex items-center gap-4">
-						<Button
-							type="text"
-							icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-							onClick={() => setCollapsed(!collapsed)}
-						/>
-						<Breadcrumb items={buildBreadcrumbs()} />
-					</div>
-					<div className="flex items-center gap-3">
-						<PortalSwitcher portals={portals} currentPortal="security" />
-						<SSEEventStream />
-						<LanguageSwitcher />
-						<ThemeToggle />
-						<Button
-							type="text"
-							icon={<ReloadOutlined />}
-							onClick={() => window.location.reload()}
-							title={t('common.refresh')}
-						/>
-						<UserMenu
-							user={user}
-							items={[{ key: 'logout', type: 'logout', onClick: handleLogout }]}
-						/>
-					</div>
-				</Header>
-				<Content className="m-6 p-6 bg-[var(--color-bg-surface)] rounded-lg min-h-[calc(100vh-112px)]">
-					{children}
-				</Content>
-			</Layout>
-		</Layout>
+			}
+			headerLeft={
+				<>
+					<Button
+						type="text"
+						className="lg:hidden"
+						icon={<MenuUnfoldOutlined />}
+						onClick={() => setMobileOpen(true)}
+						aria-label={t('nav.openMenu', '打开菜单')}
+					/>
+					<Button
+						type="text"
+						className="hidden lg:inline-flex"
+						icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+						onClick={() => setCollapsed(!collapsed)}
+					/>
+					<Breadcrumb items={buildBreadcrumbs()} />
+				</>
+			}
+			headerRight={
+				<>
+					<PortalSwitcher portals={portals} currentPortal="security" />
+					<SSEEventStream />
+					<LanguageSwitcher />
+					<ThemeToggle />
+					<Button
+						type="text"
+						icon={<ReloadOutlined />}
+						onClick={() => window.location.reload()}
+						title={t('common.refresh')}
+					/>
+					<UserMenu
+						user={user}
+						items={[{ key: 'logout', type: 'logout', onClick: handleLogout }]}
+					/>
+				</>
+			}
+			mobileOpen={mobileOpen}
+			onMobileClose={() => setMobileOpen(false)}
+			closeLabel={t('nav.closeMenu', '关闭菜单')}
+			contentClassName="p-6"
+		>
+			<div className="min-h-[calc(100vh-112px)] rounded-lg bg-[var(--color-bg-surface)] p-6">
+				{children}
+			</div>
+		</AppShell>
 	);
 }
