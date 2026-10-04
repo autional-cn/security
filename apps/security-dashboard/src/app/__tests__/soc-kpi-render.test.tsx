@@ -28,7 +28,6 @@ function mockKpiLoaded(statsOverrides: Record<string, any> = {}) {
 		data: {
 			totalLogs: 5000,
 			todayEntries: 216,
-			activeTenants: 315,
 			avgResponseMs: 45,
 			...statsOverrides,
 		},
@@ -70,13 +69,18 @@ describe('SocKpiPage', () => {
 		expect(screen.getByText('MTTD (est.)')).toBeInTheDocument();
 	});
 
-	it('renders Today Entries / Active Tenants values from camelCase fields (S-52)', () => {
+	it('renders Today Entries value from camelCase field (S-52)', () => {
 		mockKpiLoaded();
 		render(<SocKpiPage />);
 		expect(screen.getByText('Today Entries')).toBeInTheDocument();
 		expect(screen.getByText('216')).toBeInTheDocument();
-		expect(screen.getByText('Active Tenants')).toBeInTheDocument();
-		expect(screen.getByText('315')).toBeInTheDocument();
+	});
+
+	it('no longer renders the cross-tenant Active Tenants row (5702)', () => {
+		mockKpiLoaded();
+		render(<SocKpiPage />);
+		expect(screen.queryByText('Active Tenants')).not.toBeInTheDocument();
+		expect(screen.queryByText('315')).not.toBeInTheDocument();
 	});
 
 	it('shows loading spinner when data is loading', () => {

@@ -34,11 +34,10 @@ import {
 import {
 	useAuditStats,
 	useAnomaliesPreview,
-	useComplianceStatus,
 	useActiveSessionCount,
 	useGatewayStatus,
 } from '@/hooks/use-overview';
-import { useHashChain } from '@/hooks/use-security-queries';
+import { useHashChain, useComplianceSelfScore } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
 import { ConsolePageHeader } from '@autional-cn/ui';
@@ -110,18 +109,25 @@ export default function OverviewPage() {
 	const { currentTenantId } = useAuth();
 	const { data: auditData, isLoading: auditLoading } = useAuditStats();
 	const { data: anomalyData, isLoading: anomalyLoading } = useAnomaliesPreview();
-	const { data: complianceData, isLoading: complianceLoading } = useComplianceStatus();
+	// 合规评分改走租户 self score（admin twin 租户级读族，S-03）——原用户面 complianceStatus
+	// 对 security 角色恒 403，且其响应从未包含 complianceScore 字段
+	const {
+		data: selfScore,
+		isLoading: selfScoreLoading,
+		isError: selfScoreError,
+	} = useComplianceSelfScore();
 	const { data: chain, isLoading: verifyLoading } = useHashChain(currentTenantId);
 	const { data: sessionData, isLoading: sessionLoading } = useActiveSessionCount();
 	const { data: gatewayData, isLoading: gatewayLoading } = useGatewayStatus();
 
 	const loading =
-		auditLoading || anomalyLoading || complianceLoading || verifyLoading || sessionLoading;
+		auditLoading || anomalyLoading || selfScoreLoading || verifyLoading || sessionLoading;
 
 	const stats = useMemo(() => {
 		const totalLogs = auditData?.totalLogs || 0;
 		const openAnomalies = anomalyData?.total || anomalyData?.items?.length || 0;
-		const complianceScore = complianceData?.complianceScore || 0;
+		// 评分无数据时保持 null——0 分是会被误读的合规结论（S-03）
+		const complianceScore: number | null = selfScore?.overallScore ?? null;
 		const activeSessions = sessionData?.count || 0;
 
 		// 本租户链快照：无数据（未加载/未生成链）不误报；快照断裂计 1 项
@@ -136,7 +142,7 @@ export default function OverviewPage() {
 			hashChainValid,
 			criticalAlerts,
 		};
-	}, [auditData, anomalyData, complianceData, sessionData, chain]);
+	}, [auditData, anomalyData, selfScore, sessionData, chain]);
 
 	const recentAnomalies = useMemo(() => {
 		return anomalyData?.items?.slice(0, 5) || [];
@@ -150,10 +156,6 @@ export default function OverviewPage() {
 		});
 		return Object.entries(severityMap).map(([name, value]) => ({ name, value }));
 	}, [anomalyData]);
-
-	const complianceChecks = useMemo(() => {
-		return (complianceData?.checks || []).slice(0, 5);
-	}, [complianceData]);
 
 	const trendData = useMemo(() => {
 		if (auditData?.trend) {
@@ -292,17 +294,26 @@ export default function OverviewPage() {
 								<span className="text-sm text-neutral-600">{t('overview.complianceScore')}</span>
 								<SafetyCertificateOutlined className="text-success" />
 							</div>
-							<Progress
-								percent={stats.complianceScore}
-								status={
-									stats.complianceScore >= 80
-										? 'success'
-										: stats.complianceScore >= 60
-											? 'normal'
-											: 'exception'
-								}
-								format={(percent) => t('overview.scoreFormat', { score: percent })}
-							/>
+							{stats.complianceScore != null ? (
+								<Progress
+									percent={stats.complianceScore}
+									status={
+										stats.complianceScore >= 80
+											? 'success'
+											: stats.complianceScore >= 60
+												? 'normal'
+												: 'exception'
+									}
+									format={(percent) => t('overview.scoreFormat', { score: percent })}
+								/>
+							) : (
+								<div className="text-2xl font-semibold text-neutral-900 dark:text-white">--</div>
+							)}
+							{selfScoreError && (
+								<div className="text-xs text-danger mt-1">
+									{t('common.loadFailed', 'Load failed')}
+								</div>
+							)}
 						</Card>
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
@@ -546,29 +557,8 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} lg={8}>
 						<Card title={t('overview.complianceChecks')} className="h-full">
-							{complianceChecks.length === 0 ? (
-								<Empty description={t('overview.noComplianceData')} />
-							) : (
-								<List
-									size="small"
-									dataSource={complianceChecks}
-									renderItem={(item: any) => (
-										<List.Item className="flex justify-between">
-											<div className="flex items-center gap-2">
-												{item.passed ? (
-													<CheckCircleOutlined className="text-success" />
-												) : (
-													<CloseCircleOutlined className="text-danger" />
-												)}
-												<span className="text-sm">{item.item}</span>
-											</div>
-											<Tag color={item.passed ? 'success' : 'error'}>
-												{item.passed ? t('status.passed') : t('status.failed')}
-											</Tag>
-										</List.Item>
-									)}
-								/>
-							)}
+							{/* 检查项明细不在 ComplianceStatusResponse 契约中（S-03），诚实空态 */}
+							<Empty description={t('overview.noComplianceData')} />
 						</Card>
 					</Col>
 				</Row>

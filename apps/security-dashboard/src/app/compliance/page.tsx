@@ -19,6 +19,7 @@ import {
 import dayjs from 'dayjs';
 import {
 	useComplianceDashboard,
+	useComplianceSelfScore,
 	useDSARsTab,
 	useRetentionPoliciesTab,
 	useISOControlsTab,
@@ -40,7 +41,13 @@ export default function CompliancePage() {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState('overview');
 
-	const { data: compliance, isLoading: overviewLoading } = useComplianceDashboard();
+	const {
+		data: compliance,
+		isLoading: overviewLoading,
+		isError: overviewError,
+	} = useComplianceDashboard();
+	const { data: scoreData, isLoading: scoreLoading, isError: scoreError } = useComplianceSelfScore();
+	const overallScore: number | null = scoreData?.overallScore ?? null;
 	const { data: dsars, isLoading: dsarLoading } = useDSARsTab();
 	const { data: retentionPolicies, isLoading: retentionLoading } = useRetentionPoliciesTab();
 	const { data: isoControls, isLoading: isoLoading } = useISOControlsTab();
@@ -48,7 +55,7 @@ export default function CompliancePage() {
 	const { data: penTests, isLoading: penTestLoading } = usePenTestReportsTab();
 
 	const tabLoadingMap: Record<string, boolean> = {
-		overview: overviewLoading,
+		overview: overviewLoading || scoreLoading,
 		dsar: dsarLoading,
 		retention: retentionLoading,
 		iso: isoLoading,
@@ -79,9 +86,10 @@ export default function CompliancePage() {
 		},
 	];
 
-	const passedCount =
-		(compliance as any)?.checks?.filter((c: ComplianceCheckItem) => c.passed).length || 0;
-	const totalChecks = (compliance as any)?.checks?.length || 0;
+	// checks 字段当前契约不提供（S-54 诚实空态）；若未来契约提供则自动启用通过数卡与明细表
+	const checks: ComplianceCheckItem[] = (compliance as any)?.checks || [];
+	const passedCount = checks.filter((c) => c.passed).length;
+	const totalChecks = checks.length;
 
 	const tabItems = [
 		{
@@ -98,62 +106,73 @@ export default function CompliancePage() {
 							<Card>
 								<Statistic
 									title={t('compliance.complianceScore')}
-									value={(compliance as any).complianceScore || 0}
-									suffix="/ 100"
+									value={overallScore ?? '--'}
+									suffix={overallScore != null ? '/ 100' : undefined}
 								/>
-								<Progress
-									percent={(compliance as any).complianceScore || 0}
-									status={
-										(compliance as any).complianceScore >= 80
-											? 'success'
-											: (compliance as any).complianceScore >= 60
-												? 'normal'
-												: 'exception'
-									}
-									className="mt-2"
-								/>
+								{overallScore != null && (
+									<Progress
+										percent={overallScore}
+										status={
+											overallScore >= 80
+												? 'success'
+												: overallScore >= 60
+													? 'normal'
+													: 'exception'
+										}
+										className="mt-2"
+									/>
+								)}
+								{scoreError && (
+									<div className="text-xs text-danger mt-1">
+										{t('common.loadFailed', 'Load failed')}
+									</div>
+								)}
 							</Card>
 						</Col>
 						<Col xs={24} sm={8}>
 							<Card>
+								{/* 后端取值域为 compliant/non_compliant/evaluation_error（dto.go）；
+									未知值按 '--' 渲染而非臆断为失败 */}
 								<Statistic
 									title={t('compliance.overallStatus')}
 									value={
-										(compliance as any).overallStatus === 'pass'
+										(compliance as any).overallStatus === 'compliant'
 											? t('status.passed')
-											: (compliance as any).overallStatus === 'warning'
+											: (compliance as any).overallStatus === 'evaluation_error'
 												? t('status.warning')
-												: t('status.failed')
+												: (compliance as any).overallStatus === 'non_compliant'
+													? t('status.failed')
+													: '--'
 									}
 									prefix={
-										(compliance as any).overallStatus === 'pass' ? (
+										(compliance as any).overallStatus === 'compliant' ? (
 											<CheckCircleOutlined className="text-success" />
-										) : (
-											(compliance as any).overallStatus === 'warning' ? (
+										) : (compliance as any).overallStatus === 'evaluation_error' ? (
 											<ExclamationCircleOutlined className="text-warning" />
-										) : (
+										) : (compliance as any).overallStatus === 'non_compliant' ? (
 											<CloseCircleOutlined className="text-danger" />
-										)
-										)
+										) : undefined
 									}
 								/>
 							</Card>
 						</Col>
-						<Col xs={24} sm={8}>
-							<Card>
-								<Statistic
-									title={t('compliance.checksPassed')}
-									value={`${passedCount} / ${totalChecks}`}
-									prefix={<FileTextOutlined className="text-info" />}
-								/>
-							</Card>
-						</Col>
+						{totalChecks > 0 && (
+							<Col xs={24} sm={8}>
+								<Card>
+									<Statistic
+										title={t('compliance.checksPassed')}
+										value={`${passedCount} / ${totalChecks}`}
+										prefix={<FileTextOutlined className="text-info" />}
+									/>
+								</Card>
+							</Col>
+						)}
 					</Row>
 
 					<Card title={t('compliance.checkDetail')} className="mt-4">
 						<DataTable
 							columns={checkColumns}
-							dataSource={(compliance as any).checks || []}
+							dataSource={checks}
 							rowKey="item"
 							pagination={false}
 							locale={{ emptyText: <Empty description={t('compliance.noChecks')} /> }}
@@ -174,7 +193,11 @@ export default function CompliancePage() {
 						)}
 				</div>
 			) : (
-				<Empty description={t('compliance.noComplianceData')} />
+				<Empty
+					description={
+						overviewError ? t('common.loadFailed', 'Load failed') : t('compliance.noComplianceData')
+					}
+				/>
 			),
 		},
 		{

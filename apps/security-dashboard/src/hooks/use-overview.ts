@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	getAuditStats,
 	getAnomalies,
-	getComplianceStatus,
 	getActiveSessionCount,
 	fetchGatewayStatusRaw,
 } from '@/lib/api.generated';
@@ -18,13 +17,6 @@ export function useAnomaliesPreview() {
 	return useQuery({
 		queryKey: ['overview', 'anomalies'],
 		queryFn: () => getAnomalies({ page: 1, pageSize: 5 } as any),
-	});
-}
-
-export function useComplianceStatus() {
-	return useQuery({
-		queryKey: ['overview', 'complianceStatus'],
-		queryFn: getComplianceStatus,
 	});
 }
 

@@ -21,6 +21,7 @@ export const getRelatedAnomalies = Generated.adminAuditAnomaliesRelatedByAnomali
 export const assignAnomaly = Generated.adminAuditAnomaliesAssignByAnomaliesPost;
 export const addAnomalyComment = Generated.adminAuditAnomaliesCommentByAnomaliesPost;
 export const getComplianceStatus = Generated.complianceStatus;
+export const getComplianceSelfScore = Generated.adminComplianceTenantsSelfScore;
 export const getDSARs = Generated.adminComplianceGdprDsar;
 export const getDSARById = Generated.adminComplianceGdprDsarByDsar;
 export const getDSARStatus = Generated.complianceGdprDsarStatusByDsar;
@@ -82,6 +83,19 @@ export const getSecurityUserTimeline = async (userId: string) => {
 	const token = (await import('@autional-cn/shared')).getAccessToken();
 	const { camelCaseKeys } = await import('@autional-cn/shared');
 	const res = await fetch(`/bff/gateway/api/v1/security/users/${userId}/timeline`, {
+		headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+	});
+	if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	const body = await res.json();
+	return camelCaseKeys(body.data);
+};
+// @generated-api-exempt: compliance 状态 admin twin（W3-C 新增，security_admin 可达）尚未进入
+// shared 生成物，下轮重生成后可迁回 Generated.*。raw fetch 绕过 apiClient，需手动对齐其
+// /bff 前缀 + 信封解包 + camelCase 行为（与上方 getSecurityUserProfile 同模式）。
+export const getAdminComplianceStatusRaw = async () => {
+	const token = (await import('@autional-cn/shared')).getAccessToken();
+	const { camelCaseKeys } = await import('@autional-cn/shared');
+	const res = await fetch('/bff/compliance/api/v1/admin/compliance/status', {
 		headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
 	});
 	if (!res.ok) throw new Error(`HTTP ${res.status}`);

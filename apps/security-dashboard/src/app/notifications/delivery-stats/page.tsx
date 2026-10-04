@@ -29,10 +29,14 @@ import { useTranslation } from 'react-i18next';
 import { GeneratedApi } from '@autional-cn/shared';
 import { ConsolePageHeader } from '@autional-cn/ui';
 
+// S-63：只读四件套全走 admin 平面（security_admin 可达的租户级读族）——
+// stats/read-report/trend 为 notification 服务 twin，dashboard 为 communication 渠道口径。
+// 原三端点对安全门户全 403（平台门禁 / 用户面入口平面 / 平台级门禁），且 catch 静默吞错。
 const {
-	adminNotificationsPlatformStats,
-	notificationsReadReport,
-	adminCommunicationPlatformStats,
+	adminNotificationsStats,
+	adminNotificationsReadReport,
+	adminNotificationsTrend,
+	adminCommunicationDashboard,
 } = GeneratedApi;
 
 // delivered / failed / pending 是语义分类，不是并列数据系列 —— 按 $chart-note 的规矩用语义色
@@ -48,28 +52,39 @@ export default function DeliveryStatsPage() {
 	const [loading, setLoading] = useState(false);
 	const [notifStats, setNotifStats] = useState<any>(null);
 	const [readReport, setReadReport] = useState<any>(null);
+	const [trend, setTrend] = useState<any[]>([]);
 	const [commStats, setCommStats] = useState<any>(null);
+	const [errors, setErrors] = useState<Record<string, boolean>>({});
 
 	const fetchData = async () => {
 		setLoading(true);
+		const failed: Record<string, boolean> = {};
 		try {
-			const res = await adminNotificationsPlatformStats();
-			setNotifStats(res);
+			setNotifStats(await adminNotificationsStats());
 		} catch {
 			setNotifStats(null);
+			failed.notif = true;
 		}
 		try {
-			const res = await notificationsReadReport();
-			setReadReport(res);
+			setReadReport(await adminNotificationsReadReport());
 		} catch {
 			setReadReport(null);
+			failed.read = true;
 		}
 		try {
-			const res = await adminCommunicationPlatformStats();
-			setCommStats(res);
+			const res: any = await adminNotificationsTrend({ days: 30 });
+			setTrend(res?.items || []);
+		} catch {
+			setTrend([]);
+			failed.trend = true;
+		}
+		try {
+			setCommStats(await adminCommunicationDashboard());
 		} catch {
 			setCommStats(null);
+			failed.comm = true;
 		}
+		setErrors(failed);
 		setLoading(false);
 	};
 
@@ -78,25 +93,24 @@ export default function DeliveryStatsPage() {
 	}, []);
 
 	const deliveryData = useMemo(() => {
-		const total = notifStats?.totalSent || 0;
-		const delivered = notifStats?.delivered || 0;
-		const failed = notifStats?.failed || 0;
+		const total = commStats?.totalSent || 0;
+		const delivered = commStats?.delivered || 0;
+		const failed = commStats?.failed || 0;
 		const pending = Math.max(0, total - delivered - failed);
-		if (total === 0 && delivered === 0) return [];
+		if (total === 0 && delivered === 0 && failed === 0) return [];
 		return [
 			{ name: t('notification.delivered'), value: delivered, color: 'var(--color-success)' },
 			{ name: t('notification.failed'), value: failed, color: 'var(--color-danger)' },
 			{ name: t('notification.pending'), value: pending, color: 'var(--color-warning)' },
 		].filter((d) => d.value > 0);
-	}, [notifStats, t]);
+	}, [commStats, t]);
 
 	const readTrendData = useMemo(() => {
-		const timeline = readReport?.timeline || [];
-		return timeline.map((pt: any) => ({
-			date: pt.date || pt.timestamp || '',
-			readRate: pt.readRate || 0,
+		return (trend || []).map((pt: any) => ({
+			date: pt.date || '',
+			readRate: pt.sent > 0 ? pt.read / pt.sent : 0,
 		}));
-	}, [readReport]);
+	}, [trend]);
 
 	const channelBreakdown = useMemo(() => {
 		const channels = commStats?.byChannel || {};
@@ -109,10 +123,10 @@ export default function DeliveryStatsPage() {
 		}));
 	}, [commStats]);
 
-	const notifTotal = notifStats?.totalSent || 0;
-	const readCount = readReport?.readCount || 0;
-	const readRateVal = readReport?.readRate || 0;
-	const unreadCount = readReport?.unreadCount || 0;
+	const notifTotal = notifStats?.totalSent ?? null;
+	const readCount = readReport?.readCount ?? null;
+	const readRateVal = readReport?.readRate ?? null;
+	const unreadCount = readReport?.unreadCount ?? null;
 
 	const channelLabels: Record<string, string> = {
 		email: t('common.email'),
@@ -145,27 +159,42 @@ export default function DeliveryStatsPage() {
 						<Card>
 							<Statistic
 								title={t('notification.totalSent')}
-								value={notifTotal}
+								value={notifTotal ?? '--'}
 								prefix={<BellOutlined className="text-info" />}
 							/>
+							{errors.notif && (
+								<div className="text-xs text-danger mt-1">
+									{t('common.loadFailed', 'Load failed')}
+								</div>
+							)}
 						</Card>
 					</Col>
 					<Col xs={24} sm={12} lg={6}>
 						<Card>
 							<Statistic
 								title={t('notification.totalRead')}
-								value={readCount}
+								value={readCount ?? '--'}
 								prefix={<CheckCircleOutlined className="text-success" />}
 							/>
+							{errors.read && (
+								<div className="text-xs text-danger mt-1">
+									{t('common.loadFailed', 'Load failed')}
+								</div>
+							)}
 						</Card>
 					</Col>
 					<Col xs={24} sm={12} lg={6}>
 						<Card>
 							<Statistic
 								title={t('notification.totalUnread')}
-								value={unreadCount}
+								value={unreadCount ?? '--'}
 								prefix={<ClockCircleOutlined className="text-amber-500" />}
 							/>
+							{errors.read && (
+								<div className="text-xs text-danger mt-1">
+									{t('common.loadFailed', 'Load failed')}
+								</div>
+							)}
 						</Card>
 					</Col>
 					<Col xs={24} sm={12} lg={6}>
@@ -177,23 +206,29 @@ export default function DeliveryStatsPage() {
 							<div className="text-2xl font-semibold text-neutral-900 dark:text-white">
 								{readRateVal != null ? `${(Number(readRateVal) * 100).toFixed(1)}%` : '--'}
 							</div>
-							<div className="mt-2">
-								<Tag
-									color={
-										Number(readRateVal) >= 0.5
-											? 'success'
+							{readRateVal != null ? (
+								<div className="mt-2">
+									<Tag
+										color={
+											Number(readRateVal) >= 0.5
+												? 'success'
+												: Number(readRateVal) >= 0.2
+													? 'warning'
+													: 'error'
+										}
+									>
+										{Number(readRateVal) >= 0.5
+											? t('notification.excellent')
 											: Number(readRateVal) >= 0.2
-												? 'warning'
-												: 'error'
-									}
-								>
-									{Number(readRateVal) >= 0.5
-										? t('notification.excellent')
-										: Number(readRateVal) >= 0.2
-											? t('notification.average')
-											: t('notification.needsAttention')}
-								</Tag>
-							</div>
+												? t('notification.average')
+												: t('notification.needsAttention')}
+									</Tag>
+								</div>
+							) : errors.read ? (
+								<div className="text-xs text-danger mt-2">
+									{t('common.loadFailed', 'Load failed')}
+								</div>
+							) : null}
 						</Card>
 					</Col>
 				</Row>
@@ -223,7 +258,11 @@ export default function DeliveryStatsPage() {
 									</PieChart>
 								</ResponsiveContainer>
 							) : (
-								<Empty description={t('common.noData')} />
+								<Empty
+									description={
+										errors.comm ? t('common.loadFailed', 'Load failed') : t('common.noData')
+									}
+								/>
 							)}
 						</Card>
 					</Col>
@@ -250,7 +289,11 @@ export default function DeliveryStatsPage() {
 									</LineChart>
 								</ResponsiveContainer>
 							) : (
-								<Empty description={t('common.noData')} />
+								<Empty
+									description={
+										errors.trend ? t('common.loadFailed', 'Load failed') : t('common.noData')
+									}
+								/>
 							)}
 						</Card>
 					</Col>
@@ -281,7 +324,11 @@ export default function DeliveryStatsPage() {
 									</BarChart>
 								</ResponsiveContainer>
 							) : (
-								<Empty description={t('common.noData')} />
+								<Empty
+									description={
+										errors.comm ? t('common.loadFailed', 'Load failed') : t('common.noData')
+									}
+								/>
 							)}
 						</Card>
 					</Col>

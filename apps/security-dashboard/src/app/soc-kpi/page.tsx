@@ -94,11 +94,6 @@ export default function SocKpiPage() {
 							value: stats?.todayEntries ?? '-',
 						},
 						{
-							key: 'active_tenants',
-							label: t('socKpi.activeTenants', 'Active Tenants'),
-							value: stats?.activeTenants ?? '-',
-						},
-						{
 							key: 'avg_response',
 							label: t('socKpi.avgResponse', 'Avg Response Time (est.)'),
 							value: stats?.avgResponseMs ? `${stats.avgResponseMs}ms` : '-',

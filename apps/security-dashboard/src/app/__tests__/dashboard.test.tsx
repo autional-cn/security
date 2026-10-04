@@ -21,13 +21,13 @@ vi.mock('recharts', () => ({
 vi.mock('@/hooks/use-overview', () => ({
 	useAuditStats: vi.fn(),
 	useAnomaliesPreview: vi.fn(),
-	useComplianceStatus: vi.fn(),
 	useActiveSessionCount: vi.fn(),
 	useGatewayStatus: vi.fn(),
 }));
 
 vi.mock('@/hooks/use-security-queries', () => ({
 	useHashChain: vi.fn(),
+	useComplianceSelfScore: vi.fn(),
 }));
 
 vi.mock('@autional-cn/shared', () => ({
@@ -68,7 +68,6 @@ function mockAllLoading() {
 	const hooks = [
 		'useAuditStats',
 		'useAnomaliesPreview',
-		'useComplianceStatus',
 		'useActiveSessionCount',
 		'useGatewayStatus',
 	] as const;
@@ -76,6 +75,10 @@ function mockAllLoading() {
 		vi.mocked(useOverview[h]).mockReturnValue({ data: null, isLoading: true } as any);
 	}
 	vi.mocked(useSecurityQueries.useHashChain).mockReturnValue({
+		data: null,
+		isLoading: true,
+	} as any);
+	vi.mocked(useSecurityQueries.useComplianceSelfScore).mockReturnValue({
 		data: null,
 		isLoading: true,
 	} as any);
@@ -94,8 +97,8 @@ function mockAllLoaded() {
 		data: { items: [], total: 0 },
 		isLoading: false,
 	} as any);
-	vi.mocked(useOverview.useComplianceStatus).mockReturnValue({
-		data: { complianceScore: 85, checks: [] },
+	vi.mocked(useSecurityQueries.useComplianceSelfScore).mockReturnValue({
+		data: { overallScore: 85, grade: 'A' },
 		isLoading: false,
 	} as any);
 	vi.mocked(useSecurityQueries.useHashChain).mockReturnValue({

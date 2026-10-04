@@ -25,7 +25,8 @@ import {
 	getExportStatus,
 	downloadExport,
 	createExportJob,
-	getComplianceStatus,
+	getComplianceSelfScore,
+	getAdminComplianceStatusRaw,
 	getRetentionPolicies,
 	getISOControls,
 	getSOXControls,
@@ -324,7 +325,15 @@ export function useDownloadExport() {
 export function useComplianceDashboard() {
 	return useQuery({
 		queryKey: ['compliance', 'status'],
-		queryFn: getComplianceStatus,
+		queryFn: getAdminComplianceStatusRaw,
+		staleTime: 60_000,
+	});
+}
+
+export function useComplianceSelfScore() {
+	return useQuery({
+		queryKey: ['compliance', 'selfScore'],
+		queryFn: getComplianceSelfScore,
 		staleTime: 60_000,
 	});
 }
