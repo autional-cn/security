@@ -38,11 +38,42 @@ const levelColors: Record<string, string> = {
 	critical: 'purple',
 };
 
+// 时间筛选一律按 Unix 秒下发（BE 契约）；初始/快捷范围必须真正带参，不允许「UI 显示今天但请求无参」
+const toEpochSeconds = (d: dayjs.Dayjs) => Math.floor(d.valueOf() / 1000);
+
+const rangeFilters = (value: string): AuditLogFilters => {
+	const now = dayjs();
+	let start: dayjs.Dayjs | null = null;
+	let end: dayjs.Dayjs | null = now;
+
+	switch (value) {
+		case 'today':
+			start = now.startOf('day');
+			break;
+		case 'yesterday':
+			start = now.subtract(1, 'day').startOf('day');
+			end = now.subtract(1, 'day').endOf('day');
+			break;
+		case '7d':
+			start = now.subtract(7, 'day').startOf('day');
+			break;
+		case '30d':
+			start = now.subtract(30, 'day').startOf('day');
+			break;
+	}
+
+	return {
+		startTime: start ? toEpochSeconds(start) : undefined,
+		endTime: end ? toEpochSeconds(end) : undefined,
+	};
+};
+
 export default function AuditLogsPage() {
 	const { t } = useTranslation();
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(20);
-	const [filters, setFilters] = useState<AuditLogFilters>({});
+	const [filters, setFilters] = useState<AuditLogFilters>(() => rangeFilters('today'));
+	const [quickRange, setQuickRange] = useState('today');
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [detailId, setDetailId] = useState<string | null>(null);
 
@@ -62,35 +93,13 @@ export default function AuditLogsPage() {
 
 	const handleReset = () => {
 		setFilters({});
+		setQuickRange('');
 		setPage(1);
 	};
 
 	const handleQuickRange = (value: string) => {
-		const now = dayjs();
-		let start: dayjs.Dayjs | null = null;
-		let end: dayjs.Dayjs | null = now;
-
-		switch (value) {
-			case 'today':
-				start = now.startOf('day');
-				break;
-			case 'yesterday':
-				start = now.subtract(1, 'day').startOf('day');
-				end = now.subtract(1, 'day').endOf('day');
-				break;
-			case '7d':
-				start = now.subtract(7, 'day').startOf('day');
-				break;
-			case '30d':
-				start = now.subtract(30, 'day').startOf('day');
-				break;
-		}
-
-		setFilters({
-			...filters,
-			startTime: start ? start.valueOf() : undefined,
-			endTime: end ? end.valueOf() : undefined,
-		});
+		setQuickRange(value);
+		setFilters({ ...filters, ...rangeFilters(value) });
 		setPage(1);
 	};
 
@@ -98,8 +107,10 @@ export default function AuditLogsPage() {
 		try {
 			await exportMutation.mutateAsync({
 				format: 'csv',
-				startDate: filters.startTime ? dayjs(filters.startTime).format('YYYY-MM-DD') : undefined,
-				endDate: filters.endTime ? dayjs(filters.endTime).format('YYYY-MM-DD') : undefined,
+				startDate: filters.startTime
+					? dayjs(filters.startTime * 1000).format('YYYY-MM-DD')
+					: undefined,
+				endDate: filters.endTime ? dayjs(filters.endTime * 1000).format('YYYY-MM-DD') : undefined,
 			});
 			message.success(t('auditLogs.exportSubmitted'));
 		} catch {
@@ -124,6 +135,18 @@ export default function AuditLogsPage() {
 		{ label: t('auditLogs.range30d'), value: '30d' },
 	];
 
+	// 审计库双管道：事件管道 status∈{0=成功,1=失败}；请求管道 status 为 HTTP 码（2xx=成功，≥400=失败）。
+	// 与后端 status_class 口径逐字一致；其余数值（如 3xx）原样展示，不猜语义。
+	const renderStatusTag = (v: unknown) => {
+		if (v === 0 || (typeof v === 'number' && v >= 200 && v < 300)) {
+			return <Tag color="success">{t('status.success')}</Tag>;
+		}
+		if (v === 1 || (typeof v === 'number' && v >= 400)) {
+			return <Tag color="error">{t('status.failure')}</Tag>;
+		}
+		return <Tag>{String(v)}</Tag>;
+	};
+
 	const columns: DataTableColumns<AuditLogItem> = [
 		{
 			title: t('auditLogs.columnTime'),
@@ -145,12 +168,7 @@ export default function AuditLogsPage() {
 			title: t('auditLogs.columnStatus'),
 			dataIndex: 'status',
 			width: 80,
-			render: (v: number) =>
-				v === 0 ? (
-					<Tag color="success">{t('status.success')}</Tag>
-				) : (
-					<Tag color="error">{t('status.failure')}</Tag>
-				),
+			render: (v: number) => renderStatusTag(v),
 		},
 		{ title: t('auditLogs.columnIp'), dataIndex: 'ip', width: 130 },
 		{ title: t('auditLogs.columnMessage'), dataIndex: 'message', ellipsis: true },
@@ -173,7 +191,7 @@ export default function AuditLogsPage() {
 
 				<Card className="mb-4">
 					<Space direction="vertical" className="w-full" size="middle">
-						<Segmented options={quickRanges} onChange={(v) => handleQuickRange(v as string)} />
+						<Segmented options={quickRanges} value={quickRange} onChange={(v) => handleQuickRange(v as string)} />
 						<Space wrap>
 							<Input
 								placeholder={t('auditLogs.keywordPlaceholder')}
@@ -198,23 +216,23 @@ export default function AuditLogsPage() {
 							<Select
 								placeholder={t('auditLogs.filterStatus')}
 								allowClear
-								value={filters.status !== undefined ? filters.status : undefined}
-								onChange={(v) => setFilters({ ...filters, status: v })}
+								value={filters.statusClass || undefined}
+								onChange={(v) => setFilters({ ...filters, statusClass: v })}
 								style={{ width: 120 }}
 								options={[
-									{ label: t('status.success'), value: 0 },
-									{ label: t('status.failure'), value: 1 },
+									{ label: t('status.success'), value: 'success' },
+									{ label: t('status.failure'), value: 'failure' },
 								]}
 							/>
 							<DatePicker
 								placeholder={t('auditLogs.startTime')}
-								value={filters.startTime ? dayjs(filters.startTime) : null}
-								onChange={(d) => setFilters({ ...filters, startTime: d ? d.valueOf() : undefined })}
+								value={filters.startTime ? dayjs(filters.startTime * 1000) : null}
+								onChange={(d) => setFilters({ ...filters, startTime: d ? toEpochSeconds(d) : undefined })}
 							/>
 							<DatePicker
 								placeholder={t('auditLogs.endTime')}
-								value={filters.endTime ? dayjs(filters.endTime) : null}
-								onChange={(d) => setFilters({ ...filters, endTime: d ? d.valueOf() : undefined })}
+								value={filters.endTime ? dayjs(filters.endTime * 1000) : null}
+								onChange={(d) => setFilters({ ...filters, endTime: d ? toEpochSeconds(d) : undefined })}
 							/>
 							<Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
 								{t('common.search')}
@@ -284,7 +302,7 @@ export default function AuditLogsPage() {
 									{(detail as any).action}
 								</Descriptions.Item>
 								<Descriptions.Item label={t('auditLogs.detailStatus')}>
-									{(detail as any).status === 0 ? t('status.success') : t('status.failure')}
+									{renderStatusTag((detail as any).status)}
 								</Descriptions.Item>
 								<Descriptions.Item label={t('auditLogs.detailLevel')}>
 									<Tag color={levelColors[(detail as any).level]}>{(detail as any).level}</Tag>

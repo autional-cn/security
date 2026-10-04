@@ -16,6 +16,7 @@ import {
 	SecurityScanOutlined,
 } from '@ant-design/icons';
 import { getSecurityUserTimeline } from '@/lib/api';
+import { formatTimelineTime, normalizeTimestamp } from '@/lib/format';
 import { useTranslation } from 'react-i18next';
 
 const EVENT_ICON_MAP: Record<string, React.ReactNode> = {
@@ -63,8 +64,7 @@ const anomalyColumns = (t: (k: string) => string) => [
 		title: t('usersTimeline.detectedAt'),
 		dataIndex: 'detectedAt',
 		key: 'detectedAt',
-		render: (v: number) =>
-			v ? new Date(typeof v === 'number' && v < 1e12 ? v * 1000 : v).toLocaleString() : '-',
+		render: (v: number) => (v ? normalizeTimestamp(v).toLocaleString() : '-'),
 		width: 180,
 	},
 ];
@@ -122,12 +122,6 @@ export default function UserSecurityTimelinePage() {
 		return 'gray';
 	};
 
-	const formatTime = (ts: any) => {
-		if (!ts) return '-';
-		const d = new Date(typeof ts === 'string' ? ts : ts * 1000);
-		return d.toLocaleString();
-	};
-
 	return (
 		<div>
 			<ConsolePageHeader
@@ -149,7 +143,7 @@ export default function UserSecurityTimelinePage() {
 						items={events.map((evt: any, i: number) => {
 							const action = evt.action || evt.type || evt.event || '';
 							const message = evt.message || evt.description || evt.detail || '';
-							const time = evt.timestamp || evt.createdAt || evt.created_at || evt.time || '';
+							const time = evt.timestamp || evt.createdAt || evt.time || '';
 							return {
 								key: evt.id || String(i),
 								color: getEventColor(action),

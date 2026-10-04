@@ -47,11 +47,7 @@ export default function NhiDetailDrawer({
 	} = useDeviceById(deviceId);
 
 	const detail: any =
-		entityType === 'agent'
-			? (agentData as any)?.data || agentData
-			: entityType === 'robot'
-				? (robotData as any)?.data || robotData
-				: (deviceData as any)?.data || deviceData;
+		entityType === 'agent' ? agentData : entityType === 'robot' ? robotData : deviceData;
 
 	const loading =
 		entityType === 'agent' ? agentLoading : entityType === 'robot' ? robotLoading : deviceLoading;
@@ -72,7 +68,7 @@ export default function NhiDetailDrawer({
 		<Descriptions bordered column={1} size="small">
 			<Descriptions.Item label={t('nhi.name', 'Name')}>{detail.name || '-'}</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.identityId', 'Identity ID')}>
-				{detail.identity_id || detail.identityId || '-'}
+				{detail.identityId || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.status', 'Status')}>
 				<Tag color={STATUS_COLORS[detail.status] || 'default'}>
@@ -80,22 +76,22 @@ export default function NhiDetailDrawer({
 				</Tag>
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.workloadSubtype', 'Workload Subtype')}>
-				{detail.workload_subtype || detail.workloadSubtype || '-'}
+				{detail.workloadSubtype || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.ownerId', 'Owner ID')}>
-				{detail.owner_id || detail.ownerId || '-'}
+				{detail.ownerId || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.callbackUrl', 'Callback URL')}>
-				{detail.callback_url || detail.callbackUrl || '-'}
+				{detail.callbackUrl || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.rotationDays', 'Rotation Days')}>
-				{detail.rotation_days ?? detail.rotationDays ?? '-'}
+				{detail.rotationDays ?? '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.jitTtl', 'JIT TTL')}>
-				{detail.jit_ttl || detail.jitTtl || '-'}
+				{detail.jitTtl || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.lastRotatedAt', 'Last Rotated At')}>
-				{detail.last_rotated_at || detail.lastRotatedAt || '-'}
+				{detail.lastRotatedAt || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.description', 'Description')}>
 				{detail.description || '-'}
@@ -107,7 +103,7 @@ export default function NhiDetailDrawer({
 		<Descriptions bordered column={1} size="small">
 			<Descriptions.Item label={t('nhi.name', 'Name')}>{detail.name || '-'}</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.identityId', 'Identity ID')}>
-				{detail.identity_id || detail.identityId || '-'}
+				{detail.identityId || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.status', 'Status')}>
 				<Tag color={STATUS_COLORS[detail.status] || 'default'}>
@@ -115,20 +111,20 @@ export default function NhiDetailDrawer({
 				</Tag>
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.workloadSubtype', 'Workload Subtype')}>
-				{detail.workload_subtype || detail.workloadSubtype || '-'}
+				{detail.workloadSubtype || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.model', 'Model')}>{detail.model || '-'}</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.firmwareVer', 'Firmware Version')}>
-				{detail.firmware_ver || detail.firmwareVer || '-'}
+				{detail.firmwareVer || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.location', 'Location')}>
 				{detail.location || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.safetyPolicy', 'Safety Policy')}>
-				{detail.safety_policy || detail.safetyPolicy || '-'}
+				{detail.safetyPolicy || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.lastHealthAt', 'Last Health At')}>
-				{detail.last_health_at || detail.lastHealthAt || '-'}
+				{detail.lastHealthAt || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.description', 'Description')}>
 				{detail.description || '-'}
@@ -140,7 +136,7 @@ export default function NhiDetailDrawer({
 		<Descriptions bordered column={1} size="small">
 			<Descriptions.Item label={t('nhi.name', 'Name')}>{detail.name || '-'}</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.identityId', 'Identity ID')}>
-				{detail.identity_id || detail.identityId || '-'}
+				{detail.identityId || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.status', 'Status')}>
 				<Tag color={STATUS_COLORS[detail.status] || 'default'}>
@@ -148,19 +144,19 @@ export default function NhiDetailDrawer({
 				</Tag>
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.workloadSubtype', 'Workload Subtype')}>
-				{detail.workload_subtype || detail.workloadSubtype || '-'}
+				{detail.workloadSubtype || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.hardwareId', 'Hardware ID')}>
-				{detail.hardware_id || detail.hardwareId || '-'}
+				{detail.hardwareId || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.manufacturer', 'Manufacturer')}>
 				{detail.manufacturer || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.firmwareVer', 'Firmware Version')}>
-				{detail.firmware_ver || detail.firmwareVer || '-'}
+				{detail.firmwareVer || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.pairingCode', 'Pairing Code')}>
-				{detail.pairing_code || detail.pairingCode || '-'}
+				{detail.pairingCode || '-'}
 			</Descriptions.Item>
 			<Descriptions.Item label={t('nhi.description', 'Description')}>
 				{detail.description || '-'}

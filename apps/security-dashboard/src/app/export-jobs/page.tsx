@@ -67,7 +67,7 @@ export default function ExportJobsPage() {
 	const handleDownload = async (jobId: string) => {
 		setDownloadJobId(jobId);
 		try {
-			const status = (jobStatus as any)?.data || jobStatus;
+			const status = jobStatus as any;
 			if (status?.status === 'completed') {
 				await downloadMutation.mutateAsync(jobId);
 				message.success(t('exportJobs.downloadStarted'));

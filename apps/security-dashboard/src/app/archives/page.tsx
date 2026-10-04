@@ -1,57 +1,33 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Tag, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Alert, Timeline } from 'antd';
+import { Card, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Alert, Timeline } from 'antd';
 import {
 	HistoryOutlined,
 	SafetyOutlined,
 	FileZipOutlined,
-	CloudUploadOutlined,
 	SyncOutlined,
 	PlayCircleOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
 import { useAuth } from '@autional-cn/shared';
-import { useArchives, useTriggerArchive, useHashChain } from '@/hooks/use-security-queries';
+import { useArchiveStatus, useTriggerArchive, useHashChain } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
 
 const { Title, Text } = Typography;
 
-type ArchiveRecord = {
-	id: string;
-	tenantId: string;
-	dateRange: string;
-	recordsCount: number;
-	storagePath?: string;
-	status: string;
-	createdAt: string;
-	completedAt?: string;
-	hash?: string;
-};
-
 export default function ArchivesPage() {
 	const { t } = useTranslation();
-
-	const statusMap: Record<string, { color: string; label: string }> = {
-		pending: { color: 'orange', label: t('archives.statusPending') },
-		processing: { color: 'blue', label: t('archives.statusProcessing') },
-		archived: { color: 'green', label: t('archives.statusArchived') },
-		failed: { color: 'red', label: t('archives.statusFailed') },
-	};
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [triggerLoading, setTriggerLoading] = useState(false);
 
 	const { currentTenantId } = useAuth();
-	const { data: archives = [], isLoading } = useArchives();
+	// S-59（2026-10-04）：归档域无批次列表端点，只渲染状态端点（enabled/days/last_archive）。
+	const { data: archiveStatus } = useArchiveStatus();
 	// A1/S-01（2026-10-04）：链快照改本租户端点，不再消费全平台验证列表。
 	const { data: chain } = useHashChain(currentTenantId);
 	const triggerMutation = useTriggerArchive();
-
-	const archivedCount = archives.filter((a: any) => a.status === 'archived').length;
-	const totalRecords = archives.reduce((sum: number, a: any) => sum + (a.recordsCount || 0), 0);
 
 	const handleTriggerArchive = async (values: any) => {
 		setTriggerLoading(true);
@@ -67,46 +43,6 @@ export default function ArchivesPage() {
 		}
 	};
 
-	const columns: ColumnsType<ArchiveRecord> = [
-		{ title: t('archives.columnId'), dataIndex: 'id', width: 120 },
-		{ title: t('archives.columnTenantId'), dataIndex: 'tenantId', ellipsis: true },
-		{ title: t('archives.columnDateRange'), dataIndex: 'dateRange' },
-		{
-			title: t('archives.columnRecordsCount'),
-			dataIndex: 'recordsCount',
-			width: 100,
-			render: (v: number) => v?.toLocaleString() || 0,
-		},
-		{
-			title: t('archives.columnStatus'),
-			dataIndex: 'status',
-			width: 100,
-			render: (v: string) => {
-				const s = statusMap[v] || { color: 'default', label: v };
-				return <Tag color={s.color}>{s.label}</Tag>;
-			},
-		},
-		{
-			title: t('archives.columnCreatedAt'),
-			dataIndex: 'createdAt',
-			width: 180,
-			render: (v: string) => new Date(v).toLocaleString(),
-		},
-		{
-			title: t('archives.columnCompletedAt'),
-			dataIndex: 'completedAt',
-			width: 180,
-			render: (v: string) => (v ? new Date(v).toLocaleString() : '-'),
-		},
-		{
-			title: t('archives.columnHash'),
-			dataIndex: 'hash',
-			width: 160,
-			ellipsis: true,
-			render: (v: string) => v || '-',
-		},
-	];
-
 	return (
 		<Can denyAuditor>
 			<div>
@@ -117,9 +53,23 @@ export default function ArchivesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('archives.statArchivedBatches')}
-								value={archivedCount}
-								valueStyle={{ color: 'var(--color-success)' }}
+								title={t('archives.statEnabled')}
+								value={
+									archiveStatus
+										? archiveStatus.enabled
+											? t('archives.enabled')
+											: t('archives.disabled')
+										: '-'
+								}
+								valueStyle={
+									archiveStatus
+										? {
+												color: archiveStatus.enabled
+													? 'var(--color-success)'
+													: 'var(--color-warning)',
+											}
+										: undefined
+								}
 								prefix={<FileZipOutlined />}
 							/>
 						</Card>
@@ -127,8 +77,9 @@ export default function ArchivesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('archives.statTotalRecords')}
-								value={totalRecords}
+								title={t('archives.statRetentionDays')}
+								value={archiveStatus?.days ?? '-'}
+								suffix={archiveStatus ? t('archives.daysUnit') : undefined}
 								prefix={<HistoryOutlined />}
 							/>
 						</Card>
@@ -136,10 +87,15 @@ export default function ArchivesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('archives.statPending')}
-								value={archives.filter((a: any) => a.status === 'pending').length}
-								valueStyle={{ color: 'var(--color-warning)' }}
-								prefix={<CloudUploadOutlined />}
+								title={t('archives.statLastArchive')}
+								value={
+									!archiveStatus
+										? '-'
+										: typeof archiveStatus.lastArchive === 'number' && archiveStatus.lastArchive > 0
+											? new Date(archiveStatus.lastArchive).toLocaleString()
+											: t('archives.neverArchived')
+								}
+								prefix={<SyncOutlined />}
 							/>
 						</Card>
 					</Col>
@@ -161,34 +117,16 @@ export default function ArchivesPage() {
 					type="info"
 					showIcon
 					className="mb-4"
-				/>
-
-				<Card
-					title={t('archives.listTitle')}
-					extra={
-						<Space>
-							<Button
-								type="primary"
-								icon={<PlayCircleOutlined />}
-								onClick={() => setModalVisible(true)}
-							>
-								{t('archives.triggerArchive')}
-							</Button>
-						</Space>
+					action={
+						<Button
+							type="primary"
+							icon={<PlayCircleOutlined />}
+							onClick={() => setModalVisible(true)}
+						>
+							{t('archives.triggerArchive')}
+						</Button>
 					}
-				>
-					<DataTable
-						rowKey="id"
-						columns={columns}
-						dataSource={archives}
-						loading={isLoading}
-						pagination={{
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-						}}
-						scroll={{ x: 900 }}
-					/>
-				</Card>
+				/>
 
 				{chain && (
 					<Card title={t('archives.recentVerifications')} className="mt-4">

@@ -289,9 +289,9 @@ function SiemConnectorsTab() {
 			message.success(
 				t('settings.testResult', {
 					status:
-						(res as any)?.data?.testStatus === 'passed'
+						(res as any)?.testStatus === 'passed'
 							? t('settings.testPassed')
-							: (res as any)?.data?.testStatus,
+							: (res as any)?.testStatus,
 				}),
 			);
 		} catch {

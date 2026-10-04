@@ -82,7 +82,7 @@ export default function AnomalyDetailDrawer({
 		setLoading(true);
 		try {
 			const res = await getAnomalyById(id);
-			setDetail(res?.data || null);
+			setDetail(res || null);
 		} catch {
 			message.error(t('anomalies.fetchDetailFailed'));
 		} finally {
@@ -94,7 +94,7 @@ export default function AnomalyDetailDrawer({
 		setLoading(true);
 		try {
 			const res = await getAnomalyTimeline(id);
-			setTimeline(res?.data || null);
+			setTimeline(res || null);
 		} catch {
 			message.error(t('anomalies.fetchTimelineFailed'));
 		} finally {

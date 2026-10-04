@@ -146,7 +146,7 @@ export function useDSARs(params: {
 	const { page = 1, pageSize = 10, status, type } = params;
 	return useQuery({
 		queryKey: ['dsars', { page, pageSize, status, type }],
-		queryFn: () => getDSARs({ page, pageSize, status, type } as any),
+		queryFn: () => getDSARs({ page, page_size: pageSize, status, type } as any),
 		staleTime: 10_000,
 	});
 }
@@ -155,8 +155,9 @@ export function useDSARDetail(id: string | null) {
 	return useQuery({
 		queryKey: ['dsar', id],
 		queryFn: async () => {
+			// 共享客户端已解包信封，直接使用响应载荷（勿再取 .data）
 			const [detail, status] = await Promise.all([getDSARById(id!), getDSARStatus(id!)]);
-			return { detail: (detail as any)?.data || detail, status: (status as any)?.data || status };
+			return { detail, status };
 		},
 		enabled: !!id,
 	});
@@ -218,13 +219,19 @@ export function useEvidenceDetail(id: string | null) {
 // ============================================================
 // Archives
 // ============================================================
-export function useArchives() {
+export interface ArchiveStatus {
+	enabled: boolean;
+	days: number;
+	bucket?: string;
+	lastArchive?: number;
+}
+
+export function useArchiveStatus() {
 	return useQuery({
-		queryKey: ['archives'],
+		queryKey: ['archives', 'status'],
 		queryFn: async () => {
 			const res: any = await getArchiveStatus();
-			const list = Array.isArray(res) ? res : res.items || (res.data ? [res.data] : []);
-			return list;
+			return (res ?? null) as ArchiveStatus | null;
 		},
 		staleTime: 10_000,
 	});
@@ -410,7 +417,7 @@ export function useMerkleRoot() {
 		queryKey: ['merkle-root'],
 		queryFn: async () => {
 			const res: any = await getMerkleRoot();
-			return res.root || res.data?.root || 'N/A';
+			return res?.rootHash || 'N/A';
 		},
 		enabled: false,
 	});
@@ -431,7 +438,7 @@ export function useRetentionPolicy() {
 		queryKey: ['settings', 'retention-policy'],
 		queryFn: async () => {
 			const res = await getRetentionPolicy();
-			return (res as any)?.data || null;
+			return res ?? null;
 		},
 		staleTime: 30_000,
 	});

@@ -54,19 +54,19 @@ export default function DeliveryStatsPage() {
 		setLoading(true);
 		try {
 			const res = await adminNotificationsPlatformStats();
-			setNotifStats(res?.data || res);
+			setNotifStats(res);
 		} catch {
 			setNotifStats(null);
 		}
 		try {
 			const res = await notificationsReadReport();
-			setReadReport(res?.data || res);
+			setReadReport(res);
 		} catch {
 			setReadReport(null);
 		}
 		try {
 			const res = await adminCommunicationPlatformStats();
-			setCommStats(res?.data || res);
+			setCommStats(res);
 		} catch {
 			setCommStats(null);
 		}
@@ -78,7 +78,7 @@ export default function DeliveryStatsPage() {
 	}, []);
 
 	const deliveryData = useMemo(() => {
-		const total = notifStats?.total_sent || notifStats?.totalSent || 0;
+		const total = notifStats?.totalSent || 0;
 		const delivered = notifStats?.delivered || 0;
 		const failed = notifStats?.failed || 0;
 		const pending = Math.max(0, total - delivered - failed);
@@ -91,15 +91,15 @@ export default function DeliveryStatsPage() {
 	}, [notifStats, t]);
 
 	const readTrendData = useMemo(() => {
-		const timeline = readReport?.timeline || readReport?.read_timeline || [];
+		const timeline = readReport?.timeline || [];
 		return timeline.map((pt: any) => ({
 			date: pt.date || pt.timestamp || '',
-			readRate: pt.read_rate || pt.readRate || 0,
+			readRate: pt.readRate || 0,
 		}));
 	}, [readReport]);
 
 	const channelBreakdown = useMemo(() => {
-		const channels = commStats?.by_channel || commStats?.byChannel || {};
+		const channels = commStats?.byChannel || {};
 		return Object.entries(channels).map(([name, value]) => ({
 			name,
 			value: value as number,
@@ -109,10 +109,10 @@ export default function DeliveryStatsPage() {
 		}));
 	}, [commStats]);
 
-	const notifTotal = notifStats?.total_sent || notifStats?.totalSent || 0;
-	const readCount = readReport?.read_count || readReport?.readCount || 0;
-	const readRateVal = readReport?.read_rate || readReport?.readRate || 0;
-	const unreadCount = readReport?.unread_count || readReport?.unreadCount || 0;
+	const notifTotal = notifStats?.totalSent || 0;
+	const readCount = readReport?.readCount || 0;
+	const readRateVal = readReport?.readRate || 0;
+	const unreadCount = readReport?.unreadCount || 0;
 
 	const channelLabels: Record<string, string> = {
 		email: t('common.email'),
@@ -292,7 +292,7 @@ export default function DeliveryStatsPage() {
 						<Col xs={24}>
 							<Card title={t('notification.communicationPlatform')}>
 								<Row gutter={[16, 16]}>
-									{Object.entries(commStats.by_channel || commStats.byChannel || {}).map(
+									{Object.entries(commStats.byChannel || {}).map(
 										([ch, count]) => (
 											<Col xs={24} sm={8} lg={4} key={ch}>
 												<Card size="small" className="text-center">
@@ -324,11 +324,11 @@ export default function DeliveryStatsPage() {
 										</Card>
 									</Col>
 								</Row>
-								{commStats.delivery_rate != null && (
+								{commStats.deliveryRate != null && (
 									<div className="mt-4 flex items-center gap-2">
 										<span className="text-sm text-neutral-600">{t('notification.deliveryRate')}:</span>
-										<Tag color={commStats.delivery_rate >= 0.95 ? 'success' : 'warning'}>
-											{(commStats.delivery_rate * 100).toFixed(1)}%
+										<Tag color={commStats.deliveryRate >= 0.95 ? 'success' : 'warning'}>
+											{(commStats.deliveryRate * 100).toFixed(1)}%
 										</Tag>
 									</div>
 								)}

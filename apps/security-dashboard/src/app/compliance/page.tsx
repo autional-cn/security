@@ -9,6 +9,7 @@ import {
 	SafetyCertificateOutlined,
 	CheckCircleOutlined,
 	CloseCircleOutlined,
+	ExclamationCircleOutlined,
 	FileTextOutlined,
 	GlobalOutlined,
 	DatabaseOutlined,
@@ -121,14 +122,18 @@ export default function CompliancePage() {
 										(compliance as any).overallStatus === 'pass'
 											? t('status.passed')
 											: (compliance as any).overallStatus === 'warning'
-												? t('status.failed')
+												? t('status.warning')
 												: t('status.failed')
 									}
 									prefix={
 										(compliance as any).overallStatus === 'pass' ? (
 											<CheckCircleOutlined className="text-success" />
 										) : (
+											(compliance as any).overallStatus === 'warning' ? (
+											<ExclamationCircleOutlined className="text-warning" />
+										) : (
 											<CloseCircleOutlined className="text-danger" />
+										)
 										)
 									}
 								/>
@@ -215,12 +220,17 @@ export default function CompliancePage() {
 					columns={[
 						{ title: t('settings.retentionDays'), dataIndex: 'retentionPeriodDays' },
 						{ title: t('settings.dataRetention'), dataIndex: 'dataType' },
-						{ title: t('settings.autoArchive'), dataIndex: 'purpose' },
-						{ title: t('settings.archiveTarget'), dataIndex: 'legalBasis' },
+						{ title: t('settings.purpose'), dataIndex: 'purpose' },
+						{ title: t('settings.legalBasis'), dataIndex: 'legalBasis' },
 						{
 							title: t('anomalies.columnStatus'),
 							dataIndex: 'status',
-							render: (v: string) => <Tag color="success">{v}</Tag>,
+							render: (v: string) =>
+								v ? (
+									<Tag color={v === 'active' ? 'success' : 'default'}>{v}</Tag>
+								) : (
+									'-'
+								),
 						},
 					]}
 					dataSource={retentionPolicies || []}
@@ -249,7 +259,7 @@ export default function CompliancePage() {
 							render: (v: string) => <Tag>{v}</Tag>,
 						},
 						{
-							title: t('auditFindings.columnStatus'),
+							title: t('compliance.columnLastReviewed'),
 							dataIndex: 'lastReviewed',
 							render: (v: string) => (v ? dayjs(v).format('YYYY-MM-DD') : '-'),
 						},
@@ -279,8 +289,31 @@ export default function CompliancePage() {
 							dataIndex: 'status',
 							render: (v: string) => <Tag>{v}</Tag>,
 						},
-						{ title: t('settings.test'), dataIndex: 'testResult' },
-						{ title: t('archives.columnCreatedAt'), dataIndex: 'lastTestDate' },
+						{
+							title: t('compliance.columnTestResult'),
+							dataIndex: 'testResult',
+							render: (v: string) =>
+								v ? (
+									<Tag
+										color={
+											v === '通过' || v === 'passed'
+												? 'success'
+												: v === '失败' || v === 'failed'
+													? 'error'
+													: 'default'
+										}
+									>
+										{v}
+									</Tag>
+								) : (
+									'-'
+								),
+						},
+						{
+							title: t('compliance.columnLastTestDate'),
+							dataIndex: 'lastTestDate',
+							render: (v: string) => (v ? dayjs(v).format('YYYY-MM-DD') : '-'),
+						},
 					]}
 					dataSource={soxControls || []}
 					rowKey="controlId"
@@ -308,9 +341,17 @@ export default function CompliancePage() {
 								<Tag color={v === 'critical' ? 'red' : v === 'high' ? 'orange' : 'blue'}>{v}</Tag>
 							),
 						},
-						{ title: t('dsars.statTotal'), dataIndex: 'findings' },
-						{ title: t('settings.test'), dataIndex: 'testedAt' },
-						{ title: t('archives.columnCreatedAt'), dataIndex: 'nextTestDate' },
+						{ title: t('compliance.columnFindings'), dataIndex: 'findings' },
+						{
+							title: t('compliance.columnTestedAt'),
+							dataIndex: 'testedAt',
+							render: (v: string) => (v ? dayjs(v).format('YYYY-MM-DD') : '-'),
+						},
+						{
+							title: t('compliance.columnNextTestDate'),
+							dataIndex: 'nextTestDate',
+							render: (v: string) => (v ? dayjs(v).format('YYYY-MM-DD') : '-'),
+						},
 					]}
 					dataSource={penTests || []}
 					rowKey="reportId"

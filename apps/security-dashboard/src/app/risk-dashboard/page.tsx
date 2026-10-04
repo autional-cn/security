@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Row, Col, Statistic, Tag, Spin, Typography } from 'antd';
+import { Card, Row, Col, Statistic, Tag, Spin, Typography, Tooltip } from 'antd';
 import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { getRiskDashboard } from '@/lib/api';
 import { ConsolePageHeader } from '@autional-cn/ui';
+
+dayjs.extend(utc);
 
 const { Title } = Typography;
 
@@ -96,6 +100,11 @@ export default function RiskDashboardPage() {
 	const criticalCount = data?.scoreRanges.find((r) => r.range === 'critical')?.count || 0;
 	const highCount = data?.scoreRanges.find((r) => r.range === 'high')?.count || 0;
 
+	// 7 日趋势：桶键为后端 CountByDay 的 YYYY-MM-DD（+08 业务日界）；今日高亮同口径
+	const dayCounts = data?.dayCounts || [];
+	const maxCount = Math.max(...dayCounts.map((x) => x.count), 1);
+	const todayKey = dayjs().utcOffset(8).format('YYYY-MM-DD');
+
 	return (
 		<div>
 			<ConsolePageHeader
@@ -177,24 +186,26 @@ export default function RiskDashboardPage() {
 			<Card title="7 日趋势">
 				<div style={{ display: 'flex', gap: 4, alignItems: 'flex-end', height: 120 }}>
 					{(data?.dayCounts || []).map((d) => {
-						const maxCount = Math.max(...(data?.dayCounts || []).map((x) => x.count), 1);
 						const height = Math.max((d.count / maxCount) * 100, 4);
-						const isToday = d.date === new Date().toISOString().split('T')[0];
+						const bucketDay = String(d.date).slice(0, 10);
+						const isToday = bucketDay === todayKey;
 						return (
 							<div key={d.date} style={{ flex: 1, textAlign: 'center' }}>
-								<div
-									style={{
-										height: `${height}px`,
-										background: isToday ? '#1677ff' : '#91caff',
-										borderRadius: '4px 4px 0 0',
-										marginBottom: 4,
-									}}
-								/>
-								<span style={{ fontSize: 10 }}>{d.date.substring(5)}</span>
+								<Tooltip title={`${bucketDay} · ${d.count} 起`}>
+									<div
+										style={{
+											height: `${height}px`,
+											background: isToday ? '#1677ff' : '#91caff',
+											borderRadius: '4px 4px 0 0',
+											marginBottom: 4,
+										}}
+									/>
+								</Tooltip>
+								<span style={{ fontSize: 10 }}>{bucketDay.slice(5)}</span>
 							</div>
 						);
 					})}
-					{!data?.dayCounts?.length && <span>暂无数据</span>}
+					{!dayCounts.length && <span>暂无数据</span>}
 				</div>
 			</Card>
 		</div>

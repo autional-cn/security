@@ -122,7 +122,7 @@ export default function OverviewPage() {
 		const totalLogs = auditData?.totalLogs || 0;
 		const openAnomalies = anomalyData?.total || anomalyData?.items?.length || 0;
 		const complianceScore = complianceData?.complianceScore || 0;
-		const activeSessions = sessionData?.count || sessionData?.data?.count || 0;
+		const activeSessions = sessionData?.count || 0;
 
 		// 本租户链快照：无数据（未加载/未生成链）不误报；快照断裂计 1 项
 		const hashChainValid = chain?.isValid !== false;

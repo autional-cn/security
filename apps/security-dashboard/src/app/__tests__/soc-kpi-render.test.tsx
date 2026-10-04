@@ -21,13 +21,15 @@ vi.mock('@/hooks/use-security-queries', () => ({
 
 import SocKpiPage from '../soc-kpi/page';
 
+// 夹具键名必须与共享 client 解包后的 camelCase 契约一致（S-52）——
+// 若再退回 snake_case，页面读值将回落 '-'，下方数值断言即失败。
 function mockKpiLoaded(statsOverrides: Record<string, any> = {}) {
 	mockUseAuditStats.mockReturnValue({
 		data: {
-			total_logs: 5000,
-			today: 120,
-			active_tenants: 15,
-			avg_response_ms: 45,
+			totalLogs: 5000,
+			todayEntries: 216,
+			activeTenants: 315,
+			avgResponseMs: 45,
 			...statsOverrides,
 		},
 		isLoading: false,
@@ -66,6 +68,15 @@ describe('SocKpiPage', () => {
 		expect(screen.getByText('Total Anomalies')).toBeInTheDocument();
 		expect(screen.getByText('Total Alerts')).toBeInTheDocument();
 		expect(screen.getByText('MTTD (est.)')).toBeInTheDocument();
+	});
+
+	it('renders Today Entries / Active Tenants values from camelCase fields (S-52)', () => {
+		mockKpiLoaded();
+		render(<SocKpiPage />);
+		expect(screen.getByText('Today Entries')).toBeInTheDocument();
+		expect(screen.getByText('216')).toBeInTheDocument();
+		expect(screen.getByText('Active Tenants')).toBeInTheDocument();
+		expect(screen.getByText('315')).toBeInTheDocument();
 	});
 
 	it('shows loading spinner when data is loading', () => {

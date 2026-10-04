@@ -20,7 +20,7 @@ export default function SocKpiPage() {
 	const { data: anomaliesData } = useAnomalies({ page: 1, pageSize: 1 });
 	const { data: alertsData } = useAlerts({ page: 1, page_size: 1 });
 
-	const stats = (statsData as any)?.data || statsData || {};
+	const stats = (statsData as any) || {};
 	const anomalyCount = ((anomaliesData as any)?.total || 0) as number;
 	const alertCount = ((alertsData as any)?.total || 0) as number;
 
@@ -49,7 +49,7 @@ export default function SocKpiPage() {
 		{
 			key: 'mttd',
 			title: t('socKpi.mttd', 'MTTD (est.)'),
-			value: stats?.mttd_minutes ? `${stats.mttd_minutes}m` : 'N/A',
+			value: stats?.mttdMinutes ? `${stats.mttdMinutes}m` : 'N/A',
 			icon: <BugOutlined />,
 			color: 'var(--color-chart-7)',
 		},
@@ -91,17 +91,17 @@ export default function SocKpiPage() {
 						{
 							key: 'today_entries',
 							label: t('socKpi.todayEntries', 'Today Entries'),
-							value: stats?.today ?? '-',
+							value: stats?.todayEntries ?? '-',
 						},
 						{
 							key: 'active_tenants',
 							label: t('socKpi.activeTenants', 'Active Tenants'),
-							value: stats?.active_tenants ?? '-',
+							value: stats?.activeTenants ?? '-',
 						},
 						{
 							key: 'avg_response',
 							label: t('socKpi.avgResponse', 'Avg Response Time (est.)'),
-							value: stats?.avg_response_ms ? `${stats.avg_response_ms}ms` : '-',
+							value: stats?.avgResponseMs ? `${stats.avgResponseMs}ms` : '-',
 						},
 					]}
 					columns={[

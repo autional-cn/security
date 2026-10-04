@@ -72,14 +72,14 @@ function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 		},
 		{
 			title: t('nhi.type', 'Type'),
-			dataIndex: 'workload_subtype',
-			key: 'workload_subtype',
+			dataIndex: 'workloadSubtype',
+			key: 'workloadSubtype',
 			ellipsis: true,
 		},
 		{
 			title: t('nhi.created', 'Created'),
-			dataIndex: 'created_at',
-			key: 'created_at',
+			dataIndex: 'createdAt',
+			key: 'createdAt',
 			ellipsis: true,
 		},
 		{
@@ -146,14 +146,14 @@ function RobotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 		},
 		{
 			title: t('nhi.type', 'Type'),
-			dataIndex: 'workload_subtype',
-			key: 'workload_subtype',
+			dataIndex: 'workloadSubtype',
+			key: 'workloadSubtype',
 			ellipsis: true,
 		},
 		{
 			title: t('nhi.created', 'Created'),
-			dataIndex: 'created_at',
-			key: 'created_at',
+			dataIndex: 'createdAt',
+			key: 'createdAt',
 			ellipsis: true,
 		},
 		{
@@ -250,14 +250,14 @@ function IotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 		},
 		{
 			title: t('nhi.type', 'Type'),
-			dataIndex: 'workload_subtype',
-			key: 'workload_subtype',
+			dataIndex: 'workloadSubtype',
+			key: 'workloadSubtype',
 			ellipsis: true,
 		},
 		{
 			title: t('nhi.created', 'Created'),
-			dataIndex: 'created_at',
-			key: 'created_at',
+			dataIndex: 'createdAt',
+			key: 'createdAt',
 			ellipsis: true,
 		},
 		{
@@ -314,13 +314,9 @@ export default function NhiPage() {
 	const { data: robotsData } = useRobots({ page_size: 100 });
 	const { data: iotsData } = useIots({ page_size: 100 });
 
-	const agentCount = ((agentsData as any)?.total ||
-		(agentsData as any)?.data?.total ||
-		0) as number;
-	const robotCount = ((robotsData as any)?.total ||
-		(robotsData as any)?.data?.total ||
-		0) as number;
-	const iotCount = ((iotsData as any)?.total || (iotsData as any)?.data?.total || 0) as number;
+	const agentCount = ((agentsData as any)?.total || 0) as number;
+	const robotCount = ((robotsData as any)?.total || 0) as number;
+	const iotCount = ((iotsData as any)?.total || 0) as number;
 
 	const countActive = (data: any): number => {
 		const items = extractList(data) || [];

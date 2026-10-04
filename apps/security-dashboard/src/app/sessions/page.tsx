@@ -44,7 +44,7 @@ export default function SessionsPage() {
 
 	const items = (data as any)?.items || [];
 	const total = (data as any)?.total || (data as any)?.pagination?.total || items.length;
-	const activeCount = (activeCountData as any)?.count || (activeCountData as any)?.data?.count || 0;
+	const activeCount = (activeCountData as any)?.count || 0;
 
 	const handleTerminate = async (id: string) => {
 		Modal.confirm({

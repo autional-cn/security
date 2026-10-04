@@ -155,7 +155,15 @@ export default function UserSecurityProfilePage() {
 					>
 						<div className="mb-4">
 							<div className="text-sm text-neutral-600 mb-2">{t('usersProfile.accountStatus')}</div>
-							{statusBadge(securityStatus.status || securityStatus.account_status || 'unknown')}
+							{statusBadge(
+								securityStatus.isLocked
+									? 'locked'
+									: securityStatus.canLogin === true
+										? 'active'
+										: securityStatus.canLogin === false
+											? 'disabled'
+											: ''
+							)}
 						</div>
 						<Descriptions column={1} size="small" bordered>
 							<Descriptions.Item label={t('usersProfile.mfaEnabled')}>
@@ -170,19 +178,19 @@ export default function UserSecurityProfilePage() {
 								)}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.lastLogin')}>
-								{securityStatus.lastLogin || securityStatus.last_login || '-'}
+								{securityStatus.lastLogin || '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.lastFailedLogin')}>
-								{securityStatus.lastFailedLogin || securityStatus.last_failed_login || '-'}
+								{securityStatus.lastFailedLogin || '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.failedLoginCount')}>
-								{securityStatus.failedLoginCount ?? securityStatus.failed_login_count ?? 0}
+								{securityStatus.loginFailCount ?? 0}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.passwordChangedAt')}>
-								{securityStatus.passwordChangedAt || securityStatus.password_changed_at || '-'}
+								{securityStatus.passwordChangedAt || '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.loginCount')}>
-								{securityStatus.loginCount ?? securityStatus.login_count ?? '-'}
+								{securityStatus.loginCount ?? '-'}
 							</Descriptions.Item>
 						</Descriptions>
 					</Card>
@@ -272,12 +280,11 @@ export default function UserSecurityProfilePage() {
 					>
 						<Descriptions column={{ xs: 1, sm: 2, md: 3 }} size="small" bordered>
 							<Descriptions.Item label={t('usersProfile.minLength')}>
-								{passwordPolicy.minLength ?? passwordPolicy.min_length ?? '-'}
+								{passwordPolicy.minLength ?? '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.requireUppercase')}>
-								{passwordPolicy.requireUppercase != null ||
-								passwordPolicy.require_uppercase != null ? (
-									passwordPolicy.requireUppercase || passwordPolicy.require_uppercase ? (
+								{passwordPolicy.requireUpper != null ? (
+									passwordPolicy.requireUpper ? (
 										<Tag color="green">{t('common.yes')}</Tag>
 									) : (
 										<Tag color="default">{t('common.no')}</Tag>
@@ -287,8 +294,8 @@ export default function UserSecurityProfilePage() {
 								)}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.requireDigit')}>
-								{passwordPolicy.requireDigit != null || passwordPolicy.require_digit != null ? (
-									passwordPolicy.requireDigit || passwordPolicy.require_digit ? (
+								{passwordPolicy.requireDigit != null ? (
+									passwordPolicy.requireDigit ? (
 										<Tag color="green">{t('common.yes')}</Tag>
 									) : (
 										<Tag color="default">{t('common.no')}</Tag>
@@ -298,9 +305,8 @@ export default function UserSecurityProfilePage() {
 								)}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.requireSpecialChar')}>
-								{passwordPolicy.requireSpecialChar != null ||
-								passwordPolicy.require_special_char != null ? (
-									passwordPolicy.requireSpecialChar || passwordPolicy.require_special_char ? (
+								{passwordPolicy.requireSpecial != null ? (
+									passwordPolicy.requireSpecial ? (
 										<Tag color="green">{t('common.yes')}</Tag>
 									) : (
 										<Tag color="default">{t('common.no')}</Tag>
@@ -310,18 +316,16 @@ export default function UserSecurityProfilePage() {
 								)}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.maxAgeDays')}>
-								{passwordPolicy.maxAgeDays ?? passwordPolicy.max_age_days ?? '-'}
+								{passwordPolicy.expiryDays ?? '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.maxFailedAttempts')}>
-								{passwordPolicy.maxFailedAttempts ?? passwordPolicy.max_failed_attempts ?? '-'}
+								{securityStatus.maxAttempts ?? '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.lockoutDurationMin')}>
-								{passwordPolicy.lockoutDurationMin ?? passwordPolicy.lockout_duration_min ?? '-'}
+								{securityStatus.lockoutDurationMinutes ?? '-'}
 							</Descriptions.Item>
 							<Descriptions.Item label={t('usersProfile.passwordHistoryCount')}>
-								{passwordPolicy.passwordHistoryCount ??
-									passwordPolicy.password_history_count ??
-									'-'}
+								{passwordPolicy.historyCount ?? '-'}
 							</Descriptions.Item>
 						</Descriptions>
 					</Card>

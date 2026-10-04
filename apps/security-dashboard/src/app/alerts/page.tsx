@@ -30,15 +30,15 @@ interface AlertItem {
 	title: string;
 	description: string;
 	source?: string;
-	tenant_id: string;
+	tenantId: string;
 	status: string;
 	assignee?: string;
-	created_at: number;
-	updated_at?: number;
-	acknowledged_at?: number;
-	escalated_at?: number;
-	resolved_at?: number;
-	resolved_by?: string;
+	createdAt: string;
+	updatedAt?: string;
+	acknowledgedAt?: string;
+	escalatedAt?: string;
+	resolvedAt?: string;
+	resolvedBy?: string;
 }
 
 const severityColors: Record<string, string> = {
@@ -107,8 +107,8 @@ export default function AlertsPage() {
 		const escalated = items.filter((i: AlertItem) => i.status === 'escalated').length;
 		const resolvedToday = items.filter((i: AlertItem) => {
 			if (i.status !== 'resolved') return false;
-			if (!i.resolved_at) return false;
-			return dayjs(i.resolved_at).isSame(dayjs(), 'day');
+			if (!i.resolvedAt) return false;
+			return dayjs(i.resolvedAt).isSame(dayjs(), 'day');
 		}).length;
 		return { open, acknowledged, escalated, resolvedToday };
 	}, [items]);
@@ -186,9 +186,9 @@ export default function AlertsPage() {
 		},
 		{
 			title: t('alerts.columnCreatedAt'),
-			dataIndex: 'created_at',
+			dataIndex: 'createdAt',
 			width: 170,
-			render: (v: number) => (v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : '-'),
+			render: (v: string) => (v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : '-'),
 		},
 		{
 			title: t('common.actions'),
@@ -467,39 +467,39 @@ export default function AlertsPage() {
 							</Descriptions.Item>
 						)}
 						<Descriptions.Item label={t('alerts.detailTenant')}>
-							{selectedAlert.tenant_id}
+							{selectedAlert.tenantId}
 						</Descriptions.Item>
 						<Descriptions.Item label={t('alerts.columnAssignee')}>
 							{selectedAlert.assignee || '-'}
 						</Descriptions.Item>
 						<Descriptions.Item label={t('alerts.detailCreatedAt')}>
-							{selectedAlert.created_at
-								? dayjs(selectedAlert.created_at).format('YYYY-MM-DD HH:mm:ss')
+							{selectedAlert.createdAt
+								? dayjs(selectedAlert.createdAt).format('YYYY-MM-DD HH:mm:ss')
 								: '-'}
 						</Descriptions.Item>
-						{selectedAlert.updated_at && selectedAlert.updated_at > 0 && (
+						{selectedAlert.updatedAt && (
 							<Descriptions.Item label={t('alerts.detailUpdatedAt')}>
-								{dayjs(selectedAlert.updated_at).format('YYYY-MM-DD HH:mm:ss')}
+								{dayjs(selectedAlert.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
 							</Descriptions.Item>
 						)}
-						{selectedAlert.acknowledged_at && (
+						{selectedAlert.acknowledgedAt && (
 							<Descriptions.Item label={t('alerts.detailConfirmedAt')}>
-								{dayjs(selectedAlert.acknowledged_at).format('YYYY-MM-DD HH:mm:ss')}
+								{dayjs(selectedAlert.acknowledgedAt).format('YYYY-MM-DD HH:mm:ss')}
 							</Descriptions.Item>
 						)}
-						{selectedAlert.escalated_at && (
+						{selectedAlert.escalatedAt && (
 							<Descriptions.Item label={t('alerts.detailEscalatedAt')}>
-								{dayjs(selectedAlert.escalated_at).format('YYYY-MM-DD HH:mm:ss')}
+								{dayjs(selectedAlert.escalatedAt).format('YYYY-MM-DD HH:mm:ss')}
 							</Descriptions.Item>
 						)}
-						{selectedAlert.resolved_at && (
+						{selectedAlert.resolvedAt && (
 							<Descriptions.Item label={t('alerts.detailResolvedAt')}>
-								{dayjs(selectedAlert.resolved_at).format('YYYY-MM-DD HH:mm:ss')}
+								{dayjs(selectedAlert.resolvedAt).format('YYYY-MM-DD HH:mm:ss')}
 							</Descriptions.Item>
 						)}
-						{selectedAlert.resolved_by && (
+						{selectedAlert.resolvedBy && (
 							<Descriptions.Item label={t('alerts.detailResolvedBy')}>
-								{selectedAlert.resolved_by}
+								{selectedAlert.resolvedBy}
 							</Descriptions.Item>
 						)}
 					</Descriptions>
