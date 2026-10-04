@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
-import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal, Alert } from 'antd';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal } from 'antd';
 import {
 	ClusterOutlined,
 	StopOutlined,
@@ -141,10 +141,9 @@ export default function SessionsPage() {
 
 				{queryFailed && (
 					<Alert
-						type="error"
-						showIcon
+						variant="danger"
+						title={t('sessions.fetchFailed')}
 						className="mb-4"
-						message={t('sessions.fetchFailed')}
 						action={
 							<Button
 								size="small"
@@ -156,7 +155,7 @@ export default function SessionsPage() {
 								{t('common.retry')}
 							</Button>
 						}
-					/>
+					 />
 				)}
 
 				<Row gutter={[16, 16]} className="mb-4">

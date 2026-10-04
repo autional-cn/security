@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Alert, Timeline } from 'antd';
+import { Card, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Timeline } from 'antd';
 import {
 	HistoryOutlined,
 	SafetyOutlined,
@@ -12,6 +12,7 @@ import {
 import { useAuth } from '@autional-cn/shared';
 import { useArchiveStatus, useTriggerArchive, useHashChain } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
+import { Alert } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
 
 const { Title, Text } = Typography;
@@ -115,10 +116,8 @@ export default function ArchivesPage() {
 				</Row>
 
 				<Alert
-					message={t('archives.alertTitle')}
-					description={t('archives.alertDescription')}
-					type="info"
-					showIcon
+					variant="info"
+					title={t('archives.alertTitle')}
 					className="mb-4"
 					action={
 						<Button
@@ -129,7 +128,9 @@ export default function ArchivesPage() {
 							{t('archives.triggerArchive')}
 						</Button>
 					}
-				/>
+				>
+					{t('archives.alertDescription')}
+				</Alert>
 
 				{chain && (
 					<Card title={t('archives.recentVerifications')} className="mt-4">

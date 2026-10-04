@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Row, Col, Statistic, Tag, Spin, Tooltip, Alert, Button } from 'antd';
+import { Card, Row, Col, Statistic, Tag, Spin, Tooltip, Button } from 'antd';
 import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { getRiskDashboard } from '@/lib/api';
-import { ConsolePageHeader } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { UserIdentity } from '@/components/UserIdentity';
 
 dayjs.extend(utc);
@@ -117,16 +117,16 @@ export default function RiskDashboardPage() {
 					description="租户风险全景视图 — 今日事件 / 评分分布 / 高风险用户 Top 5"
 				/>
 				<Alert
-					type="error"
-					showIcon
-					message="风险数据加载失败"
-					description={error}
+					variant="danger"
+					title="风险数据加载失败"
 					action={
 						<Button size="small" onClick={load}>
 							重试
 						</Button>
 					}
-				/>
+				>
+					{error}
+				</Alert>
 			</div>
 		);
 	};

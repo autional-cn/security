@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Card, Col, Row, Statistic, List, Tag, Empty, Spin, Progress, Badge, Timeline, Alert, Button, Skeleton } from 'antd';
+import { Card, Col, Row, Statistic, List, Tag, Empty, Spin, Progress, Badge, Timeline, Button, Skeleton } from 'antd';
 import {
 	FileSearchOutlined,
 	WarningOutlined,
@@ -42,7 +42,7 @@ import { useHashChain, useComplianceSelfScore } from '@/hooks/use-security-queri
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
-import { ConsolePageHeader } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { UserIdentity } from '@/components/UserIdentity';
 import { anomalyDescription } from '@/lib/anomaly';
 import { anomalyTypeLabel, severityColor, severityLabel } from '@/lib/enums';
@@ -474,16 +474,16 @@ export default function OverviewPage() {
 								{gatewayError ? (
 									/* S-02：接口失败（非 JSON/网络错误）≠ 服务不健康——错误态 + 重试，不渲染空态假死 */
 									<Alert
-										type="error"
-										showIcon
-										message={t('overview.cannotGetStatus')}
-										description={gatewayErrorObj instanceof Error ? gatewayErrorObj.message : undefined}
+										variant="danger"
+										title={t('overview.cannotGetStatus')}
 										action={
 											<Button size="small" onClick={() => refetchGateway()}>
 												{t('common.retry')}
 											</Button>
 										}
-									/>
+									>
+										{gatewayErrorObj instanceof Error ? gatewayErrorObj.message : undefined}
+									</Alert>
 								) : serviceStatuses.length > 0 ? (
 									<div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-3">
 										{serviceStatuses.map((svc: any) => (
