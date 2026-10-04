@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route, Outlet, useLocation, useParams } from 'react-router';
 import AppLayout from './components/AppLayout';
+import NoAccessPage from './components/NoAccessPage';
 import {
 	SecurityGuard,
 	SecurityAdminGuard,
@@ -101,8 +102,9 @@ export default function App() {
 					<Route
 						path="/:tenantSlug"
 						element={
-							/* notFound：确定性未知 slug（by-slug 404）原地渲染 404，不发弹跳（F-W6） */
-							<SecurityGuard notFound={<NotFoundPage />}>
+							/* notFound：确定性未知 slug（by-slug 404）原地渲染 404，不发弹跳（F-W6）
+							   fallback：非准入角色的兜底页（S-75），取代整页白屏死路 */
+							<SecurityGuard notFound={<NotFoundPage />} fallback={<NoAccessPage />}>
 								<LayoutWrapper />
 							</SecurityGuard>
 						}
@@ -253,7 +255,7 @@ function appRoutes() {
 			<Route
 				path="archives"
 				element={
-					<SecurityAdminGuard>
+					<SecurityAdminGuard fallback={<NoAccessPage showHome />}>
 						<PageTransition>
 							<Suspense fallback={<PageLoader />}>
 								<ArchivesPage />
@@ -315,7 +317,7 @@ function appRoutes() {
 			<Route
 				path="soc-kpi"
 				element={
-					<SecurityAdminGuard>
+					<SecurityAdminGuard fallback={<NoAccessPage showHome />}>
 						<PageTransition>
 							<Suspense fallback={<PageLoader />}>
 								<SocKpiPage />

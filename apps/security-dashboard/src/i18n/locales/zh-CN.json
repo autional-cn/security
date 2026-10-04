@@ -650,7 +650,9 @@
     "countSuffix": "次"
   },
   "roleGuard": {
-    "noAccess": "抱歉，您没有权限访问安全运营中心。需要 security_admin、admin 或 super_admin 角色。"
+    "noAccess": "抱歉，您当前账号的角色无权访问此页面。如需访问，请切换具备相应权限的账号。",
+    "switchAccount": "切换账号",
+    "backHome": "返回首页"
   },
   "sse": {
     "realtimeEvent": "实时安全事件",
@@ -1420,7 +1422,9 @@
   "reports.noRiskData": "暂无风险数据",
   "reports.noRecommendations": "暂无建议",
   "reports.countSuffix": "次",
-  "roleGuard.noAccess": "抱歉，您没有权限访问安全运营中心。需要 security_admin、admin 或 super_admin 角色。",
+  "roleGuard.backHome": "返回首页",
+  "roleGuard.noAccess": "抱歉，您当前账号的角色无权访问此页面。如需访问，请切换具备相应权限的账号。",
+  "roleGuard.switchAccount": "切换账号",
   "sse.realtimeEvent": "实时安全事件",
   "sse.connected": "SSE 实时事件流已连接",
   "sse.disconnected": "SSE 未连接",

@@ -13,12 +13,30 @@ interface CanProps {
 	children: React.ReactNode;
 }
 
+/** 站点角色层级：auditor（只读） < security_admin < super_admin；未知角色 rank=0（fail-closed） */
+const ROLE_RANK: Record<string, number> = {
+	auditor: 1,
+	security_admin: 2,
+	super_admin: 3,
+};
+
+const MIN_ROLE_RANK: Record<NonNullable<CanProps['minRole']>, number> = {
+	security_admin: 2,
+	super_admin: 3,
+};
+
+function meetsMinRole(role: string | null, minRole: NonNullable<CanProps['minRole']>): boolean {
+	const rank = role ? (ROLE_RANK[role] ?? 0) : 0;
+	return rank >= MIN_ROLE_RANK[minRole];
+}
+
 /**
  * 权限守卫组件。
  *
  * 规则（优先级从高到低）:
  * 1. `denyAuditor` → auditor 被拒绝（所有写操作都应设置）
- * 2. `minRole` → 要求最低角色
+ * 2. `minRole` → 角色层级门槛（auditor < security_admin < super_admin）；
+ *    非层级内角色/空角色一律拒绝（fail-closed）
  * 3. `permission` → 要求具体权限字符串
  *
  * 用法:
@@ -41,8 +59,8 @@ export function Can({
 		return <>{fallback}</>;
 	}
 
-	// 角色门槛
-	if (minRole === 'security_admin' && role === 'auditor') {
+	// 角色层级门槛
+	if (minRole && !meetsMinRole(role, minRole)) {
 		return <>{fallback}</>;
 	}
 

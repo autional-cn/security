@@ -650,7 +650,9 @@
     "countSuffix": " times"
   },
   "roleGuard": {
-    "noAccess": "Sorry, you do not have permission to access the Security Operations Center. Requires security_admin, admin, or super_admin role."
+    "noAccess": "Sorry, your current account role cannot access this page. To continue, switch to an account with the required permissions.",
+    "switchAccount": "Switch Account",
+    "backHome": "Back to Home"
   },
   "sse": {
     "realtimeEvent": "Real-time Security Event",
@@ -1420,7 +1422,9 @@
   "reports.noRiskData": "No risk data",
   "reports.noRecommendations": "No recommendations",
   "reports.countSuffix": " times",
-  "roleGuard.noAccess": "Sorry, you do not have permission to access the Security Operations Center. Requires security_admin, admin, or super_admin role.",
+  "roleGuard.backHome": "Back to Home",
+  "roleGuard.noAccess": "Sorry, your current account role cannot access this page. To continue, switch to an account with the required permissions.",
+  "roleGuard.switchAccount": "Switch Account",
   "sse.realtimeEvent": "Real-time Security Event",
   "sse.connected": "SSE event stream connected",
   "sse.disconnected": "SSE not connected",
