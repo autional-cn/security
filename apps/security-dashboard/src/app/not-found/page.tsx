@@ -2,7 +2,8 @@
 
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Result } from 'antd';
+import { Button } from 'antd';
+import { Result } from '@autional-cn/ui';
 import { useTenantSlugFromUrl } from '@autional-cn/shared';
 
 /**
@@ -22,10 +23,11 @@ export default function NotFoundPage() {
 	return (
 		<div className="flex min-h-[60vh] items-center justify-center">
 			<Result
-				status="404"
-				title="404"
-				subTitle={t('notFound.description', '页面不存在或租户无效，请检查访问地址。')}
-				extra={
+				variant="info"
+				className="w-full max-w-md"
+				title={<span className="text-4xl font-bold">404</span>}
+				description={t('notFound.description', '页面不存在或租户无效，请检查访问地址。')}
+				action={
 					<Button type="primary" onClick={() => navigate(home)}>
 						{t('notFound.back', '返回首页')}
 					</Button>

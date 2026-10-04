@@ -2,7 +2,8 @@
 
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Result } from 'antd';
+import { Button } from 'antd';
+import { Result } from '@autional-cn/ui';
 import { useLogout, useTenantSlugFromUrl } from '@autional-cn/shared';
 
 interface NoAccessPageProps {
@@ -29,13 +30,14 @@ export default function NoAccessPage({ showHome = false }: NoAccessPageProps) {
 	return (
 		<div className="flex min-h-[60vh] items-center justify-center">
 			<Result
-				status="403"
-				title="403"
-				subTitle={t(
+				variant="warning"
+				className="w-full max-w-md"
+				title={<span className="text-4xl font-bold">403</span>}
+				description={t(
 					'roleGuard.noAccess',
 					'抱歉，您当前账号的角色无权访问此页面。如需访问，请切换具备相应权限的账号。',
 				)}
-				extra={[
+				action={[
 					<Button type="primary" key="switch-account" onClick={logout}>
 						{t('roleGuard.switchAccount', '切换账号')}
 					</Button>,
