@@ -222,7 +222,7 @@ export default function SSEEventStream() {
 			<div className="mt-2 pt-2 border-t border-neutral-200 text-right">
 				<Link
 					to={`/${slug ?? ''}/audit-logs`}
-					className="text-xs text-blue-600 hover:opacity-80"
+					className="text-xs text-primary-600 hover:opacity-80"
 				>
 					{t('sse.viewAuditLogs')}
 				</Link>

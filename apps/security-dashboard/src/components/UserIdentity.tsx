@@ -40,7 +40,7 @@ export function UserIdentity({ userId, link = true }: { userId?: string | null; 
 
 	if (!link) return body;
 	return (
-		<Link to={`/${slug ?? ''}/users/${userId}/profile`} className="text-blue-600 hover:opacity-80">
+		<Link to={`/${slug ?? ''}/users/${userId}/profile`} className="text-primary-600 hover:opacity-80">
 			{body}
 		</Link>
 	);

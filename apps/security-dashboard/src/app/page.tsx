@@ -339,7 +339,7 @@ export default function OverviewPage() {
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.hashChainIntegrity')}</span>
 									{stats.hashChainValid === null ? (
-										<QuestionCircleOutlined className="text-neutral-400" />
+										<QuestionCircleOutlined className="text-neutral-500" />
 									) : stats.hashChainValid ? (
 										<CheckCircleOutlined className="text-success" />
 									) : (
@@ -570,7 +570,7 @@ export default function OverviewPage() {
 											<div>
 												<Link
 													to={`/${slug ?? ''}/${drillRoute}`}
-													className="text-sm font-medium text-blue-600 hover:opacity-80"
+													className="text-sm font-medium text-primary-600 hover:opacity-80"
 												>
 													{evt.title}
 												</Link>
@@ -606,7 +606,7 @@ export default function OverviewPage() {
 													{/* S-73：类型标签接异常列表页；S-05：主体用户可读身份 */}
 													<Link
 														to={`/${slug ?? ''}/anomalies`}
-														className="font-medium text-sm text-blue-600 hover:opacity-80"
+														className="font-medium text-sm text-primary-600 hover:opacity-80"
 													>
 														{anomalyTypeLabel(t, item.type)}
 													</Link>
