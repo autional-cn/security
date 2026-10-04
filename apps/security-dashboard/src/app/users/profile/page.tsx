@@ -3,10 +3,11 @@
 import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Row, Col, Statistic, Descriptions, Badge, Spin, Alert, Tag } from 'antd';
+import { Alert, Button, Card, Row, Col, Statistic, Descriptions, Badge, Spin, Tag } from 'antd';
 import {
+	HistoryOutlined,
 	SafetyOutlined,
 	MobileOutlined,
 	DesktopOutlined,
@@ -14,7 +15,9 @@ import {
 	WarningOutlined,
 	LockOutlined,
 } from '@ant-design/icons';
+import { useTenantSlug } from '@autional-cn/shared';
 import { getSecurityUserProfile } from '@/lib/api';
+import { UserIdentity } from '@/components/UserIdentity';
 import { useTranslation } from 'react-i18next';
 
 const deviceColumns = (t: (k: string) => string) => [
@@ -67,6 +70,7 @@ const sessionColumns = (t: (k: string) => string) => [
 export default function UserSecurityProfilePage() {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
+	const slug = useTenantSlug();
 
 	const { data, isLoading, error, isError } = useQuery({
 		queryKey: ['users', 'profile', id],
@@ -110,6 +114,10 @@ export default function UserSecurityProfilePage() {
 	const anomalyCount = typeof profile.anomalyCount === 'number' ? profile.anomalyCount : 0;
 	const passwordPolicy = profile.passwordPolicy || {};
 	const partialErrors = (profile.partialErrors as string[]) || [];
+	// S-70：组合端点部分失败时（partial_errors 形如 "devices: upstream returned 403"），
+	// 对应区块空态不得断言「暂无 X」——区分「无数据/取数失败」
+	const devicesUnavailable = partialErrors.some((e) => e.startsWith('devices'));
+	const sessionsUnavailable = partialErrors.some((e) => e.startsWith('sessions'));
 
 	const statusBadge = (status: string) => {
 		switch (status) {
@@ -129,7 +137,23 @@ export default function UserSecurityProfilePage() {
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-neutral-600 ml-2">ID: {id}</span>}</>}
+				title={
+					<>
+						{t('usersProfile.title')}
+						{id && (
+							<span className="text-sm text-neutral-600 ml-2">
+								<UserIdentity userId={id} link={false} />
+							</span>
+						)}
+					</>
+				}
+				actions={
+					id ? (
+						<Link to={`/${slug ?? ''}/users/${id}/timeline`}>
+							<Button icon={<HistoryOutlined />}>{t('usersProfile.viewTimeline')}</Button>
+						</Link>
+					) : undefined
+				}
 			/>
 
 			{partialErrors.length > 0 && (
@@ -236,7 +260,9 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-neutral-600 py-4">{t('usersProfile.noDevices')}</div>
+							<div className="text-center text-neutral-600 py-4">
+								{devicesUnavailable ? t('usersProfile.devicesUnavailable') : t('usersProfile.noDevices')}
+							</div>
 						)}
 					</Card>
 				</Col>
@@ -262,7 +288,9 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-neutral-600 py-4">{t('usersProfile.noSessions')}</div>
+							<div className="text-center text-neutral-600 py-4">
+								{sessionsUnavailable ? t('usersProfile.sessionsUnavailable') : t('usersProfile.noSessions')}
+							</div>
 						)}
 					</Card>
 				</Col>

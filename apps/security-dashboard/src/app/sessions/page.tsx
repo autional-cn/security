@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal } from 'antd';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal, Alert } from 'antd';
 import {
 	ClusterOutlined,
 	StopOutlined,
@@ -18,6 +18,7 @@ import { useSessions, useActiveSessions, useTerminateSession } from '@/hooks/use
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
+import { PageScopeHint } from '@/components/PageScopeHint';
 
 interface SessionItem {
 	id: string;
@@ -38,13 +39,16 @@ export default function SessionsPage() {
 	const [pageSize, setPageSize] = useState(20);
 	const [keyword, setKeyword] = useState('');
 
-	const { data, isLoading, refetch } = useSessions({ page, pageSize, keyword });
-	const { data: activeCountData, refetch: refetchActive } = useActiveSessions();
+	const { data, isLoading, isError: sessionsError, refetch } = useSessions({ page, pageSize, keyword });
+	const { data: activeCountData, isError: activeError, refetch: refetchActive } = useActiveSessions();
 	const terminateMutation = useTerminateSession();
 
 	const items = (data as any)?.items || [];
 	const total = (data as any)?.total || (data as any)?.pagination?.total || items.length;
 	const activeCount = (activeCountData as any)?.count || 0;
+	// S-46：查询失败时不得渲染假 0（与「真为 0」不可分）——统计卡对失败源显示 '--'
+	const highRiskCount = items.filter((s: any) => s.riskScore >= 80).length;
+	const queryFailed = sessionsError || activeError;
 
 	const handleTerminate = async (id: string) => {
 		Modal.confirm({
@@ -135,12 +139,32 @@ export default function SessionsPage() {
 					}
 				/>
 
+				{queryFailed && (
+					<Alert
+						type="error"
+						showIcon
+						className="mb-4"
+						message={t('sessions.fetchFailed')}
+						action={
+							<Button
+								size="small"
+								onClick={() => {
+									refetch();
+									refetchActive();
+								}}
+							>
+								{t('common.retry')}
+							</Button>
+						}
+					/>
+				)}
+
 				<Row gutter={[16, 16]} className="mb-4">
 					<Col xs={24} sm={8}>
 						<Card>
 							<Statistic
 								title={t('sessions.activeSessions')}
-								value={activeCount}
+								value={activeError ? '--' : activeCount}
 								prefix={<ClusterOutlined className="text-info" />}
 							/>
 						</Card>
@@ -148,8 +172,8 @@ export default function SessionsPage() {
 					<Col xs={24} sm={8}>
 						<Card>
 							<Statistic
-								title={t('sessions.highRiskSessions')}
-								value={items.filter((s: any) => s.riskScore >= 80).length}
+								title={<span>{t('sessions.highRiskSessions')}<PageScopeHint /></span>}
+								value={sessionsError ? '--' : highRiskCount}
 								prefix={<StopOutlined className="text-danger" />}
 							/>
 						</Card>
@@ -158,7 +182,7 @@ export default function SessionsPage() {
 						<Card>
 							<Statistic
 								title={t('sessions.totalSessions')}
-								value={total}
+								value={sessionsError ? '--' : total}
 								prefix={<ClusterOutlined className="text-info" />}
 							/>
 						</Card>
@@ -205,7 +229,13 @@ export default function SessionsPage() {
 							},
 						}}
 						scroll={{ x: 1400 }}
-						locale={{ emptyText: <Empty description={t('sessions.empty')} /> }}
+						locale={{
+							emptyText: (
+								<Empty
+									description={sessionsError ? t('sessions.fetchFailed') : t('sessions.empty')}
+								/>
+							),
+						}}
 					/>
 				</Spin>
 			</div>

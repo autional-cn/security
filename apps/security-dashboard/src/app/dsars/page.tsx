@@ -14,6 +14,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useDSARs, useDSARDetail, useUpdateDSAR } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
+import { PageScopeHint } from '@/components/PageScopeHint';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -136,7 +137,7 @@ export default function DSARsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('dsars.statPending')}
+								title={<span>{t('dsars.statPending')}<PageScopeHint /></span>}
 								value={pendingCount}
 								valueStyle={{ color: 'var(--color-warning)' }}
 								prefix={<FileSearchOutlined />}
@@ -146,7 +147,7 @@ export default function DSARsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('dsars.statProcessing')}
+								title={<span>{t('dsars.statProcessing')}<PageScopeHint /></span>}
 								value={processingCount}
 								valueStyle={{ color: 'var(--color-info)' }}
 								prefix={<SyncOutlined spin />}
@@ -156,7 +157,7 @@ export default function DSARsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('dsars.statTodayNew')}
+								title={<span>{t('dsars.statTodayNew')}<PageScopeHint /></span>}
 								value={
 									items.filter((i) => {
 										const d = new Date(i.createdAt);

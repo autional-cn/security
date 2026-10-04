@@ -8,6 +8,7 @@ const mockUseUpdateAnomalyStatus = vi.fn();
 vi.mock('@/hooks/use-security-queries', () => ({
 	useAnomalies: (...args: any[]) => mockUseAnomalies(...args),
 	useUpdateAnomalyStatus: () => mockUseUpdateAnomalyStatus(),
+	useAdminUsers: () => ({ data: { items: [] }, isFetching: false }),
 }));
 
 vi.mock('@autional-cn/shared', () => ({
@@ -37,10 +38,19 @@ vi.mock('@autional-cn/shared', () => ({
 		subscribe: vi.fn(() => vi.fn()),
 	},
 	useCurrentRole: () => 'security_admin',
+	useTenantSlug: () => 'test-tenant',
 }));
 
 vi.mock('@/lib/antd-app', () => ({
 	message: { success: vi.fn(), error: vi.fn() },
+	modal: { confirm: vi.fn() },
+}));
+
+// UserIdentity（S-71 画像入口）内 Link 需 Router 上下文，测试环境用 a 标签 stub
+vi.mock('react-router', () => ({
+	Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+		<a href={to}>{children}</a>
+	),
 }));
 
 import AnomaliesPage from '../anomalies/page';

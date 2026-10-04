@@ -4,11 +4,10 @@ import React, { useState, useMemo } from 'react';
 import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Descriptions, Modal, Input, Tooltip } from 'antd';
+import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Descriptions, Modal, Tooltip } from 'antd';
 import {
 	WarningOutlined,
 	CheckCircleOutlined,
-	ExclamationCircleOutlined,
 	ReloadOutlined,
 	BellOutlined,
 	RiseOutlined,
@@ -18,10 +17,12 @@ import {
 } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
-import { useAlerts, useUpdateAlertStatus, useAssignAlert } from '@/hooks/use-security-queries';
+import { useAlerts, useUpdateAlertStatus, useAssignAlert, useAdminUsers } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { Can } from '@/components/Can';
+import { PageScopeHint } from '@/components/PageScopeHint';
 import { useTranslation } from 'react-i18next';
+import { severityColor, severityLabel } from '@/lib/enums';
 
 interface AlertItem {
 	id: string;
@@ -40,22 +41,6 @@ interface AlertItem {
 	resolvedAt?: string;
 	resolvedBy?: string;
 }
-
-const severityColors: Record<string, string> = {
-	critical: 'red',
-	high: 'orange',
-	medium: 'gold',
-	low: 'blue',
-	info: 'default',
-};
-
-const severityIcons: Record<string, React.ReactNode> = {
-	critical: <WarningOutlined className="text-danger" />,
-	high: <WarningOutlined className="text-warning" />,
-	medium: <ExclamationCircleOutlined className="text-warning" />,
-	low: <ExclamationCircleOutlined className="text-info" />,
-	info: <ExclamationCircleOutlined className="text-neutral-500" />,
-};
 
 const statusColorMap: Record<string, string> = {
 	open: 'error',
@@ -89,9 +74,13 @@ export default function AlertsPage() {
 	const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
 	const [drawerVisible, setDrawerVisible] = useState(false);
 	const [assignModalVisible, setAssignModalVisible] = useState(false);
-	const [assigneeInput, setAssigneeInput] = useState('');
+	const [assignee, setAssignee] = useState<string | undefined>(undefined);
+	const [assignSearch, setAssignSearch] = useState('');
+	const assignSearchTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-	const { data, isLoading, refetch } = useAlerts({ page, pageSize, filters });
+	// S-44：筛选平铺下发（对齐 BE ListAlerts 的扁平 query 契约；
+	// 原 nested filters 对象序列化为 filters[severity]=… 永不被 ShouldBindQuery 绑定 → 静默失效）
+	const { data, isLoading, refetch } = useAlerts({ page, pageSize, ...filters });
 	const statusMutation = useUpdateAlertStatus();
 	const assignMutation = useAssignAlert();
 
@@ -123,13 +112,29 @@ export default function AlertsPage() {
 		}
 	};
 
+	// S-40 同族（2026-10-04）：分配改搜索式用户选择器（原为裸文本框手输用户 ID）。
+	const { data: assignUsersData, isFetching: assignUsersLoading } = useAdminUsers(
+		assignSearch,
+		assignModalVisible,
+	);
+	const assignUserOptions = (((assignUsersData as any)?.items || []) as any[]).map((u) => ({
+		value: u.id as string,
+		label: u.username ? `${u.username}${u.email ? ` · ${u.email}` : ''}` : u.email || u.id,
+	}));
+
+	const handleAssignSearch = (value: string) => {
+		clearTimeout(assignSearchTimer.current);
+		assignSearchTimer.current = setTimeout(() => setAssignSearch(value), 300);
+	};
+
 	const handleAssign = async () => {
-		if (!selectedAlert || !assigneeInput.trim()) return;
+		if (!selectedAlert || !assignee) return;
 		try {
-			await assignMutation.mutateAsync({ id: selectedAlert.id, assignee: assigneeInput.trim() });
+			await assignMutation.mutateAsync({ id: selectedAlert.id, assignee });
 			message.success(t('alerts.successAssign'));
 			setAssignModalVisible(false);
-			setAssigneeInput('');
+			setAssignee(undefined);
+			setAssignSearch('');
 			setDrawerVisible(false);
 		} catch {
 			message.error(t('alerts.failAssign'));
@@ -143,7 +148,8 @@ export default function AlertsPage() {
 
 	const openAssign = (alert: AlertItem) => {
 		setSelectedAlert(alert);
-		setAssigneeInput(alert.assignee || '');
+		setAssignee(alert.assignee || undefined);
+		setAssignSearch('');
 		setAssignModalVisible(true);
 	};
 
@@ -152,14 +158,11 @@ export default function AlertsPage() {
 			title: t('alerts.columnSeverity'),
 			dataIndex: 'severity',
 			width: 100,
-			render: (v: string) => <Tag color={severityColors[v]}>{v}</Tag>,
-			filters: [
-				{ text: 'Critical', value: 'critical' },
-				{ text: 'High', value: 'high' },
-				{ text: 'Medium', value: 'medium' },
-				{ text: 'Low', value: 'low' },
-				{ text: 'Info', value: 'info' },
-			],
+			render: (v: string) => <Tag color={severityColor(v)}>{severityLabel(t, v)}</Tag>,
+			filters: (['critical', 'high', 'medium', 'low', 'info'] as const).map((v) => ({
+				text: severityLabel(t, v),
+				value: v,
+			})),
 		},
 		{
 			title: t('alerts.columnType'),
@@ -266,7 +269,7 @@ export default function AlertsPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('alerts.statsOpen')}
+							title={<span>{t('alerts.statsOpen')}<PageScopeHint /></span>}
 							value={stats.open}
 							prefix={<WarningOutlined className="text-danger" />}
 							valueStyle={{ color: stats.open > 0 ? 'var(--color-danger-text)' : undefined }}
@@ -276,7 +279,7 @@ export default function AlertsPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('alerts.statsAcknowledged')}
+							title={<span>{t('alerts.statsAcknowledged')}<PageScopeHint /></span>}
 							value={stats.acknowledged}
 							prefix={<CheckCircleOutlined className="text-info" />}
 						/>
@@ -285,7 +288,7 @@ export default function AlertsPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('alerts.statsEscalated')}
+							title={<span>{t('alerts.statsEscalated')}<PageScopeHint /></span>}
 							value={stats.escalated}
 							prefix={<RiseOutlined className="text-warning" />}
 						/>
@@ -294,7 +297,7 @@ export default function AlertsPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('alerts.statsResolvedToday')}
+							title={<span>{t('alerts.statsResolvedToday')}<PageScopeHint /></span>}
 							value={stats.resolvedToday}
 							prefix={<CheckCircleOutlined className="text-success" />}
 						/>
@@ -330,13 +333,10 @@ export default function AlertsPage() {
 							setPage(1);
 						}}
 						style={{ width: 130 }}
-						options={[
-							{ label: 'Critical', value: 'critical' },
-							{ label: 'High', value: 'high' },
-							{ label: 'Medium', value: 'medium' },
-							{ label: 'Low', value: 'low' },
-							{ label: 'Info', value: 'info' },
-						]}
+						options={(['critical', 'high', 'medium', 'low', 'info'] as const).map((v) => ({
+							label: severityLabel(t, v),
+							value: v,
+						}))}
 					/>
 					<Select
 						placeholder={t('alerts.filterType')}
@@ -448,7 +448,9 @@ export default function AlertsPage() {
 							<Tag>{typeLabels[selectedAlert.type] || selectedAlert.type}</Tag>
 						</Descriptions.Item>
 						<Descriptions.Item label={t('alerts.columnSeverity')}>
-							<Tag color={severityColors[selectedAlert.severity]}>{selectedAlert.severity}</Tag>
+							<Tag color={severityColor(selectedAlert.severity)}>
+								{severityLabel(t, selectedAlert.severity)}
+							</Tag>
 						</Descriptions.Item>
 						<Descriptions.Item label={t('alerts.columnStatus')}>
 							<Tag color={statusColorMap[selectedAlert.status]}>
@@ -513,14 +515,22 @@ export default function AlertsPage() {
 				onCancel={() => setAssignModalVisible(false)}
 				okText={t('alerts.confirmAssign')}
 				cancelText={t('common.cancel')}
+				okButtonProps={{ disabled: !assignee }}
 			>
 				<div className="py-4">
 					<label className="block mb-2 font-medium">{t('alerts.assignLabel')}</label>
-					<Input
+					<Select
+						showSearch
+						allowClear
+						style={{ width: '100%' }}
 						placeholder={t('alerts.assignPlaceholder')}
-						value={assigneeInput}
-						onChange={(e) => setAssigneeInput(e.target.value)}
-						onPressEnter={handleAssign}
+						value={assignee}
+						onChange={(v) => setAssignee(v)}
+						onSearch={handleAssignSearch}
+						filterOption={false}
+						loading={assignUsersLoading}
+						options={assignUserOptions}
+						notFoundContent={assignUsersLoading ? <Spin size="small" /> : undefined}
 					/>
 				</div>
 			</Modal>

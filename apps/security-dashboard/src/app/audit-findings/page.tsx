@@ -18,6 +18,7 @@ import {
 } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
+import { PageScopeHint } from '@/components/PageScopeHint';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -173,7 +174,7 @@ export default function AuditFindingsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('auditFindings.statOpen')}
+								title={<span>{t('auditFindings.statOpen')}<PageScopeHint /></span>}
 								value={openCount}
 								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<WarningOutlined />}
@@ -183,7 +184,7 @@ export default function AuditFindingsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('auditFindings.statOverdue')}
+								title={<span>{t('auditFindings.statOverdue')}<PageScopeHint /></span>}
 								value={overdueCount}
 								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<FileSearchOutlined />}
@@ -193,7 +194,7 @@ export default function AuditFindingsPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('auditFindings.statCritical')}
+								title={<span>{t('auditFindings.statCritical')}<PageScopeHint /></span>}
 								value={
 									items.filter((i) => i.severity === 'critical' || i.severity === 'high').length
 								}

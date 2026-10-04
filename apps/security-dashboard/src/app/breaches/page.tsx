@@ -14,6 +14,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useBreachNotifications, useUpdateBreach } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { Can } from '@/components/Can';
+import { PageScopeHint } from '@/components/PageScopeHint';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -150,7 +151,7 @@ export default function BreachesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('breaches.statOpen')}
+								title={<span>{t('breaches.statOpen')}<PageScopeHint /></span>}
 								value={openCount}
 								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<ExclamationCircleOutlined />}
@@ -160,7 +161,7 @@ export default function BreachesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('breaches.statCritical')}
+								title={<span>{t('breaches.statCritical')}<PageScopeHint /></span>}
 								value={criticalCount}
 								valueStyle={{ color: 'var(--color-danger-text)' }}
 								prefix={<WarningOutlined />}
@@ -170,7 +171,7 @@ export default function BreachesPage() {
 					<Col span={6}>
 						<Card>
 							<Statistic
-								title={t('breaches.statTodayNew')}
+								title={<span>{t('breaches.statTodayNew')}<PageScopeHint /></span>}
 								value={
 									items.filter((i) => {
 										const d = new Date(i.reportedAt);

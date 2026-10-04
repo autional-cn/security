@@ -38,7 +38,6 @@ const UserSecurityProfilePage = lazy(() => import('./app/users/profile/page'));
 const UserSecurityTimelinePage = lazy(() => import('./app/users/timeline/page'));
 const NhiPage = lazy(() => import('./app/nhi/page'));
 const SocKpiPage = lazy(() => import('./app/soc-kpi/page'));
-const IncidentsPage = lazy(() => import('./app/incidents/page'));
 const DeliveryStatsPage = lazy(() => import('./app/notifications/delivery-stats/page'));
 const NotFoundPage = lazy(() => import('./app/not-found/page'));
 
@@ -324,16 +323,6 @@ function appRoutes() {
 							</Suspense>
 						</PageTransition>
 					</SecurityAdminGuard>
-				}
-			/>
-			<Route
-				path="incidents"
-				element={
-					<PageTransition>
-						<Suspense fallback={<PageLoader />}>
-							<IncidentsPage />
-						</Suspense>
-					</PageTransition>
 				}
 			/>
 			<Route

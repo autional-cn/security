@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Modal, Input, Button } from 'antd';
+import { Modal, Select, Button, Spin } from 'antd';
 import { UserSwitchOutlined } from '@ant-design/icons';
 import { assignAnomaly } from '@/lib/api.generated';
 import { Can } from '@/components/Can';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
+import { useAdminUsers } from '@/hooks/use-security-queries';
 
 interface AssignAnomalyModalProps {
 	anomalyId: string | null;
@@ -15,6 +16,8 @@ interface AssignAnomalyModalProps {
 	onSuccess: () => void;
 }
 
+// S-40（2026-10-04）：裸文本框手输用户 ID → 搜索式用户选择器（identity 管理面 /admin/users，
+// 仅在该弹窗打开时拉取；输入 300ms 防抖）。
 export default function AssignAnomalyModal({
 	anomalyId,
 	visible,
@@ -22,11 +25,24 @@ export default function AssignAnomalyModal({
 	onSuccess,
 }: AssignAnomalyModalProps) {
 	const { t } = useTranslation();
-	const [assignee, setAssignee] = useState('');
+	const [assignee, setAssignee] = useState<string | undefined>(undefined);
+	const [search, setSearch] = useState('');
 	const [loading, setLoading] = useState(false);
+	const searchTimer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+	const { data: usersData, isFetching: usersLoading } = useAdminUsers(search, visible);
+	const userOptions = (((usersData as any)?.items || []) as any[]).map((u) => ({
+		value: u.id as string,
+		label: u.username ? `${u.username}${u.email ? ` · ${u.email}` : ''}` : u.email || u.id,
+	}));
+
+	const handleSearch = (value: string) => {
+		clearTimeout(searchTimer.current);
+		searchTimer.current = setTimeout(() => setSearch(value), 300);
+	};
 
 	const handleAssign = async () => {
-		if (!assignee.trim()) {
+		if (!assignee) {
 			message.warning(t('anomalies.assignInputWarning'));
 			return;
 		}
@@ -34,9 +50,10 @@ export default function AssignAnomalyModal({
 
 		setLoading(true);
 		try {
-			await assignAnomaly(anomalyId, { assignee: assignee.trim() });
+			await assignAnomaly(anomalyId, { assignee });
 			message.success(t('anomalies.assignSuccess'));
-			setAssignee('');
+			setAssignee(undefined);
+			setSearch('');
 			onSuccess();
 			onClose();
 		} catch {
@@ -47,7 +64,8 @@ export default function AssignAnomalyModal({
 	};
 
 	const handleCancel = () => {
-		setAssignee('');
+		setAssignee(undefined);
+		setSearch('');
 		onClose();
 	};
 
@@ -76,11 +94,18 @@ export default function AssignAnomalyModal({
 				<div className="mb-2 text-sm text-neutral-600">
 					{t('anomalies.columnId')}: <span className="font-mono">{anomalyId || '-'}</span>
 				</div>
-				<Input
+				<Select
+					showSearch
+					allowClear
+					style={{ width: '100%' }}
 					placeholder={t('anomalies.assignModalPlaceholder')}
 					value={assignee}
-					onChange={(e) => setAssignee(e.target.value)}
-					onPressEnter={handleAssign}
+					onChange={(v) => setAssignee(v)}
+					onSearch={handleSearch}
+					filterOption={false}
+					loading={usersLoading}
+					options={userOptions}
+					notFoundContent={usersLoading ? <Spin size="small" /> : undefined}
 				/>
 			</div>
 		</Modal>

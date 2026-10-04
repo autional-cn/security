@@ -20,6 +20,10 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('react-router', () => ({
 	useParams: () => ({ id: 'user-test-1' }),
+	// S-71：profile 页头部新增「查看时间线」链接
+	Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+		<a href={to}>{children}</a>
+	),
 }));
 
 const { profileRef } = vi.hoisted(() => ({ profileRef: { current: null as any } }));

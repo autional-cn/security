@@ -116,6 +116,7 @@ describe('SessionsPage', () => {
 	it('shows search input', () => {
 		mockLoaded([]);
 		render(<SessionsPage />);
-		expect(screen.getByPlaceholderText('搜索用户/IP/设备')).toBeInTheDocument();
+		// S-47：检索实际仅按用户过滤（IP/设备参数被服务端忽略），占位文案同步收窄
+		expect(screen.getByPlaceholderText('搜索用户')).toBeInTheDocument();
 	});
 });

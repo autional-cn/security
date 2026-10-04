@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Alert, Input, Tabs, Descriptions, Typography } from 'antd';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Alert, Input, Tabs, Descriptions, Tooltip, Typography } from 'antd';
 import {
 	CheckCircleOutlined,
 	CloseCircleOutlined,
@@ -24,6 +24,20 @@ import {
 import type { HashChainSnapshot } from '@/hooks/use-security-queries';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
+import { verifyMerkleProof } from '@/lib/merkle';
+
+// 契约对齐 dto.MerkleProofResponse（响应经 shared 客户端解包 + camel 化）
+interface MerkleProofResult {
+	tenantId?: string;
+	entryId?: string;
+	leafHash?: string;
+	proof?: string[];
+	rootHash?: string;
+	leafIndex?: number;
+	leafCount?: number;
+}
+
+type MerkleVerifyState = 'pass' | 'fail' | 'unavailable';
 
 // A1/S-01（2026-10-04）：本页只呈现当前租户的链快照；
 // 全平台聚合视图（GET /verifications）为平台面端点，租户面不再调取。
@@ -32,7 +46,9 @@ export default function HashChainPage() {
 	const { currentTenantId } = useAuth();
 	const [activeTab, setActiveTab] = useState('hashchain');
 	const [merkleProofId, setMerkleProofId] = useState('');
-	const [merkleProofResult, setMerkleProofResult] = useState<any>(null);
+	const [merkleProofResult, setMerkleProofResult] = useState<MerkleProofResult | null>(null);
+	const [merkleVerify, setMerkleVerify] = useState<MerkleVerifyState | null>(null);
+	const [computedRoot, setComputedRoot] = useState('');
 
 	const { data: chain, isLoading, isFetching, refetch } = useHashChain(currentTenantId);
 	const { data: merkleRoot, isLoading: merkleLoading, refetch: refetchMerkle } = useMerkleRoot();
@@ -67,13 +83,28 @@ export default function HashChainPage() {
 			return;
 		}
 		try {
-			const res = await proofMutation.mutateAsync({
+			const res = (await proofMutation.mutateAsync({
 				tenantId: currentTenantId,
-				entryId: merkleProofId,
-			});
-			setMerkleProofResult(res);
+				entryId: merkleProofId.trim(),
+			})) as MerkleProofResult | undefined;
+			// S-24：浏览器本地折叠重算（SHA-256）比对根哈希——展示前完成，避免中间态闪烁
+			let state: MerkleVerifyState = 'unavailable';
+			let root = '';
+			try {
+				const r = await verifyMerkleProof(res?.leafHash ?? '', res?.proof ?? [], res?.rootHash ?? '');
+				state = r.ok ? 'pass' : 'fail';
+				root = r.computedRoot;
+			} catch {
+				/* WebCrypto 不可用（非安全上下文）→ 降级展示 */
+			}
+			setMerkleProofResult(res ?? null);
+			setMerkleVerify(state);
+			setComputedRoot(root);
 			message.success(t('hashChain.merkleProofSuccess'));
 		} catch {
+			setMerkleProofResult(null);
+			setMerkleVerify(null);
+			setComputedRoot('');
 			message.error(t('hashChain.merkleProofError'));
 		}
 	};
@@ -244,21 +275,35 @@ export default function HashChainPage() {
 						{merkleProofResult && (
 							<Descriptions column={1} bordered className="mt-4" size="small">
 								<Descriptions.Item label={t('hashChain.merkleProofLogId')}>
-									{merkleProofResult.logId || merkleProofId}
+									{/* S-24：原读 logId（BE 实际回 entryId）→ 恒空回落输入值，已修正 */}
+									<span className="font-mono break-all">
+										{merkleProofResult.entryId || merkleProofId}
+									</span>
 								</Descriptions.Item>
 								<Descriptions.Item label={t('hashChain.merkleProofRootHash')}>
-									{merkleProofResult.rootHash || '-'}
+									<span className="font-mono break-all">{merkleProofResult.rootHash || '-'}</span>
 								</Descriptions.Item>
 								<Descriptions.Item label={t('hashChain.merkleProofLeafHash')}>
-									{merkleProofResult.leafHash || '-'}
+									<span className="font-mono break-all">{merkleProofResult.leafHash || '-'}</span>
+								</Descriptions.Item>
+								<Descriptions.Item label={t('hashChain.merkleProofLeafPosition')}>
+									{merkleProofResult.leafIndex !== undefined &&
+									merkleProofResult.leafCount !== undefined
+										? `${merkleProofResult.leafIndex} / ${merkleProofResult.leafCount}`
+										: '-'}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('hashChain.merkleProofComputedRoot')}>
+									<span className="font-mono break-all">{computedRoot || '-'}</span>
 								</Descriptions.Item>
 								<Descriptions.Item label={t('hashChain.merkleProofResult')}>
-									{merkleProofResult.valid !== undefined ? (
-										merkleProofResult.valid ? (
-											<Tag color="success">{t('hashChain.merkleProofPassed')}</Tag>
-										) : (
-											<Tag color="error">{t('hashChain.merkleProofFailed')}</Tag>
-										)
+									{merkleVerify === 'pass' ? (
+										<Tag color="success">{t('hashChain.merkleProofPassed')}</Tag>
+									) : merkleVerify === 'fail' ? (
+										<Tag color="error">{t('hashChain.merkleProofFailed')}</Tag>
+									) : merkleVerify === 'unavailable' ? (
+										<Tooltip title={t('hashChain.merkleProofUnavailable')}>
+											<Tag>—</Tag>
+										</Tooltip>
 									) : (
 										'-'
 									)}

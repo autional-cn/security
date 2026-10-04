@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -27,6 +27,8 @@ import { Layout, Menu, Button, Typography, Breadcrumb } from 'antd';
 import { useAuth, useLogout, usePortalCatalog, useTenantSlug } from '@autional-cn/shared';
 import { AppShell, LanguageSwitcher, PortalSwitcher, ThemeToggle, UserMenu } from '@autional-cn/ui';
 import SSEEventStream from './SSEEventStream';
+import { message, notification } from '@/lib/antd-app';
+import { consumeSessionDegraded, SESSION_DEGRADED_NOTICE_KEY } from '@/lib/session-degrade';
 
 const { Text } = Typography;
 
@@ -38,13 +40,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	const [collapsed, setCollapsed] = useState(false);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const handleLogout = useLogout();
-	const { user, currentTenantId } = useAuth();
+	const { user, currentTenantId, isAuthenticated } = useAuth();
 	// basename 恒 "/" 后 pathname 含租户 slug（如 /acme-corp/audit-logs），
 	// slug 用于导航拼接 + 内部路径匹配（菜单高亮/面包屑）剥离前缀。
 	const slug = useTenantSlug();
 	// 管理面平面（audiences [admin, platform]）：安全控制台走 admin 受众端点
 	const { portals } = usePortalCatalog({ tenantId: currentTenantId, slug, audience: 'admin' });
 	const internalPath = slug ? pathname.replace(new RegExp(`^/${slug}`), '') || '/' : pathname;
+
+	// S-74：会话过期降级标记 ∈ 已重新认证 → 恢复告知（toast + 关闭降级提示）。
+	// 标记一次性消费；正常首次登录/无降级历史时不打扰。
+	useEffect(() => {
+		if (!isAuthenticated) return;
+		if (!consumeSessionDegraded()) return;
+		notification.destroy(SESSION_DEGRADED_NOTICE_KEY);
+		message.success(t('sse.sessionRestored'));
+	}, [isAuthenticated, t]);
 
 	const menuItems = [
 		{ key: '/', icon: <DashboardOutlined />, label: t('nav.overview') },
@@ -67,7 +78,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 				{ key: '/anomalies', label: t('nav.anomalies') },
 				{ key: '/alerts', label: t('nav.alerts') },
 				{ key: '/sessions', label: t('nav.sessionSecurity') },
-				{ key: '/incidents', label: t('nav.incidents') },
 			],
 		},
 		{
@@ -125,7 +135,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 			'/evidence': t('bc.evidence'),
 			'/audit-findings': t('bc.auditFindings'),
 			'/notifications/delivery-stats': t('bc.deliveryStats'),
-			'/incidents': t('nav.incidents'),
 			'/nhi': t('nav.nhi', 'NHI Monitoring'),
 			'/soc-kpi': t('nav.socKpi', 'SOC KPIs'),
 			'/archives': t('bc.archives'),

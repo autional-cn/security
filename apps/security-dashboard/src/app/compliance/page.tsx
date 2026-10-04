@@ -315,22 +315,18 @@ export default function CompliancePage() {
 						{
 							title: t('compliance.columnTestResult'),
 							dataIndex: 'testResult',
-							render: (v: string) =>
-								v ? (
-									<Tag
-										color={
-											v === '通过' || v === 'passed'
-												? 'success'
-												: v === '失败' || v === 'failed'
-													? 'error'
-													: 'default'
-										}
-									>
-										{v}
-									</Tag>
-								) : (
-									'-'
-								),
+							// S-55②：域值为自由文本（历史行含 通过/passed 混杂），归一为本地标签；未知值原样回落
+							render: (v: string) => {
+								if (!v) return '-';
+								const norm = v.trim().toLowerCase();
+								const meta =
+									norm === 'passed' || norm === 'pass' || v === '通过'
+										? { label: t('status.passed'), color: 'success' as const }
+										: norm === 'failed' || norm === 'fail' || v === '失败'
+											? { label: t('status.failed'), color: 'error' as const }
+											: { label: v, color: 'default' as const };
+								return <Tag color={meta.color}>{meta.label}</Tag>;
+							},
 						},
 						{
 							title: t('compliance.columnLastTestDate'),

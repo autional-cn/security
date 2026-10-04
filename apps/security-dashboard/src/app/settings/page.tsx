@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
-import { Card, Form, Input, Button, Switch, Select, message as antdMessage, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty } from 'antd';
+import { Card, Form, Input, Button, Switch, Select, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty, Alert } from 'antd';
 import {
 	SaveOutlined,
 	PlusOutlined,
@@ -25,10 +25,10 @@ import {
 	useDeleteSiemConnector,
 	useTestSiemConnector,
 } from '@/hooks/use-security-queries';
-import { message } from '@/lib/antd-app';
+import { message, modal } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { AuditStatsOnly } from '@autional-cn/shared';
-import { ConsolePageHeader } from '@autional-cn/ui';
+import { ConsolePageHeader, useTheme } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
 import type {
 	RetentionPolicyResponse,
@@ -37,9 +37,11 @@ import type {
 } from '@autional-cn/shared/generated/types';
 
 const STORAGE_KEY = 'security-dashboard-settings';
+// 与 main.tsx <ThemeProvider storageKey> 同名：settings 的主题选择直写该键并即时翻转 ui 主题系统。
+const THEME_STORAGE_KEY = 'security-dashboard-theme';
 
 const defaultLocalValues = {
-	emailAlert: true,
+	emailAlert: false,
 	smsAlert: false,
 	webhookUrl: '',
 	theme: 'light',
@@ -59,22 +61,53 @@ function saveLocalSettings(values: typeof defaultLocalValues) {
 	localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
 }
 
+// 主题偏好接线：light/dark 直写主题键并按需翻转；system 清键、运行时按系统偏好取值。
+// 翻转经 ui useTheme().toggle（AntdThemeProvider 订阅同一 context，antd 算法即时跟进）。
+function applyThemePreference(
+	pref: string,
+	activeTheme: 'light' | 'dark',
+	toggle: () => void,
+) {
+	const prefersDark =
+		typeof window !== 'undefined' &&
+		window.matchMedia('(prefers-color-scheme: dark)').matches;
+	const target: 'light' | 'dark' =
+		pref === 'system' ? (prefersDark ? 'dark' : 'light') : pref === 'dark' ? 'dark' : 'light';
+	if (activeTheme !== target) toggle();
+	try {
+		if (pref === 'system') localStorage.removeItem(THEME_STORAGE_KEY);
+		else localStorage.setItem(THEME_STORAGE_KEY, target);
+	} catch {
+		/* 存储不可用：本次已生效，仅不持久化 */
+	}
+}
+
 function LocalSettingsTab() {
 	const { t } = useTranslation();
 	const [form] = Form.useForm();
 	const [saving, setSaving] = useState(false);
+	const { theme: activeTheme, toggle } = useTheme();
 
 	React.useEffect(() => {
-		form.setFieldsValue(loadLocalSettings());
-	}, [form]);
+		let hasSaved = false;
+		try {
+			hasSaved = localStorage.getItem(STORAGE_KEY) !== null;
+		} catch {
+			/* ignore */
+		}
+		// 首次（无存档）回填当前生效主题，避免展示与真实主题不符
+		const initial = loadLocalSettings();
+		form.setFieldsValue(hasSaved ? initial : { ...initial, theme: activeTheme });
+	}, [form, activeTheme]);
 
 	const handleSave = async (values: typeof defaultLocalValues) => {
 		setSaving(true);
 		try {
 			saveLocalSettings(values);
-			antdMessage.success(t('settings.saved'));
+			applyThemePreference(values.theme, activeTheme, toggle);
+			message.success(t('settings.saved'));
 		} catch {
-			antdMessage.error(t('settings.saveFailed'));
+			message.error(t('settings.saveFailed'));
 		} finally {
 			setSaving(false);
 		}
@@ -83,6 +116,12 @@ function LocalSettingsTab() {
 	return (
 		<Form form={form} layout="vertical" onFinish={handleSave}>
 			<Card title={t('settings.alertNotification')} className="mb-4">
+				<Alert
+					type="info"
+					showIcon
+					message={t('settings.localOnlyHint')}
+					className="mb-4"
+				/>
 				<Form.Item name="emailAlert" label={t('settings.emailAlert')} valuePropName="checked">
 					<Switch />
 				</Form.Item>
@@ -273,13 +312,25 @@ function SiemConnectorsTab() {
 		}
 	};
 
-	const handleDelete = async (id: string) => {
-		try {
-			await deleteMutation.mutateAsync(id);
-			message.success(t('settings.connectorDeleted'));
-		} catch {
-			message.error(t('settings.connectorDeleteFailed'));
-		}
+	// S-65②（2026-10-04）：删除连接器为破坏性写操作，先弹确认（对齐 sessions 终止会话正例）
+	const handleDelete = (record: SIEMConnectorResponse) => {
+		const id = record.id;
+		if (!id) return;
+		modal.confirm({
+			title: t('settings.confirmDeleteTitle'),
+			content: t('settings.confirmDeleteContent', { name: record.name || id }),
+			okText: t('common.delete'),
+			okType: 'danger',
+			cancelText: t('common.cancel'),
+			onOk: async () => {
+				try {
+					await deleteMutation.mutateAsync(id);
+					message.success(t('settings.connectorDeleted'));
+				} catch {
+					message.error(t('settings.connectorDeleteFailed'));
+				}
+			},
+		});
 	};
 
 	const handleTest = async (id: string) => {
@@ -372,7 +423,7 @@ function SiemConnectorsTab() {
 						size="small"
 						danger
 						icon={<DeleteOutlined />}
-						onClick={() => record.id && handleDelete(record.id)}
+						onClick={() => handleDelete(record)}
 					>
 						{t('common.delete')}
 					</Button>

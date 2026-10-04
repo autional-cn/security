@@ -4,12 +4,7 @@ import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Row, Col, Statistic, Spin } from 'antd';
-import {
-	ClockCircleOutlined,
-	AlertOutlined,
-	WarningOutlined,
-	BugOutlined,
-} from '@ant-design/icons';
+import { ClockCircleOutlined, AlertOutlined, WarningOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuditStats, useAnomalies, useAlerts } from '@/hooks/use-security-queries';
 
@@ -46,13 +41,6 @@ export default function SocKpiPage() {
 			icon: <AlertOutlined />,
 			color: 'var(--color-danger)',
 		},
-		{
-			key: 'mttd',
-			title: t('socKpi.mttd', 'MTTD (est.)'),
-			value: stats?.mttdMinutes ? `${stats.mttdMinutes}m` : 'N/A',
-			icon: <BugOutlined />,
-			color: 'var(--color-chart-7)',
-		},
 	];
 
 	return (
@@ -61,7 +49,7 @@ export default function SocKpiPage() {
 
 			<Row gutter={[16, 16]} className="mb-4">
 				{statCards.map((c) => (
-					<Col xs={24} sm={12} md={6} key={c.key}>
+					<Col xs={24} sm={12} md={8} key={c.key}>
 						<Card>
 							{statsLoading ? (
 								<div className="text-center py-4">
@@ -92,11 +80,6 @@ export default function SocKpiPage() {
 							key: 'today_entries',
 							label: t('socKpi.todayEntries', 'Today Entries'),
 							value: stats?.todayEntries ?? '-',
-						},
-						{
-							key: 'avg_response',
-							label: t('socKpi.avgResponse', 'Avg Response Time (est.)'),
-							value: stats?.avgResponseMs ? `${stats.avgResponseMs}ms` : '-',
 						},
 					]}
 					columns={[

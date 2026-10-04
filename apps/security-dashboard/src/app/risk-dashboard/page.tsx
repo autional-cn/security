@@ -1,17 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
-import { Card, Row, Col, Statistic, Tag, Spin, Typography, Tooltip } from 'antd';
+import { Card, Row, Col, Statistic, Tag, Spin, Tooltip, Alert, Button } from 'antd';
 import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { getRiskDashboard } from '@/lib/api';
 import { ConsolePageHeader } from '@autional-cn/ui';
+import { UserIdentity } from '@/components/UserIdentity';
 
 dayjs.extend(utc);
-
-const { Title } = Typography;
 
 interface RiskRange {
 	range: string;
@@ -52,6 +51,9 @@ const levelColors: Record<string, string> = {
 	normal: 'default',
 };
 
+// S-30：分数体系为小数制，保留最多 2 位小数——原 Math.round 致 0.35→0 的「高分低均」误读
+const fmtScore = (s: number | null | undefined) => Number(Number(s ?? 0).toFixed(2));
+
 const eventColumns = [
 	{
 		title: '事件类型',
@@ -64,22 +66,23 @@ const eventColumns = [
 
 const userColumns = [
 	{
-		title: '用户 ID',
+		title: '用户',
 		dataIndex: 'userId',
 		key: 'userId',
-		render: (id: string) => id.substring(0, 10) + '...',
+		// S-32：裸 ULID 截断不可识别 → 用户名/邮箱 + 画像入口（查不到回落截断 ULID）
+		render: (id: string) => <UserIdentity userId={id} />,
 	},
 	{
 		title: '最高分',
 		dataIndex: 'maxScore',
 		key: 'maxScore',
-		render: (s: number) => <Tag color={s >= 80 ? 'red' : 'orange'}>{s}</Tag>,
+		render: (s: number) => <Tag color={s >= 80 ? 'red' : 'orange'}>{fmtScore(s)}</Tag>,
 	},
 	{
 		title: '平均分',
 		dataIndex: 'avgScore',
 		key: 'avgScore',
-		render: (s: number) => Math.round(s),
+		render: (s: number) => fmtScore(s),
 	},
 	{ title: '事件数', dataIndex: 'count', key: 'count' },
 ];
@@ -87,15 +90,46 @@ const userColumns = [
 export default function RiskDashboardPage() {
 	const [data, setData] = useState<DashboardData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
+	// S-28：失败静默 catch 会把「接口失败」渲染成与「今天没事件」相同的全 0 界面——
+	// catch 分支置错误态（含诊断信息），空值不再与 0 合并渲染
+	const load = useCallback(() => {
+		setLoading(true);
+		setError(null);
 		getRiskDashboard()
 			.then(setData)
-			.catch(() => {})
+			.catch((e) => setError((e as Error)?.message || 'load failed'))
 			.finally(() => setLoading(false));
 	}, []);
 
+	useEffect(() => {
+		load();
+	}, [load]);
+
 	if (loading) return <Spin style={{ display: 'block', margin: '80px auto' }} />;
+
+	if (error) {
+		return (
+			<div>
+				<ConsolePageHeader
+					title="风险仪表盘"
+					description="租户风险全景视图 — 今日事件 / 评分分布 / 高风险用户 Top 5"
+				/>
+				<Alert
+					type="error"
+					showIcon
+					message="风险数据加载失败"
+					description={error}
+					action={
+						<Button size="small" onClick={load}>
+							重试
+						</Button>
+					}
+				/>
+			</div>
+		);
+	};
 
 	const criticalCount = data?.scoreRanges.find((r) => r.range === 'critical')?.count || 0;
 	const highCount = data?.scoreRanges.find((r) => r.range === 'high')?.count || 0;
@@ -121,7 +155,7 @@ export default function RiskDashboardPage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title="严重事件"
+							title="严重事件（今日）"
 							value={criticalCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
 							prefix={<WarningOutlined />}
@@ -131,7 +165,7 @@ export default function RiskDashboardPage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title="高风险事件"
+							title="高风险事件（今日）"
 							value={highCount}
 							valueStyle={{ color: '#fa8c16' }}
 							prefix={<RiseOutlined />}
@@ -141,7 +175,7 @@ export default function RiskDashboardPage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title="信号维度"
+							title="评分档位（今日）"
 							value={data?.scoreRanges.length || 0}
 							prefix={<SafetyOutlined />}
 						/>
@@ -151,7 +185,7 @@ export default function RiskDashboardPage() {
 
 			<Row gutter={16}>
 				<Col span={12}>
-					<Card title="评分分布" style={{ marginBottom: 16 }}>
+					<Card title="评分分布（今日）" style={{ marginBottom: 16 }}>
 						{(data?.scoreRanges || []).map((r) => (
 							<div key={r.range} style={{ marginBottom: 8 }}>
 								<Tag color={levelColors[r.range] || 'default'}>{r.range}</Tag>
@@ -161,7 +195,7 @@ export default function RiskDashboardPage() {
 					</Card>
 				</Col>
 				<Col span={12}>
-					<Card title="高频事件类型" style={{ marginBottom: 16 }}>
+					<Card title="高频事件类型（近 7 天）" style={{ marginBottom: 16 }}>
 						<DataTable
 							dataSource={data?.topEventTypes || []}
 							columns={eventColumns}
@@ -180,6 +214,7 @@ export default function RiskDashboardPage() {
 					rowKey="userId"
 					pagination={false}
 					size="small"
+					locale={{ emptyText: '近 7 天无高风险用户（最高分 ≥ 60）' }}
 				/>
 			</Card>
 

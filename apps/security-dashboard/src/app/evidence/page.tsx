@@ -15,6 +15,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useEvidence, useEvidenceDetail } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
+import { PageScopeHint } from '@/components/PageScopeHint';
 
 const { Title, Text } = Typography;
 
@@ -144,7 +145,7 @@ export default function EvidencePage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title={t('evidence.statGdpr')}
+							title={<span>{t('evidence.statGdpr')}<PageScopeHint /></span>}
 							value={items.filter((i) => i.controlType === 'gdpr').length}
 							valueStyle={{ color: 'var(--color-chart-7)' }}
 						/>
@@ -153,7 +154,7 @@ export default function EvidencePage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title={t('evidence.statIso')}
+							title={<span>{t('evidence.statIso')}<PageScopeHint /></span>}
 							value={items.filter((i) => i.controlType === 'iso27001').length}
 							valueStyle={{ color: 'var(--color-info)' }}
 						/>
@@ -162,7 +163,7 @@ export default function EvidencePage() {
 				<Col span={6}>
 					<Card>
 						<Statistic
-							title={t('evidence.statSox')}
+							title={<span>{t('evidence.statSox')}<PageScopeHint /></span>}
 							value={items.filter((i) => i.controlType === 'sox').length}
 							valueStyle={{ color: '#fa8c16' }}
 						/>

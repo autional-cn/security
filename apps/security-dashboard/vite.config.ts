@@ -30,6 +30,11 @@ export default defineConfig({
         target: process.env.VITE_API_PROXY_URL || 'http://localhost:11080',
         changeOrigin: true,
       },
+      // S-02：网关 /ready 健康端点（overview 服务健康卡数据源）
+      '/ready': {
+        target: process.env.VITE_API_PROXY_URL || 'http://localhost:11080',
+        changeOrigin: true,
+      },
     },
   },
   preview: {
@@ -40,6 +45,10 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/oauth/': {
+        target: process.env.VITE_API_PROXY_URL || 'http://localhost:11080',
+        changeOrigin: true,
+      },
+      '/ready': {
         target: process.env.VITE_API_PROXY_URL || 'http://localhost:11080',
         changeOrigin: true,
       },

@@ -1,63 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Timeline, Tag, Spin, Alert } from 'antd';
-import {
-	SafetyOutlined,
-	FileTextOutlined,
-	WarningOutlined,
-	LoginOutlined,
-	LogoutOutlined,
-	KeyOutlined,
-	SecurityScanOutlined,
-} from '@ant-design/icons';
+import { Alert, Button, Card, Pagination, Spin, Tag, Timeline } from 'antd';
+import { ProfileOutlined, SafetyOutlined, WarningOutlined } from '@ant-design/icons';
+import { useTenantSlug } from '@autional-cn/shared';
 import { getSecurityUserTimeline } from '@/lib/api';
 import { formatTimelineTime, normalizeTimestamp } from '@/lib/format';
+import { anomalyTypeLabel, severityColor, severityLabel } from '@/lib/enums';
+import { eventActionLabel, eventMessage, eventStyle } from '@/lib/timeline';
+import { UserIdentity } from '@/components/UserIdentity';
 import { useTranslation } from 'react-i18next';
 
-const EVENT_ICON_MAP: Record<string, React.ReactNode> = {
-	login: <LoginOutlined />,
-	logout: <LogoutOutlined />,
-	password_change: <KeyOutlined />,
-	mfa_enroll: <SafetyOutlined />,
-	mfa_challenge: <SafetyOutlined />,
-	security_scan: <SecurityScanOutlined />,
-	audit_log: <FileTextOutlined />,
-	anomaly: <WarningOutlined />,
-};
-
-const severityColor = (severity: string) => {
-	switch (severity) {
-		case 'critical':
-			return 'red';
-		case 'high':
-			return 'orange';
-		case 'medium':
-			return 'gold';
-		case 'low':
-			return 'blue';
-		default:
-			return 'default';
-	}
-};
-
-const anomalyColumns = (t: (k: string) => string) => [
+const anomalyColumns = (t: (k: string, o?: Record<string, unknown>) => string) => [
 	{
 		title: t('usersTimeline.anomalyType'),
 		dataIndex: 'type',
 		key: 'type',
-		render: (v: string) => v || '-',
+		render: (v: string) => anomalyTypeLabel(t, v),
 		ellipsis: true,
 	},
 	{
 		title: t('usersTimeline.severity'),
 		dataIndex: 'severity',
 		key: 'severity',
-		render: (v: string) => <Tag color={severityColor(v)}>{v || '-'}</Tag>,
+		render: (v: string) => (
+			<Tag color={severityColor(v)}>{v ? severityLabel(t, v) : '-'}</Tag>
+		),
 		width: 100,
 	},
 	{
@@ -72,10 +44,14 @@ const anomalyColumns = (t: (k: string) => string) => [
 export default function UserSecurityTimelinePage() {
 	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
+	const slug = useTenantSlug();
+	// S-72③：分页（网关透传 page/page_size，响应附 eventsTotal）
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(50);
 
 	const { data, isLoading, error, isError } = useQuery({
-		queryKey: ['users', 'timeline', id],
-		queryFn: () => getSecurityUserTimeline(id!),
+		queryKey: ['users', 'timeline', id, page, pageSize],
+		queryFn: () => getSecurityUserTimeline(id!, { page, pageSize }),
 		enabled: !!id,
 	});
 
@@ -111,21 +87,28 @@ export default function UserSecurityTimelinePage() {
 		: Array.isArray((timeline.anomalies as any)?.items)
 			? (timeline.anomalies as any).items
 			: [];
-
-	const getEventIcon = (action: string) => EVENT_ICON_MAP[action] || <FileTextOutlined />;
-	const getEventColor = (action: string) => {
-		if (action?.includes('anomaly')) return 'red';
-		if (action?.includes('failed')) return 'red';
-		if (action?.includes('password')) return 'orange';
-		if (action?.includes('mfa')) return 'blue';
-		if (action?.includes('login')) return 'green';
-		return 'gray';
-	};
+	const eventsTotal = typeof timeline.eventsTotal === 'number' ? timeline.eventsTotal : 0;
 
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<>{t('usersTimeline.title')} {id && <span className="text-sm text-neutral-600 ml-2">ID: {id}</span>}</>}
+				title={
+					<>
+						{t('usersTimeline.title')}
+						{id && (
+							<span className="text-sm text-neutral-600 ml-2">
+								<UserIdentity userId={id} link={false} />
+							</span>
+						)}
+					</>
+				}
+				actions={
+					id ? (
+						<Link to={`/${slug ?? ''}/users/${id}/profile`}>
+							<Button icon={<ProfileOutlined />}>{t('usersTimeline.viewProfile')}</Button>
+						</Link>
+					) : undefined
+				}
 			/>
 
 			<Card
@@ -138,28 +121,48 @@ export default function UserSecurityTimelinePage() {
 				className="mb-4"
 			>
 				{events.length > 0 ? (
-					<Timeline
-						mode="left"
-						items={events.map((evt: any, i: number) => {
-							const action = evt.action || evt.type || evt.event || '';
-							const message = evt.message || evt.description || evt.detail || '';
-							const time = evt.timestamp || evt.createdAt || evt.time || '';
-							return {
-								key: evt.id || String(i),
-								color: getEventColor(action),
-								dot: getEventIcon(action),
-								label: <span className="text-xs text-neutral-600">{formatTimelineTime(time)}</span>,
-								children: (
-									<div>
-										<div className="text-sm font-medium capitalize">
-											{action.replace(/_/g, ' ')}
+					<>
+						<Timeline
+							mode="left"
+							items={events.map((evt: any, i: number) => {
+								const action = evt.action || evt.type || evt.event || '';
+								const message = evt.message || evt.description || evt.detail || '';
+								const time = evt.timestamp || evt.createdAt || evt.time || '';
+								const { Icon, color } = eventStyle(action);
+								return {
+									key: evt.id || String(i),
+									color,
+									dot: <Icon />,
+									label: <span className="text-xs text-neutral-600">{formatTimelineTime(time)}</span>,
+									children: (
+										<div>
+											<div className="text-sm font-medium">{eventActionLabel(t, action)}</div>
+											{message && (
+												<div className="text-xs text-neutral-600">{eventMessage(t, message)}</div>
+											)}
 										</div>
-										{message && <div className="text-xs text-neutral-600">{message}</div>}
-									</div>
-								),
-							};
-						})}
-					/>
+									),
+								};
+							})}
+						/>
+						{eventsTotal > pageSize && (
+							<div className="mt-4 flex justify-end">
+								<Pagination
+									size="small"
+									current={page}
+									pageSize={pageSize}
+									total={eventsTotal}
+									showSizeChanger
+									pageSizeOptions={[20, 50, 100]}
+									onChange={(p, ps) => {
+										setPage(ps !== pageSize ? 1 : p);
+										setPageSize(ps);
+									}}
+									showTotal={(total) => t('usersTimeline.totalEvents', { count: total })}
+								/>
+							</div>
+						)}
+					</>
 				) : (
 					<div className="text-center text-neutral-600 py-8">{t('usersTimeline.noEvents')}</div>
 				)}

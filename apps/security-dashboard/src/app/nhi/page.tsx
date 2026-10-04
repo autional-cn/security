@@ -54,9 +54,14 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
 
 function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	const { t } = useTranslation();
-	const { data, isLoading } = useAgents({ page_size: 100 });
+	// S-51（fix-security-w5）：服务端分页——原 page_size:100 拉取 + 客户端 20/页，
+	// >100 条截断、翻页数字漂移
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
+	const { data, isLoading } = useAgents({ page, page_size: pageSize });
 	const deleteAgent = useDeleteAgent();
 	const items = extractList(data) || [];
+	const total = (data as any)?.total || (data as any)?.pagination?.total || items.length;
 
 	const columns = [
 		{ title: t('nhi.name', 'Name'), dataIndex: 'name', key: 'name', ellipsis: true },
@@ -117,7 +122,17 @@ function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 			columns={columns}
 			dataSource={items}
 			loading={isLoading}
-			pagination={{ pageSize: 20 }}
+			pagination={{
+				current: page,
+				pageSize,
+				total,
+				showSizeChanger: true,
+				showTotal: (cnt) => t('common.total', { count: cnt }),
+				onChange: (p, ps) => {
+					setPage(p);
+					setPageSize(ps);
+				},
+			}}
 			size="small"
 			locale={{ emptyText: t('nhi.noAgents', 'No agents found') }}
 		/>
@@ -126,11 +141,15 @@ function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 
 function RobotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	const { t } = useTranslation();
-	const { data, isLoading } = useRobots({ page_size: 100 });
+	// S-51（fix-security-w5）：服务端分页（同 AgentTable）
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
+	const { data, isLoading } = useRobots({ page, page_size: pageSize });
 	const commission = useCommissionRobot();
 	const decommission = useDecommissionRobot();
 	const deleteRobot = useDeleteRobot();
 	const items = extractList(data) || [];
+	const total = (data as any)?.total || (data as any)?.pagination?.total || items.length;
 
 	const columns = [
 		{ title: t('nhi.name', 'Name'), dataIndex: 'name', key: 'name', ellipsis: true },
@@ -223,7 +242,17 @@ function RobotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 			columns={columns}
 			dataSource={items}
 			loading={isLoading}
-			pagination={{ pageSize: 20 }}
+			pagination={{
+				current: page,
+				pageSize,
+				total,
+				showSizeChanger: true,
+				showTotal: (cnt) => t('common.total', { count: cnt }),
+				onChange: (p, ps) => {
+					setPage(p);
+					setPageSize(ps);
+				},
+			}}
 			size="small"
 			locale={{ emptyText: t('nhi.noRobots', 'No robots found') }}
 		/>
@@ -232,9 +261,13 @@ function RobotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 
 function IotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 	const { t } = useTranslation();
-	const { data, isLoading } = useIots({ page_size: 100 });
+	// S-51（fix-security-w5）：服务端分页（同 AgentTable）
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
+	const { data, isLoading } = useIots({ page, page_size: pageSize });
 	const deleteDevice = useDeleteDevice();
 	const items = extractList(data) || [];
+	const total = (data as any)?.total || (data as any)?.pagination?.total || items.length;
 
 	const columns = [
 		{ title: t('nhi.name', 'Name'), dataIndex: 'name', key: 'name', ellipsis: true },
@@ -295,7 +328,17 @@ function IotTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
 			columns={columns}
 			dataSource={items}
 			loading={isLoading}
-			pagination={{ pageSize: 20 }}
+			pagination={{
+				current: page,
+				pageSize,
+				total,
+				showSizeChanger: true,
+				showTotal: (cnt) => t('common.total', { count: cnt }),
+				onChange: (p, ps) => {
+					setPage(p);
+					setPageSize(ps);
+				},
+			}}
 			size="small"
 			locale={{ emptyText: t('nhi.noDevices', 'No devices found') }}
 		/>
@@ -310,22 +353,17 @@ export default function NhiPage() {
 		id: string;
 	} | null>(null);
 
-	const { data: agentsData } = useAgents({ page_size: 100 });
-	const { data: robotsData } = useRobots({ page_size: 100 });
-	const { data: iotsData } = useIots({ page_size: 100 });
+	// S-51（fix-security-w5）：统计卡一律读服务端 total（page_size:1 仅取计数）——
+	// 原当页 items 计数随翻页漂移，robotActive/iotActive 为算而不用死变量已删除
+	const { data: agentsData } = useAgents({ page_size: 1 });
+	const { data: robotsData } = useRobots({ page_size: 1 });
+	const { data: iotsData } = useIots({ page_size: 1 });
+	const { data: activeAgentsData } = useAgents({ status: 'active', page_size: 1 });
 
 	const agentCount = ((agentsData as any)?.total || 0) as number;
 	const robotCount = ((robotsData as any)?.total || 0) as number;
 	const iotCount = ((iotsData as any)?.total || 0) as number;
-
-	const countActive = (data: any): number => {
-		const items = extractList(data) || [];
-		return items.filter((i: any) => i.status === 'active').length;
-	};
-
-	const agentActive = countActive(agentsData);
-	const robotActive = countActive(robotsData);
-	const iotActive = countActive(iotsData);
+	const agentActive = ((activeAgentsData as any)?.total || 0) as number;
 
 	return (
 		<Can denyAuditor>

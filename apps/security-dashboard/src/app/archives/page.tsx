@@ -32,8 +32,11 @@ export default function ArchivesPage() {
 	const handleTriggerArchive = async (values: any) => {
 		setTriggerLoading(true);
 		try {
-			const beforeDate = values.beforeDate?.format('YYYY-MM-DD');
-			await triggerMutation.mutateAsync({ beforeDate });
+			// S-62（2026-10-04）：BE dto.ArchiveRequest.Before 为 Unix 秒（json:"before"）。
+			// 旧实现发 {before_date:"YYYY-MM-DD"} —— 键名+类型双失配 ⇒ Before=0 ⇒ 恒按
+			// 保留策略默认窗口（当前−90 天）归档，与所选日期无关。
+			const before: number = values.beforeDate.unix();
+			await triggerMutation.mutateAsync({ before });
 			message.success(t('archives.triggerSuccess'));
 			setModalVisible(false);
 		} catch (err: any) {

@@ -44,7 +44,6 @@ export const terminateSession = Generated.sessionsBySessionsDelete;
 export const getSecurityReport = Generated.adminAuditReportsSecurity;
 export const getComplianceReport = Generated.adminAuditReportsCompliance;
 export const getExportJobs = Generated.adminAuditExportJobs;
-export const getExportStatus = Generated.adminAuditExportStatusByExport;
 export const downloadExport = Generated.adminAuditExportDownloadByExport;
 export const createExportJob = Generated.adminAuditExportPost;
 export const getMerkleRoot = Generated.adminAuditMerkleRoot;
@@ -79,12 +78,23 @@ export const getSecurityUserProfile = async (userId: string) => {
 };
 // @generated-api-exempt: BFF gateway composite endpoints — registered at
 // /bff/gateway/api/v1/security on gateway engine (JWT required)
-export const getSecurityUserTimeline = async (userId: string) => {
+// S-72③：分页透传（网关 GetUserSecurityTimeline 支持 page/page_size，响应附 events_total）
+export const getSecurityUserTimeline = async (
+	userId: string,
+	params?: { page?: number; pageSize?: number },
+) => {
 	const token = (await import('@autional-cn/shared')).getAccessToken();
 	const { camelCaseKeys } = await import('@autional-cn/shared');
-	const res = await fetch(`/bff/gateway/api/v1/security/users/${userId}/timeline`, {
-		headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-	});
+	const qs = new URLSearchParams();
+	if (params?.page) qs.set('page', String(params.page));
+	if (params?.pageSize) qs.set('page_size', String(params.pageSize));
+	const query = qs.toString();
+	const res = await fetch(
+		`/bff/gateway/api/v1/security/users/${userId}/timeline${query ? `?${query}` : ''}`,
+		{
+			headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+		},
+	);
 	if (!res.ok) throw new Error(`HTTP ${res.status}`);
 	const body = await res.json();
 	return camelCaseKeys(body.data);
@@ -138,5 +148,14 @@ export const getNhiPolicy = Generated.adminPoliciesNhi;
 export const updateNhiPolicy = Generated.adminPoliciesNhiPut;
 export const fetchGatewayStatusRaw = async () => {
 	const res = await fetch('/ready');
+	// S-02（fix-security-w5）：环境未把 /ready 接到网关时（如 SPA fallback 返回 index.html，
+	// 200 text/html），res.json() 抛 SyntaxError 且报错无诊断价值——前置 content-type 守卫，
+	// 抛带诊断信息的错误交给卡片错误态 + 重试。
+	const contentType = res.headers.get('content-type') || '';
+	if (!contentType.includes('application/json')) {
+		throw new Error(`/ready: unexpected content-type "${contentType || 'none'}" (HTTP ${res.status})`);
+	}
+	// 注意：网关 /ready 不健康时返回 503，但 body 仍是 JSON（checks/checks_latency）——
+	// 须照常解析渲染服务红点，不可按 !res.ok 抛错（那是「服务不健康」不是「接口失败」）。
 	return res.json();
 };

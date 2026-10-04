@@ -14,11 +14,15 @@ import {
 
 import dayjs from 'dayjs';
 import { useAnomalies, useUpdateAnomalyStatus } from '@/hooks/use-security-queries';
-import { message } from '@/lib/antd-app';
+import { message, modal } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import AnomalyDetailDrawer from '@/components/anomaly/AnomalyDetailDrawer';
 import AssignAnomalyModal from '@/components/anomaly/AssignAnomalyModal';
 import { Can } from '@/components/Can';
+import { UserIdentity } from '@/components/UserIdentity';
+import { PageScopeHint } from '@/components/PageScopeHint';
+import { severityColor, severityLabel } from '@/lib/enums';
+import { anomalyDescription } from '@/lib/anomaly';
 
 interface AnomalyItem {
 	id: string;
@@ -30,13 +34,6 @@ interface AnomalyItem {
 	status: 'open' | 'investigating' | 'resolved' | 'false_positive';
 	detectedAt: number;
 }
-
-const severityColors: Record<string, string> = {
-	low: 'blue',
-	medium: 'gold',
-	high: 'orange',
-	critical: 'red',
-};
 
 export default function AnomaliesPage() {
 	const { t } = useTranslation();
@@ -80,13 +77,29 @@ export default function AnomaliesPage() {
 		return { open, investigating, resolved, critical };
 	}, [items]);
 
-	const handleStatusChange = async (id: string, status: string) => {
-		try {
-			await updateMutation.mutateAsync({ id, status });
-			message.success(t('anomalies.statusUpdated'));
-		} catch {
-			message.error(t('anomalies.updateFailed'));
-		}
+	// S-37（2026-10-04）：状态流转为直接落库写操作，先弹确认；误报标记确认按钮用 danger 呈现。
+	const confirmContentKey: Record<'investigating' | 'resolved' | 'false_positive', string> = {
+		investigating: 'anomalies.confirmInvestigate',
+		resolved: 'anomalies.confirmResolve',
+		false_positive: 'anomalies.confirmFalsePositive',
+	};
+
+	const handleStatusChange = (id: string, status: 'investigating' | 'resolved' | 'false_positive') => {
+		modal.confirm({
+			title: t('anomalies.confirmTitle'),
+			content: t(confirmContentKey[status]),
+			okText: t('common.confirm'),
+			cancelText: t('common.cancel'),
+			okButtonProps: status === 'false_positive' ? { danger: true } : undefined,
+			onOk: async () => {
+				try {
+					await updateMutation.mutateAsync({ id, status });
+					message.success(t('anomalies.statusUpdated'));
+				} catch {
+					message.error(t('anomalies.updateFailed'));
+				}
+			},
+		});
 	};
 
 	const openDetail = (id: string) => {
@@ -126,10 +139,20 @@ export default function AnomaliesPage() {
 			title: t('anomalies.columnSeverity'),
 			dataIndex: 'severity',
 			width: 110,
-			render: (v: string) => <Tag color={severityColors[v]}>{v}</Tag>,
+			render: (v: string) => <Tag color={severityColor(v)}>{severityLabel(t, v)}</Tag>,
 		},
-		{ title: t('anomalies.columnDescription'), dataIndex: 'description', ellipsis: true },
-		{ title: t('anomalies.columnUser'), dataIndex: 'userId', width: 140 },
+		{
+			title: t('anomalies.columnDescription'),
+			dataIndex: 'description',
+			ellipsis: true,
+			render: (_: unknown, record: AnomalyItem) => anomalyDescription(t, record),
+		},
+		{
+			title: t('anomalies.columnUser'),
+			dataIndex: 'userId',
+			width: 170,
+			render: (v: string) => <UserIdentity userId={v} />,
+		},
 		{ title: t('anomalies.columnTenant'), dataIndex: 'tenantId', width: 120 },
 		{
 			title: t('anomalies.columnStatus'),
@@ -169,21 +192,24 @@ export default function AnomaliesPage() {
 							</>
 						)}
 						{(record.status === 'open' || record.status === 'investigating') && (
-							<Button
-								size="small"
-								type="primary"
-								onClick={() => handleStatusChange(record.id, 'resolved')}
-							>
-								{t('anomalies.actionResolve')}
-							</Button>
+							<>
+								<Button
+									size="small"
+									type="primary"
+									onClick={() => handleStatusChange(record.id, 'resolved')}
+								>
+									{t('anomalies.actionResolve')}
+								</Button>
+								{/* S-37：误报按状态收窄（终态行不再提供该动作） */}
+								<Button
+									size="small"
+									danger
+									onClick={() => handleStatusChange(record.id, 'false_positive')}
+								>
+									{t('anomalies.actionFalsePositive')}
+								</Button>
+							</>
 						)}
-						<Button
-							size="small"
-							danger
-							onClick={() => handleStatusChange(record.id, 'false_positive')}
-						>
-							{t('anomalies.actionFalsePositive')}
-						</Button>
 					</Can>
 				</Space>
 			),
@@ -207,7 +233,7 @@ export default function AnomaliesPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('anomalies.statsOpen')}
+							title={<span>{t('anomalies.statsOpen')}<PageScopeHint /></span>}
 							value={stats.open}
 							prefix={<WarningOutlined className="text-danger" />}
 						/>
@@ -216,7 +242,7 @@ export default function AnomaliesPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('anomalies.statsInvestigating')}
+							title={<span>{t('anomalies.statsInvestigating')}<PageScopeHint /></span>}
 							value={stats.investigating}
 							prefix={<ExclamationCircleOutlined className="text-warning" />}
 						/>
@@ -225,7 +251,7 @@ export default function AnomaliesPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('anomalies.statsResolved')}
+							title={<span>{t('anomalies.statsResolved')}<PageScopeHint /></span>}
 							value={stats.resolved}
 							prefix={<CheckCircleOutlined className="text-success" />}
 						/>
@@ -234,7 +260,7 @@ export default function AnomaliesPage() {
 				<Col xs={12} sm={6}>
 					<Card>
 						<Statistic
-							title={t('anomalies.statsCritical')}
+							title={<span>{t('anomalies.statsCritical')}<PageScopeHint /></span>}
 							value={stats.critical}
 							prefix={<WarningOutlined className="text-purple-500" />}
 						/>
@@ -254,20 +280,24 @@ export default function AnomaliesPage() {
 							placeholder={t('anomalies.filterSeverity')}
 							allowClear
 							value={filters.severity || undefined}
-							onChange={(v) => setFilters({ ...filters, severity: v })}
+							onChange={(v) => {
+								setFilters({ ...filters, severity: v });
+								setPage(1);
+							}}
 							style={{ width: 130 }}
-							options={[
-								{ label: 'Low', value: 'low' },
-								{ label: 'Medium', value: 'medium' },
-								{ label: 'High', value: 'high' },
-								{ label: 'Critical', value: 'critical' },
-							]}
+							options={(['low', 'medium', 'high', 'critical'] as const).map((v) => ({
+								label: severityLabel(t, v),
+								value: v,
+							}))}
 						/>
 						<Select
 							placeholder={t('anomalies.filterStatus')}
 							allowClear
 							value={filters.status || undefined}
-							onChange={(v) => setFilters({ ...filters, status: v })}
+							onChange={(v) => {
+								setFilters({ ...filters, status: v });
+								setPage(1);
+							}}
 							style={{ width: 130 }}
 							options={[
 								{ label: t('anomalies.statusOpen'), value: 'open' },
@@ -276,14 +306,7 @@ export default function AnomaliesPage() {
 								{ label: t('anomalies.statusFalsePositive'), value: 'false_positive' },
 							]}
 						/>
-						<Button
-							type="primary"
-							onClick={() => {
-								setPage(1);
-							}}
-						>
-							{t('common.search')}
-						</Button>
+						{/* S-39：筛选控件 onChange 即时生效（无草稿输入），移除语义误导的「搜索」按钮 */}
 						<Button
 							onClick={() => {
 								setFilters({});

@@ -48,10 +48,21 @@ export function useAuditLogDetail(id: string | null) {
 	});
 }
 
+/** S-21：导出范围筛选（对齐列表过滤契约；请求拦截器统一 camel→snake，BE 按 level/status_class/keyword 绑定） */
+export interface ExportJobPayload extends Record<string, unknown> {
+	format: string;
+	startDate?: string;
+	endDate?: string;
+	level?: string;
+	statusClass?: 'success' | 'failure';
+	keyword?: string;
+}
+
 export function useCreateExportJob() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: createExportJob,
+		// SDK 生成类型暂缺新筛选字段（swagger 重生成前），经 Record 透传
+		mutationFn: (payload: ExportJobPayload) => createExportJob(payload as any),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ['export-jobs'] }),
 	});
 }

@@ -3,21 +3,18 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
-import { Card, Tag, Button, Spin, Empty, Space, Badge, Modal, Form, Select, DatePicker, Input, Progress } from 'antd';
+import { Card, Tag, Button, Spin, Empty, Space, Badge, Modal, Form, Select, DatePicker, Input, Progress, Tooltip } from 'antd';
 import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
-import {
-	useExportJobs,
-	useExportJobStatus,
-	useCreateExportJob,
-	useDownloadExport,
-} from '@/hooks/use-security-queries';
+import { useExportJobs, useDownloadExport } from '@/hooks/use-security-queries';
+import { useCreateExportJob } from '@/hooks/use-audit-logs';
 import { message } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
-import type { ExportJobResponse, ExportJobRequest } from '@autional-cn/shared/generated/types';
+import type { ExportJobResponse } from '@autional-cn/shared/generated/types';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
+import { levelLabel } from '@/lib/enums';
 
 export default function ExportJobsPage() {
 	const { t } = useTranslation();
@@ -35,10 +32,9 @@ export default function ExportJobsPage() {
 	const [createVisible, setCreateVisible] = useState(false);
 	const [createForm] = Form.useForm();
 	const [creating, setCreating] = useState(false);
-	const [downloadJobId, setDownloadJobId] = useState<string | null>(null);
+	const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
 	const { data, isLoading } = useExportJobs({ page, pageSize });
-	const { data: jobStatus } = useExportJobStatus(downloadJobId);
 	const createMutation = useCreateExportJob();
 	const downloadMutation = useDownloadExport();
 
@@ -48,12 +44,15 @@ export default function ExportJobsPage() {
 	const handleCreate = async (values: any) => {
 		setCreating(true);
 		try {
-			const req: ExportJobRequest = {
+			// S-21：导出范围随 audit-logs 过滤契约（level/statusClass/keyword），与列表筛选能力对齐
+			await createMutation.mutateAsync({
 				format: values.format,
 				startDate: values.startDate ? dayjs(values.startDate).format('YYYY-MM-DD') : undefined,
 				endDate: values.endDate ? dayjs(values.endDate).format('YYYY-MM-DD') : undefined,
-			};
-			await createMutation.mutateAsync(req);
+				level: values.level,
+				statusClass: values.statusClass,
+				keyword: values.keyword,
+			});
 			message.success(t('exportJobs.createSuccess'));
 			setCreateVisible(false);
 			createForm.resetFields();
@@ -64,22 +63,24 @@ export default function ExportJobsPage() {
 		}
 	};
 
+	// S-17（2026-10-04）：旧实现先 setState 再同步读旧闭包 jobStatus（恒 undefined）⇒
+	// 首次点击必走「任务状态:（空）」警告分支。按钮已按 status==='completed' 门控，
+	// 直接调下载端点（返回 { downloadUrl }，预签名 900s），取 URL 后新开页签。
 	const handleDownload = async (jobId: string) => {
-		setDownloadJobId(jobId);
+		setDownloadingId(jobId);
 		try {
-			const status = jobStatus as any;
-			if (status?.status === 'completed') {
-				await downloadMutation.mutateAsync(jobId);
-				message.success(t('exportJobs.downloadStarted'));
-			} else {
-				message.warning(
-					t('exportJobs.taskStatus', {
-						status: statusLabels[status?.status || 'unknown'] || status?.status,
-					}),
-				);
+			const res: any = await downloadMutation.mutateAsync(jobId);
+			const url = res?.downloadUrl;
+			if (!url) {
+				message.error(t('exportJobs.downloadFailed'));
+				return;
 			}
+			window.open(url, '_blank', 'noopener');
+			message.success(t('exportJobs.downloadStarted'));
 		} catch {
-			message.error(t('exportJobs.fetchStatusFailed'));
+			message.error(t('exportJobs.downloadFailed'));
+		} finally {
+			setDownloadingId(null);
 		}
 	};
 
@@ -119,7 +120,17 @@ export default function ExportJobsPage() {
 				return <span className="text-neutral-600">—</span>;
 			},
 		},
-		{ title: t('exportJobs.columnFilename'), dataIndex: 'filename', ellipsis: true },
+		{
+			title: t('exportJobs.columnFilename'),
+			dataIndex: 'filename',
+			ellipsis: true,
+			// S-20：历史任务文件名前缀不一致（种子残留），列内显示 basename 归一观感，全文挂 Tooltip
+			render: (v?: string) => {
+				if (!v) return '-';
+				const base = v.split('/').pop() || v;
+				return <Tooltip title={v}>{base}</Tooltip>;
+			},
+		},
 		{
 			title: t('exportJobs.columnRecordCount'),
 			dataIndex: 'recordCount',
@@ -130,9 +141,17 @@ export default function ExportJobsPage() {
 			title: t('exportJobs.columnFormat'),
 			dataIndex: 'contentType',
 			width: 120,
-			render: (v?: string) => (
-				<Tag>{v?.includes('csv') ? 'CSV' : v?.includes('json') ? 'JSON' : v}</Tag>
-			),
+			// S-19：历史任务 content_type 为空 → 按文件名后缀推导格式；均不可得回落 '-'
+			render: (v: string | undefined, record: ExportJobResponse) => {
+				const ct = v || '';
+				const name = record.filename || '';
+				const kind = ct.includes('csv') || name.endsWith('.csv')
+					? 'CSV'
+					: ct.includes('json') || name.endsWith('.json')
+						? 'JSON'
+						: '';
+				return kind ? <Tag>{kind}</Tag> : <span className="text-neutral-600">-</span>;
+			},
 		},
 		{
 			title: t('exportJobs.columnGeneratedAt'),
@@ -149,6 +168,7 @@ export default function ExportJobsPage() {
 					<Button
 						size="small"
 						icon={<DownloadOutlined />}
+						loading={downloadingId === record.jobId}
 						onClick={() => record.jobId && handleDownload(record.jobId)}
 						disabled={record.status !== 'completed'}
 					>
@@ -222,8 +242,30 @@ export default function ExportJobsPage() {
 						<Form.Item name="endDate" label={t('exportJobs.createEndDateLabel')}>
 							<DatePicker style={{ width: '100%' }} placeholder="YYYY-MM-DD" />
 						</Form.Item>
-						<Form.Item name="tenantId" label={t('exportJobs.createTenantIdLabel')}>
-							<Input placeholder={t('exportJobs.createTenantPlaceholder')} />
+						{/* S-18：移除「租户ID」死字段（值从未上送；后端恒按调用上下文租户导出） */}
+						{/* S-21：补筛选条件（复用 audit-logs 过滤契约） */}
+						<Form.Item name="level" label={t('exportJobs.createLevelLabel')}>
+							<Select
+								allowClear
+								placeholder={t('exportJobs.createFilterOptional')}
+								options={(['info', 'warning', 'error', 'critical'] as const).map((v) => ({
+									label: levelLabel(t, v),
+									value: v,
+								}))}
+							/>
+						</Form.Item>
+						<Form.Item name="statusClass" label={t('exportJobs.createStatusClassLabel')}>
+							<Select
+								allowClear
+								placeholder={t('exportJobs.createFilterOptional')}
+								options={[
+									{ label: t('status.success'), value: 'success' },
+									{ label: t('status.failure'), value: 'failure' },
+								]}
+							/>
+						</Form.Item>
+						<Form.Item name="keyword" label={t('exportJobs.createKeywordLabel')}>
+							<Input placeholder={t('auditLogs.keywordPlaceholder')} />
 						</Form.Item>
 					</Form>
 				</Modal>

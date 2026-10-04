@@ -28,7 +28,6 @@ function mockKpiLoaded(statsOverrides: Record<string, any> = {}) {
 		data: {
 			totalLogs: 5000,
 			todayEntries: 216,
-			avgResponseMs: 45,
 			...statsOverrides,
 		},
 		isLoading: false,
@@ -66,7 +65,14 @@ describe('SocKpiPage', () => {
 		expect(screen.getByText('Total Logs')).toBeInTheDocument();
 		expect(screen.getByText('Total Anomalies')).toBeInTheDocument();
 		expect(screen.getByText('Total Alerts')).toBeInTheDocument();
-		expect(screen.getByText('MTTD (est.)')).toBeInTheDocument();
+	});
+
+	it('no longer renders the sourceless MTTD card or Avg Response row (S-53)', () => {
+		mockKpiLoaded();
+		render(<SocKpiPage />);
+		expect(screen.queryByText('MTTD (est.)')).not.toBeInTheDocument();
+		expect(screen.queryByText('N/A')).not.toBeInTheDocument();
+		expect(screen.queryByText('Avg Response Time (est.)')).not.toBeInTheDocument();
 	});
 
 	it('renders Today Entries value from camelCase field (S-52)', () => {

@@ -21,6 +21,9 @@ import type {
 } from '@autional-cn/shared/generated/types';
 import AnomalyComments from './AnomalyComments';
 import { Drawer } from '@autional-cn/ui/antd';
+import { UserIdentity } from '@/components/UserIdentity';
+import { severityColor, severityLabel } from '@/lib/enums';
+import { anomalyDescription } from '@/lib/anomaly';
 
 interface AnomalyDetailDrawerProps {
 	anomalyId: string | null;
@@ -132,7 +135,7 @@ export default function AnomalyDetailDrawer({
 			<div className="space-y-4">
 				<Alert
 					message={`${t('anomalies.columnType')}：${typeLabels[detail.type ?? ''] || detail.type}`}
-					description={detail.description}
+					description={anomalyDescription(t, detail)}
 					type={
 						detail.severity === 'critical'
 							? 'error'
@@ -148,7 +151,7 @@ export default function AnomalyDetailDrawer({
 						<Card size="small">
 							<Statistic
 								title={t('anomalies.columnSeverity')}
-								value={detail.severity?.toUpperCase() || '-'}
+								value={severityLabel(t, detail.severity)}
 								valueStyle={{
 									color: severityColors[detail.severity || ''] === 'red' ? 'var(--color-danger)' : 'var(--color-warning)',
 								}}
@@ -175,7 +178,9 @@ export default function AnomalyDetailDrawer({
 
 				<Descriptions bordered column={1} size="small">
 					<Descriptions.Item label={t('anomalies.columnId')}>{detail.id}</Descriptions.Item>
-					<Descriptions.Item label={t('anomalies.columnUser')}>{detail.userId}</Descriptions.Item>
+					<Descriptions.Item label={t('anomalies.columnUser')}>
+						<UserIdentity userId={detail.userId} />
+					</Descriptions.Item>
 					<Descriptions.Item label={t('anomalies.columnTenant')}>
 						{detail.tenantId}
 					</Descriptions.Item>
@@ -290,7 +295,7 @@ export default function AnomalyDetailDrawer({
 									<div className="text-sm font-medium">{evt.action}</div>
 									<div className="text-xs text-neutral-600">{evt.message}</div>
 									<div className="text-xs text-neutral-600 mt-1">
-										{evt.ip} · {evt.module} · {evt.operatorId}
+										{evt.ip} · {evt.module} · <UserIdentity userId={evt.operatorId} />
 									</div>
 								</div>
 							),
@@ -314,7 +319,7 @@ export default function AnomalyDetailDrawer({
 						<div className="w-full">
 							<div className="flex items-center justify-between">
 								<div className="flex items-center gap-2">
-									<Tag color={severityColors[item.severity || '']}>{item.severity}</Tag>
+									<Tag color={severityColor(item.severity)}>{severityLabel(t, item.severity)}</Tag>
 									<span className="font-medium">{typeLabels[item.type ?? ''] || item.type}</span>
 								</div>
 								<Badge
@@ -328,10 +333,10 @@ export default function AnomalyDetailDrawer({
 									text={statusLabels[item.status || ''] || item.status}
 								/>
 							</div>
-							<div className="text-sm text-neutral-700 mt-1">{item.description}</div>
+							<div className="text-sm text-neutral-700 mt-1">{anomalyDescription(t, item)}</div>
 							<div className="text-xs text-neutral-600 mt-1">
 								{item.detectedAt ? dayjs(item.detectedAt).format('YYYY-MM-DD HH:mm:ss') : '-'} ·{' '}
-								{item.userId}
+								<UserIdentity userId={item.userId} />
 							</div>
 						</div>
 					</List.Item>

@@ -12,6 +12,15 @@ import {
 } from '@ant-design/icons';
 import { useSecurityReport, useComplianceReport } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
+import { severityColor, severityLabel } from '@/lib/enums';
+import {
+	complianceDescription,
+	complianceItemLabel,
+	complianceRecommendation,
+	securityRecommendation,
+	securityRiskDescription,
+	securityRiskType,
+} from '@/lib/reports';
 
 export default function ReportsPage() {
 	const { t } = useTranslation();
@@ -112,19 +121,14 @@ export default function ReportsPage() {
 									renderItem={(item: any) => (
 										<List.Item className="flex justify-between">
 											<div className="flex items-center gap-2">
-												<Tag
-													color={
-														item.severity === 'high'
-															? 'red'
-															: item.severity === 'medium'
-																? 'orange'
-																: 'blue'
-													}
-												>
-													{item.severity}
+												{/* S-60：severity/type/description 走 i18n 映射（未知值原样回落） */}
+												<Tag color={severityColor(item.severity)}>
+													{severityLabel(t, item.severity)}
 												</Tag>
-												<span className="font-medium">{item.type}</span>
-												<span className="text-neutral-600 text-sm">{item.description}</span>
+												<span className="font-medium">{securityRiskType(t, item.type)}</span>
+												<span className="text-neutral-600 text-sm">
+													{securityRiskDescription(t, item)}
+												</span>
 											</div>
 											<span className="text-sm font-semibold">
 												{item.count} {t('reports.countSuffix')}
@@ -142,7 +146,8 @@ export default function ReportsPage() {
 								<ul className="list-disc pl-5 space-y-1">
 									{securityReport.recommendations.map((r: string, i: number) => (
 										<li key={i} className="text-sm">
-											{r}
+											{/* S-60：有限枚举英文建议 → 本地文案 */}
+											{securityRecommendation(t, r)}
 										</li>
 									))}
 								</ul>
@@ -197,7 +202,12 @@ export default function ReportsPage() {
 						<Card title={t('reports.checkResults')} className="mb-4">
 							<DataTable
 								columns={[
-									{ title: t('reports.columnItem'), dataIndex: 'item' },
+									{
+										title: t('reports.columnItem'),
+										dataIndex: 'item',
+										// S-60：机器键 → 本地文案（9 键映射，未知原样回落）
+										render: (v: string) => complianceItemLabel(t, v),
+									},
 									{
 										title: t('reports.columnStatus'),
 										dataIndex: 'passed',
@@ -208,12 +218,14 @@ export default function ReportsPage() {
 												<Tag color="error">{t('status.failed')}</Tag>
 											),
 									},
-									{ title: t('reports.columnDescription'), dataIndex: 'description' },
 									{
-										title: t('reports.columnIssues'),
-										dataIndex: 'issues',
-										render: (v?: string[]) => v?.join(', ') || '-',
+										title: t('reports.columnDescription'),
+										dataIndex: 'description',
+										// S-60：英文描述按 item 键映射（未知原样回落）
+										render: (_: string, record: any) =>
+											complianceDescription(t, record.item, record.description),
 									},
+									// S-61：撤销「问题」死列（契约 Issues 从不填充 → 恒 '-'）
 								]}
 								dataSource={complianceReport.checks || []}
 								rowKey="item"
@@ -226,7 +238,8 @@ export default function ReportsPage() {
 								<ul className="list-disc pl-5 space-y-1">
 									{complianceReport.recommendations.map((r: string, i: number) => (
 										<li key={i} className="text-sm">
-											{r}
+											{/* S-60：有限枚举英文建议 → 本地文案 */}
+											{complianceRecommendation(t, r)}
 										</li>
 									))}
 								</ul>

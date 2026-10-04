@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@autional-cn/shared';
-import { adminSessions } from '@autional-cn/shared/generated/api';
+import { adminSessions, adminUsers } from '@autional-cn/shared/generated/api';
 import {
 	getActiveSessionCount,
 	terminateSession,
@@ -22,9 +22,7 @@ import {
 	getAuditFindingById,
 	updateAuditFinding,
 	getExportJobs,
-	getExportStatus,
 	downloadExport,
-	createExportJob,
 	getComplianceSelfScore,
 	getAdminComplianceStatusRaw,
 	getRetentionPolicies,
@@ -113,6 +111,16 @@ export function useUpdateAnomalyStatus() {
 		mutationFn: ({ id, status }: { id: string; status: string }) =>
 			updateAnomalyStatus(id, { status }),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ['anomalies'] }),
+	});
+}
+
+// 分配分析师选择器数据源（identity 管理面用户列表，网关 required_roles 含 security_admin）
+export function useAdminUsers(search: string, enabled = true) {
+	return useQuery({
+		queryKey: ['admin-users', search],
+		queryFn: () => adminUsers({ search: search || undefined, page: 1, limit: 20 }),
+		staleTime: 30_000,
+		enabled,
 	});
 }
 
@@ -241,7 +249,8 @@ export function useArchiveStatus() {
 export function useTriggerArchive() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (params: { beforeDate?: string }) => triggerArchive(params),
+		// BE 契约（service-audit dto.ArchiveRequest）：before 为 Unix 秒
+		mutationFn: (params: { before: number }) => triggerArchive(params),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ['archives'] }),
 	});
 }
@@ -297,21 +306,7 @@ export function useExportJobs(params: { page?: number; pageSize?: number }) {
 	});
 }
 
-export function useExportJobStatus(jobId: string | null) {
-	return useQuery({
-		queryKey: ['export-job', jobId],
-		queryFn: () => getExportStatus(jobId!),
-		enabled: !!jobId,
-	});
-}
-
-export function useCreateExportJob() {
-	const qc = useQueryClient();
-	return useMutation({
-		mutationFn: createExportJob,
-		onSuccess: () => qc.invalidateQueries({ queryKey: ['export-jobs'] }),
-	});
-}
+// useCreateExportJob 单点在 use-audit-logs.ts（S-21 导出筛选载荷类型在此统一）
 
 export function useDownloadExport() {
 	return useMutation({

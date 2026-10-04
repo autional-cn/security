@@ -10,8 +10,9 @@ vi.mock('recharts', () => ({
 	CartesianGrid: () => null,
 	Tooltip: () => null,
 	ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-	PieChart: () => <div data-testid="pie-chart" />,
-	Pie: () => null,
+	PieChart: ({ children }: any) => <div data-testid="pie-chart">{children}</div>,
+	// S-08 回归需要读取实际喂给饼图的数据（top-N + 其他聚合）
+	Pie: ({ data }: any) => <div data-testid="pie-data">{JSON.stringify(data)}</div>,
 	Cell: () => null,
 	BarChart: () => <div data-testid="bar-chart" />,
 	Bar: () => null,
@@ -28,6 +29,17 @@ vi.mock('@/hooks/use-overview', () => ({
 vi.mock('@/hooks/use-security-queries', () => ({
 	useHashChain: vi.fn(),
 	useComplianceSelfScore: vi.fn(),
+	// UserIdentity（S-05：事件/异常主体用户）数据源
+	useAdminUsers: vi.fn(() => ({ data: { items: [] } })),
+}));
+
+// S-73：统计卡/事件标题改 Link（react-router），测试环境用 a 标签 stub
+vi.mock('react-router', () => ({
+	Link: ({ to, children, className }: any) => (
+		<a href={to} className={className}>
+			{children}
+		</a>
+	),
 }));
 
 vi.mock('@autional-cn/shared', () => ({
@@ -36,6 +48,7 @@ vi.mock('@autional-cn/shared', () => ({
 		currentTenantId: 'test-tenant',
 		isAuthenticated: true,
 	})),
+	useTenantSlug: () => 'test-tenant',
 	useAuthStore: vi.fn(() => ({
 		user: { tenant_id: 'test-tenant' },
 		currentTenantId: 'test-tenant',
@@ -170,5 +183,74 @@ describe('DashboardPage (overview)', () => {
 		} as any);
 		render(<OverviewPage />);
 		expect(screen.getByText('无法获取服务状态')).toBeInTheDocument();
+	});
+
+	// S-73（fix-security-w5）：统计卡接对应路由（原全页零 pointer/零 href）
+	it('S-73：统计卡/事件标题接对应路由', () => {
+		mockAllLoaded();
+		render(<OverviewPage />);
+		const hrefs = screen.getAllByRole('link').map((a) => a.getAttribute('href'));
+		expect(hrefs).toContain('/test-tenant/audit-logs');
+		expect(hrefs).toContain('/test-tenant/anomalies');
+		expect(hrefs).toContain('/test-tenant/sessions');
+		expect(hrefs).toContain('/test-tenant/compliance');
+		expect(hrefs).toContain('/test-tenant/hash-chain');
+		expect(hrefs).toContain('/test-tenant/risk-dashboard');
+	});
+
+	// S-08（fix-security-w5）：前 5 + 其余聚合「其他模块」，长尾不淹没图例
+	it('S-08：模块分布前 5 + 其他聚合', () => {
+		mockAllLoaded();
+		vi.mocked(useOverview.useAuditStats).mockReturnValue({
+			data: {
+				totalLogs: 451,
+				trend: [],
+				byModule: { a: 100, b: 90, c: 80, d: 70, e: 60, f: 50, g: 1 },
+			},
+			isLoading: false,
+		} as any);
+		render(<OverviewPage />);
+		const pie = screen.getByTestId('pie-data');
+		expect(pie.textContent).toContain('"name":"e","value":60');
+		expect(pie.textContent).toContain('"name":"其他模块","value":51');
+		expect(pie.textContent).not.toContain('"name":"f"');
+	});
+
+	it('S-08：无 byModule 时不渲染硬编码假 mock（诚实空态）', () => {
+		mockAllLoaded();
+		vi.mocked(useOverview.useAuditStats).mockReturnValue({
+			data: { totalLogs: 100, trend: [] },
+			isLoading: false,
+		} as any);
+		render(<OverviewPage />);
+		expect(screen.queryByTestId('pie-data')).toBeNull();
+	});
+
+	// S-05（fix-security-w5）：异常事件描述本地化 + 主体用户可读身份（原英文原文 + 无主体）
+	it('S-05：事件流/异常卡描述本地化 + 用户名', () => {
+		mockAllLoaded();
+		vi.mocked(useOverview.useAnomaliesPreview).mockReturnValue({
+			data: {
+				items: [
+					{
+						id: 'a1',
+						type: 'unusual_time',
+						severity: 'medium',
+						description: 'User has 5 off-hours access events',
+						userId: 'u1',
+						detectedAt: Date.now(),
+					},
+				],
+				total: 1,
+			},
+			isLoading: false,
+		} as any);
+		vi.mocked(useSecurityQueries.useAdminUsers).mockReturnValue({
+			data: { items: [{ id: 'u1', username: 'alice' }] },
+		} as any);
+		render(<OverviewPage />);
+		expect(screen.getAllByText('异常时间').length).toBeGreaterThanOrEqual(1);
+		expect(screen.getAllByText('用户在非工作时段有 5 次访问事件').length).toBeGreaterThanOrEqual(1);
+		expect(screen.getAllByText('alice').length).toBeGreaterThanOrEqual(1);
 	});
 });

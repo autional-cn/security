@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Link } from 'react-router';
 import { notification } from '@/lib/antd-app';
-import { Badge } from 'antd';
+import { Badge, Popover } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import {
 	getAccessToken,
@@ -10,9 +11,11 @@ import {
 	loginWithTokens,
 	logout,
 	getAUTH_PAGES_URL,
+	useTenantSlug,
 } from '@autional-cn/shared';
 import { authRefreshPost } from '@autional-cn/shared/generated/api';
 import { useTranslation } from 'react-i18next';
+import { markSessionDegraded, SESSION_DEGRADED_NOTICE_KEY } from '@/lib/session-degrade';
 
 interface RealtimeEvent {
 	id: string;
@@ -25,11 +28,21 @@ interface RealtimeEvent {
 
 const MAX_RETRIES = 20;
 const BASE_DELAY = 1000;
+// S-07（fix-security-w5）：badge 点击展开最近事件列表的容量上限
+const RECENT_EVENTS_CAP = 20;
+const SEVERITY_DOT_COLORS: Record<string, string> = {
+	critical: 'var(--color-danger)',
+	warning: 'var(--color-warning)',
+	info: 'var(--color-info)',
+};
 
 export default function SSEEventStream() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const slug = useTenantSlug();
 	const [connected, setConnected] = useState(false);
 	const [eventCount, setEventCount] = useState(0);
+	// S-07：原仅累加计数（info 级事件无任何查看途径）——保留最近 RECENT_EVENTS_CAP 条供弹层查看
+	const [recentEvents, setRecentEvents] = useState<RealtimeEvent[]>([]);
 	const abortRef = useRef<AbortController | null>(null);
 	const retryCountRef = useRef(0);
 	const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,8 +98,17 @@ export default function SSEEventStream() {
 					connect();
 					return;
 				}
-				// U350 接通后复查落点：本站无 /login 路由（此前相对路径接通即 404）；
-				// 改走 auth 站入口路由（?redirect= 由入口三分支解析租户并发起登录，成功后原路返回）。
+				// S-74：过期降级不静默——持久轻提示 + 共享标记（AppLayout 在恢复后 toast 并关提示）。
+				notification.warning({
+					key: SESSION_DEGRADED_NOTICE_KEY,
+					message: t('sse.sessionExpiredTitle'),
+					description: t('sse.sessionExpiredDesc'),
+					duration: 0,
+					placement: 'bottomRight',
+				});
+				markSessionDegraded();
+				// U350：落点走 auth 站入口路由（本站无 /login 路由，相对路径接通即 404）；
+				// ?redirect= 由入口三分支解析租户，登录成功后原路返回（rc.22 起 logout 参数生效）。
 				logout(`${getAUTH_PAGES_URL()}/login?redirect=${encodeURIComponent(window.location.href)}`);
 				return;
 			}
@@ -121,6 +143,8 @@ export default function SSEEventStream() {
 						try {
 							const data: RealtimeEvent = JSON.parse(eventData);
 							setEventCount((c) => c + 1);
+							// S-07：全量（含 info）入最近列表，弹层可查
+							setRecentEvents((prev) => [data, ...prev].slice(0, RECENT_EVENTS_CAP));
 
 							if (data.severity === 'critical' || data.severity === 'warning') {
 								notification.open({
@@ -167,16 +191,59 @@ export default function SSEEventStream() {
 		};
 	}, [connect]);
 
+	// S-07（fix-security-w5）：badge 点击展开最近事件列表（cap 20）+ 跳转审计日志页，
+	// 修「仅累加计数、info 级无查看途径」（Nielsen #1 可达性）
+	const recentEventsPanel = (
+		<div className="w-80 max-w-[80vw]">
+			<div className="text-xs font-medium text-neutral-600 mb-2">{t('sse.recentEvents')}</div>
+			{recentEvents.length === 0 ? (
+				<div className="text-xs text-neutral-500 py-2 text-center">{t('sse.noEvents')}</div>
+			) : (
+				<ul className="max-h-64 overflow-y-auto m-0 p-0 list-none space-y-1">
+					{recentEvents.map((evt) => (
+						<li key={evt.id} className="flex items-start gap-2 text-xs">
+							<span
+								className="w-2 h-2 rounded-full mt-1 shrink-0"
+								style={{ backgroundColor: SEVERITY_DOT_COLORS[evt.severity] || 'var(--color-neutral-400)' }}
+							/>
+							<span className="flex-1 min-w-0 break-words">{evt.message}</span>
+							<span className="text-neutral-500 shrink-0">
+								{evt.timestamp
+									? new Date(evt.timestamp).toLocaleTimeString(i18n.language, {
+											hour: '2-digit',
+											minute: '2-digit',
+										})
+									: ''}
+							</span>
+						</li>
+					))}
+				</ul>
+			)}
+			<div className="mt-2 pt-2 border-t border-neutral-200 text-right">
+				<Link
+					to={`/${slug ?? ''}/audit-logs`}
+					className="text-xs text-blue-600 hover:opacity-80"
+				>
+					{t('sse.viewAuditLogs')}
+				</Link>
+			</div>
+		</div>
+	);
+
 	return (
-		<Badge
-			count={eventCount}
-			overflowCount={99}
-			style={{ backgroundColor: connected ? 'var(--color-success)' : 'var(--color-neutral-300)' }}
-		>
-			<ThunderboltOutlined
-				style={{ color: connected ? 'var(--color-success)' : 'var(--color-neutral-300)', fontSize: 16 }}
-				title={connected ? t('sse.connected') : t('sse.disconnected')}
-			/>
-		</Badge>
+		<Popover content={recentEventsPanel} trigger="click" placement="bottomRight">
+			<span className="inline-flex cursor-pointer" role="button" tabIndex={0}>
+				<Badge
+					count={eventCount}
+					overflowCount={99}
+					style={{ backgroundColor: connected ? 'var(--color-success)' : 'var(--color-neutral-300)' }}
+				>
+					<ThunderboltOutlined
+						style={{ color: connected ? 'var(--color-success)' : 'var(--color-neutral-300)', fontSize: 16 }}
+						title={connected ? t('sse.connected') : t('sse.disconnected')}
+					/>
+				</Badge>
+			</span>
+		</Popover>
 	);
 }
