@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
-import { ConsolePageHeader } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Alert, Button, Card, Row, Col, Statistic, Descriptions, Badge, Spin, Tag } from 'antd';
+import { Button, Card, Row, Col, Statistic, Descriptions, Badge, Spin, Tag } from 'antd';
 import {
 	HistoryOutlined,
 	SafetyOutlined,
@@ -90,11 +90,11 @@ export default function UserSecurityProfilePage() {
 		return (
 			<div className="p-4">
 				<Alert
-					type="error"
-					message={t('usersProfile.fetchError')}
-					description={(error as Error)?.message || t('usersProfile.unknownError')}
-					showIcon
-				/>
+					variant="danger"
+					title={t('usersProfile.fetchError')}
+				>
+					{(error as Error)?.message || t('usersProfile.unknownError')}
+				</Alert>
 			</div>
 		);
 	}
@@ -158,13 +158,13 @@ export default function UserSecurityProfilePage() {
 
 			{partialErrors.length > 0 && (
 				<Alert
-					type="warning"
-					message={t('usersProfile.partialErrors')}
-					description={partialErrors.join('; ')}
-					showIcon
+					variant="warning"
+					title={t('usersProfile.partialErrors')}
 					className="mb-4"
 					closable
-				/>
+				>
+					{partialErrors.join('; ')}
+				</Alert>
 			)}
 
 			<Row gutter={[16, 16]}>

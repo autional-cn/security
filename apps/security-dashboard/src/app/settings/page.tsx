@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
-import { Card, Form, Input, Button, Switch, Select, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty, Alert } from 'antd';
+import { Card, Form, Input, Button, Switch, Select, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty } from 'antd';
 import {
 	SaveOutlined,
 	PlusOutlined,
@@ -28,7 +28,7 @@ import {
 import { message, modal } from '@/lib/antd-app';
 import { useTranslation } from 'react-i18next';
 import { AuditStatsOnly } from '@autional-cn/shared';
-import { ConsolePageHeader, useTheme } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader, useTheme } from '@autional-cn/ui';
 import { Can } from '@/components/Can';
 import type {
 	RetentionPolicyResponse,
@@ -117,11 +117,10 @@ function LocalSettingsTab() {
 		<Form form={form} layout="vertical" onFinish={handleSave}>
 			<Card title={t('settings.alertNotification')} className="mb-4">
 				<Alert
-					type="info"
-					showIcon
-					message={t('settings.localOnlyHint')}
+					variant="info"
+					title={t('settings.localOnlyHint')}
 					className="mb-4"
-				/>
+				 />
 				<Form.Item name="emailAlert" label={t('settings.emailAlert')} valuePropName="checked">
 					<Switch />
 				</Form.Item>

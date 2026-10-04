@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Tabs, Spin, Descriptions, Tag, Timeline, List, Badge, Empty, Alert, Card, Statistic, Row, Col } from 'antd';
+import { Tabs, Spin, Descriptions, Tag, Timeline, List, Badge, Empty, Card, Statistic, Row, Col } from 'antd';
 import {
 	FileSearchOutlined,
 	WarningOutlined,
@@ -20,6 +20,7 @@ import type {
 	AuditLogResponse,
 } from '@autional-cn/shared/generated/types';
 import AnomalyComments from './AnomalyComments';
+import { Alert } from '@autional-cn/ui';
 import { Drawer } from '@autional-cn/ui/antd';
 import { UserIdentity } from '@/components/UserIdentity';
 import { severityColor, severityLabel } from '@/lib/enums';
@@ -134,17 +135,17 @@ export default function AnomalyDetailDrawer({
 		return (
 			<div className="space-y-4">
 				<Alert
-					message={`${t('anomalies.columnType')}：${typeLabels[detail.type ?? ''] || detail.type}`}
-					description={anomalyDescription(t, detail)}
-					type={
+					variant={
 						detail.severity === 'critical'
-							? 'error'
+							? 'danger'
 							: detail.severity === 'high'
 								? 'warning'
 								: 'info'
 					}
-					showIcon
-				/>
+					title={`${t('anomalies.columnType')}：${typeLabels[detail.type ?? ''] || detail.type}`}
+				>
+					{anomalyDescription(t, detail)}
+				</Alert>
 
 				<Row gutter={[16, 16]}>
 					<Col span={12}>

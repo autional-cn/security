@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Tabs, Spin, Descriptions, Tag, Empty, Alert } from 'antd';
+import { Tabs, Spin, Descriptions, Tag, Empty } from 'antd';
 import { SafetyOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAgentById, useRobotById, useDeviceById } from '@/hooks/use-security-queries';
+import { Alert } from '@autional-cn/ui';
 import { Drawer } from '@autional-cn/ui/antd';
 
 interface NhiDetailDrawerProps {
@@ -194,11 +195,9 @@ export default function NhiDetailDrawer({
 		>
 			{hasError && (
 				<Alert
-					message={t('nhi.fetchDetailFailed', 'Failed to fetch detail')}
-					type="error"
-					showIcon
-					style={{ marginBottom: 16 }}
-				/>
+					variant="danger"
+					title={t('nhi.fetchDetailFailed', 'Failed to fetch detail')}
+				 />
 			)}
 			<Spin spinning={loading}>
 				<Tabs items={tabItems} />

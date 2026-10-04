@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
-import { ConsolePageHeader } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { Alert, Button, Card, Pagination, Spin, Tag, Timeline } from 'antd';
+import { Button, Card, Pagination, Spin, Tag, Timeline } from 'antd';
 import { ProfileOutlined, SafetyOutlined, WarningOutlined } from '@ant-design/icons';
 import { useTenantSlug } from '@autional-cn/shared';
 import { getSecurityUserTimeline } from '@/lib/api';
@@ -67,11 +67,11 @@ export default function UserSecurityTimelinePage() {
 		return (
 			<div className="p-4">
 				<Alert
-					type="error"
-					message={t('usersTimeline.fetchError')}
-					description={(error as Error)?.message || t('usersTimeline.unknownError')}
-					showIcon
-				/>
+					variant="danger"
+					title={t('usersTimeline.fetchError')}
+				>
+					{(error as Error)?.message || t('usersTimeline.unknownError')}
+				</Alert>
 			</div>
 		);
 	}

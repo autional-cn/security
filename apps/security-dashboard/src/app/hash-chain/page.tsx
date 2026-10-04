@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
-import { ConsolePageHeader } from '@autional-cn/ui';
-import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Alert, Input, Tabs, Descriptions, Tooltip, Typography } from 'antd';
+import { Alert, ConsolePageHeader } from '@autional-cn/ui';
+import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Tabs, Descriptions, Tooltip, Typography } from 'antd';
 import {
 	CheckCircleOutlined,
 	CloseCircleOutlined,
@@ -164,12 +164,12 @@ export default function HashChainPage() {
 		<div>
 			{chain?.isValid === false && (
 				<Alert
-					message={t('hashChain.alertBroken')}
-					description={chain.message}
-					type="error"
-					showIcon
+					variant="danger"
+					title={t('hashChain.alertBroken')}
 					className="mb-4"
-				/>
+				>
+					{chain.message}
+				</Alert>
 			)}
 
 			<Row gutter={[16, 16]} className="mb-4">
@@ -315,12 +315,12 @@ export default function HashChainPage() {
 			</Row>
 
 			<Alert
-				message={t('hashChain.merkleAlertTitle')}
-				description={t('hashChain.merkleAlertDescription')}
-				type="info"
-				showIcon
+				variant="info"
+				title={t('hashChain.merkleAlertTitle')}
 				icon={<ClusterOutlined />}
-			/>
+			>
+				{t('hashChain.merkleAlertDescription')}
+			</Alert>
 		</div>
 	);
 
