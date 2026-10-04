@@ -129,7 +129,7 @@ export default function UserSecurityProfilePage() {
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-neutral-500 ml-2">ID: {id}</span>}</>}
+				title={<>{t('usersProfile.title')} {id && <span className="text-sm text-neutral-600 ml-2">ID: {id}</span>}</>}
 			/>
 
 			{partialErrors.length > 0 && (
@@ -228,7 +228,7 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-neutral-500 py-4">{t('usersProfile.noDevices')}</div>
+							<div className="text-center text-neutral-600 py-4">{t('usersProfile.noDevices')}</div>
 						)}
 					</Card>
 				</Col>
@@ -254,7 +254,7 @@ export default function UserSecurityProfilePage() {
 								scroll={{ x: true }}
 							/>
 						) : (
-							<div className="text-center text-neutral-500 py-4">{t('usersProfile.noSessions')}</div>
+							<div className="text-center text-neutral-600 py-4">{t('usersProfile.noSessions')}</div>
 						)}
 					</Card>
 				</Col>

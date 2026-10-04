@@ -441,9 +441,9 @@ export default function OverviewPage() {
 												<div className="text-xs font-medium text-center truncate w-full">
 													{svc.name.replace('-service', '')}
 												</div>
-												<div className="text-xs text-neutral-500">{serviceStatusText(svc.status)}</div>
+												<div className="text-xs text-neutral-600">{serviceStatusText(svc.status)}</div>
 												{svc.latency && svc.latency !== 'timeout' && (
-													<div className="text-xs text-neutral-500">{svc.latency}</div>
+													<div className="text-xs text-neutral-600">{svc.latency}</div>
 												)}
 											</div>
 										))}
@@ -499,7 +499,7 @@ export default function OverviewPage() {
 									const cfg = EVENT_TYPE_CONFIG[evt.type];
 									return {
 										label: (
-											<span className="text-xs text-neutral-500">
+											<span className="text-xs text-neutral-600">
 												{new Date(evt.time).toLocaleTimeString(i18n.language, {
 													hour: '2-digit',
 													minute: '2-digit',
@@ -533,7 +533,7 @@ export default function OverviewPage() {
 												<Tag color={severityColor(item.severity)}>{item.severity}</Tag>
 												<span className="font-medium text-sm">{anomalyTypeLabel(item.type)}</span>
 											</div>
-											<div className="text-xs text-neutral-500">
+											<div className="text-xs text-neutral-600">
 												{item.detectedAt
 													? new Date(item.detectedAt).toLocaleString(i18n.language)
 													: '-'}

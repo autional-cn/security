@@ -112,11 +112,11 @@ export default function ExportJobsPage() {
 			render: (_: any, record: ExportJobResponse) => {
 				if (record.status === 'completed') return <Progress percent={100} size="small" />;
 				if (record.status === 'failed' || record.status === 'cancelled')
-					return <span className="text-neutral-500">—</span>;
+					return <span className="text-neutral-600">—</span>;
 				if (record.status === 'processing')
 					return <Progress percent={50} size="small" status="active" />;
 				if (record.status === 'pending') return <Progress percent={0} size="small" />;
-				return <span className="text-neutral-500">—</span>;
+				return <span className="text-neutral-600">—</span>;
 			},
 		},
 		{ title: t('exportJobs.columnFilename'), dataIndex: 'filename', ellipsis: true },
