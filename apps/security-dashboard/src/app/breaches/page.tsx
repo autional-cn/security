@@ -142,150 +142,150 @@ export default function BreachesPage() {
 	];
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<Title level={3}>{t('breaches.title')}</Title>
-				<Text type="secondary">{t('breaches.subtitle')}</Text>
+		<div>
+			<Title level={3}>{t('breaches.title')}</Title>
+			<Text type="secondary">{t('breaches.subtitle')}</Text>
 
-				<Row gutter={16} className="mt-4 mb-4">
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('breaches.statOpen')}<PageScopeHint /></span>}
-								value={openCount}
-								valueStyle={{ color: 'var(--color-danger-text)' }}
-								prefix={<ExclamationCircleOutlined />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('breaches.statCritical')}<PageScopeHint /></span>}
-								value={criticalCount}
-								valueStyle={{ color: 'var(--color-danger-text)' }}
-								prefix={<WarningOutlined />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('breaches.statTodayNew')}<PageScopeHint /></span>}
-								value={
-									items.filter((i) => {
-										const d = new Date(i.reportedAt);
-										const today = new Date();
-										return d.toDateString() === today.toDateString();
-									}).length
-								}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic title={t('breaches.statTotal')} value={total} />
-						</Card>
-					</Col>
-				</Row>
+			<Row gutter={16} className="mt-4 mb-4">
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('breaches.statOpen')}<PageScopeHint /></span>}
+							value={openCount}
+							valueStyle={{ color: 'var(--color-danger-text)' }}
+							prefix={<ExclamationCircleOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('breaches.statCritical')}<PageScopeHint /></span>}
+							value={criticalCount}
+							valueStyle={{ color: 'var(--color-danger-text)' }}
+							prefix={<WarningOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('breaches.statTodayNew')}<PageScopeHint /></span>}
+							value={
+								items.filter((i) => {
+									const d = new Date(i.reportedAt);
+									const today = new Date();
+									return d.toDateString() === today.toDateString();
+								}).length
+							}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic title={t('breaches.statTotal')} value={total} />
+					</Card>
+				</Col>
+			</Row>
 
-				<Card
-					title={t('breaches.listTitle')}
-					extra={
-						<Space>
-							<Select
-								placeholder={t('breaches.filterStatus')}
-								allowClear
-								style={{ width: 120 }}
-								options={[
-									{ value: 'open', label: t('breaches.statusOpen') },
-									{ value: 'investigating', label: t('breaches.statusInvestigating') },
-									{ value: 'contained', label: t('breaches.statusContained') },
-									{ value: 'resolved', label: t('breaches.statusResolved') },
-									{ value: 'notified', label: t('breaches.statusNotified') },
-								]}
-								value={filterStatus}
-								onChange={setFilterStatus}
-							/>
-							<Select
-								placeholder={t('breaches.filterSeverity')}
-								allowClear
-								style={{ width: 120 }}
-								options={[
-									{ value: 'critical', label: t('breaches.severityCritical') },
-									{ value: 'high', label: t('breaches.severityHigh') },
-									{ value: 'medium', label: t('breaches.severityMedium') },
-									{ value: 'low', label: t('breaches.severityLow') },
-								]}
-								value={filterSeverity}
-								onChange={setFilterSeverity}
-							/>
-						</Space>
-					}
-				>
-					<DataTable
-						rowKey="id"
-						columns={columns}
-						dataSource={items}
-						loading={isLoading}
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps || 10);
-							},
-						}}
-						scroll={{ x: 900 }}
-					/>
-				</Card>
+			<Card
+				title={t('breaches.listTitle')}
+				extra={
+					<Space>
+						<Select
+							placeholder={t('breaches.filterStatus')}
+							allowClear
+							style={{ width: 120 }}
+							options={[
+								{ value: 'open', label: t('breaches.statusOpen') },
+								{ value: 'investigating', label: t('breaches.statusInvestigating') },
+								{ value: 'contained', label: t('breaches.statusContained') },
+								{ value: 'resolved', label: t('breaches.statusResolved') },
+								{ value: 'notified', label: t('breaches.statusNotified') },
+							]}
+							value={filterStatus}
+							onChange={setFilterStatus}
+						/>
+						<Select
+							placeholder={t('breaches.filterSeverity')}
+							allowClear
+							style={{ width: 120 }}
+							options={[
+								{ value: 'critical', label: t('breaches.severityCritical') },
+								{ value: 'high', label: t('breaches.severityHigh') },
+								{ value: 'medium', label: t('breaches.severityMedium') },
+								{ value: 'low', label: t('breaches.severityLow') },
+							]}
+							value={filterSeverity}
+							onChange={setFilterSeverity}
+						/>
+					</Space>
+				}
+			>
+				<DataTable
+					rowKey="id"
+					columns={columns}
+					dataSource={items}
+					loading={isLoading}
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps || 10);
+						},
+					}}
+					scroll={{ x: 900 }}
+				/>
+			</Card>
 
-				<Drawer
-					title={`${t('breaches.detailTitle')} — ${selected?.id}`}
-					size="md"
-					open={drawerVisible}
-					onClose={() => setDrawerVisible(false)}
-				>
-					{selected && (
-						<>
-							<Descriptions column={1} bordered className="mb-6">
-								<Descriptions.Item label={t('breaches.columnId')}>{selected.id}</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnTitle')}>
-									{selected.title}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('anomalies.columnDescription')}>
-									{selected.description || '-'}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnSeverity')}>
-									<Tag color={severityMap[selected.severity]?.color}>
-										{severityMap[selected.severity]?.label}
-									</Tag>
-								</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnStatus')}>
-									<Badge
-										status={statusMap[selected.status]?.color as any}
-										text={statusMap[selected.status]?.label}
-									/>
-								</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnAffectedUsers')}>
-									{selected.affectedUsers?.toLocaleString()}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnReportedToDpa')}>
-									{selected.reportedToDpa ? (
-										<Tag color="green">{t('breaches.yes')}</Tag>
-									) : (
-										<Tag>{t('breaches.no')}</Tag>
-									)}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('breaches.columnReportedAt')}>
-									{selected.reportedAt ? new Date(selected.reportedAt).toLocaleString() : '-'}
-								</Descriptions.Item>
-							</Descriptions>
+			<Drawer
+				title={`${t('breaches.detailTitle')} — ${selected?.id}`}
+				size="md"
+				open={drawerVisible}
+				onClose={() => setDrawerVisible(false)}
+			>
+				{selected && (
+					<>
+						<Descriptions column={1} bordered className="mb-6">
+							<Descriptions.Item label={t('breaches.columnId')}>{selected.id}</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnTitle')}>
+								{selected.title}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('anomalies.columnDescription')}>
+								{selected.description || '-'}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnSeverity')}>
+								<Tag color={severityMap[selected.severity]?.color}>
+									{severityMap[selected.severity]?.label}
+								</Tag>
+							</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnStatus')}>
+								<Badge
+									status={statusMap[selected.status]?.color as any}
+									text={statusMap[selected.status]?.label}
+								/>
+							</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnAffectedUsers')}>
+								{selected.affectedUsers?.toLocaleString()}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnReportedToDpa')}>
+								{selected.reportedToDpa ? (
+									<Tag color="green">{t('breaches.yes')}</Tag>
+								) : (
+									<Tag>{t('breaches.no')}</Tag>
+								)}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('breaches.columnReportedAt')}>
+								{selected.reportedAt ? new Date(selected.reportedAt).toLocaleString() : '-'}
+							</Descriptions.Item>
+						</Descriptions>
 
-							{selected.status !== 'resolved' && selected.status !== 'notified' && (
+						{selected.status !== 'resolved' && selected.status !== 'notified' && (
+							<Can denyAuditor>
 								<Card title={t('breaches.updateStatusTitle')} size="small">
 									<Form layout="vertical" onFinish={handleUpdate}>
 										<Form.Item
@@ -330,11 +330,11 @@ export default function BreachesPage() {
 										</Form.Item>
 									</Form>
 								</Card>
-							)}
-						</>
-					)}
-				</Drawer>
-			</div>
-		</Can>
+							</Can>
+						)}
+					</>
+				)}
+			</Drawer>
+		</div>
 	);
 }

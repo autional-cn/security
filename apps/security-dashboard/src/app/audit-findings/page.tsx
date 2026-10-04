@@ -165,150 +165,150 @@ export default function AuditFindingsPage() {
 	];
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<Title level={3}>{t('auditFindings.title')}</Title>
-				<Text type="secondary">{t('auditFindings.subtitle')}</Text>
+		<div>
+			<Title level={3}>{t('auditFindings.title')}</Title>
+			<Text type="secondary">{t('auditFindings.subtitle')}</Text>
 
-				<Row gutter={16} className="mt-4 mb-4">
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('auditFindings.statOpen')}<PageScopeHint /></span>}
-								value={openCount}
-								valueStyle={{ color: 'var(--color-danger-text)' }}
-								prefix={<WarningOutlined />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('auditFindings.statOverdue')}<PageScopeHint /></span>}
-								value={overdueCount}
-								valueStyle={{ color: 'var(--color-danger-text)' }}
-								prefix={<FileSearchOutlined />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('auditFindings.statCritical')}<PageScopeHint /></span>}
-								value={
-									items.filter((i) => i.severity === 'critical' || i.severity === 'high').length
-								}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic title={t('auditFindings.statTotal')} value={total} />
-						</Card>
-					</Col>
-				</Row>
+			<Row gutter={16} className="mt-4 mb-4">
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('auditFindings.statOpen')}<PageScopeHint /></span>}
+							value={openCount}
+							valueStyle={{ color: 'var(--color-danger-text)' }}
+							prefix={<WarningOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('auditFindings.statOverdue')}<PageScopeHint /></span>}
+							value={overdueCount}
+							valueStyle={{ color: 'var(--color-danger-text)' }}
+							prefix={<FileSearchOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('auditFindings.statCritical')}<PageScopeHint /></span>}
+							value={
+								items.filter((i) => i.severity === 'critical' || i.severity === 'high').length
+							}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic title={t('auditFindings.statTotal')} value={total} />
+					</Card>
+				</Col>
+			</Row>
 
-				<Card
-					title={t('auditFindings.listTitle')}
-					extra={
-						<Space>
-							<Select
-								placeholder={t('auditFindings.filterStatus')}
-								allowClear
-								style={{ width: 120 }}
-								options={[
-									{ value: 'open', label: t('auditFindings.statusOpen') },
-									{ value: 'in_progress', label: t('auditFindings.statusInProgress') },
-									{ value: 'resolved', label: t('auditFindings.statusResolved') },
-									{ value: 'accepted', label: t('auditFindings.statusAccepted') },
-								]}
-								value={filterStatus}
-								onChange={setFilterStatus}
-							/>
-							<Select
-								placeholder={t('auditFindings.filterSeverity')}
-								allowClear
-								style={{ width: 120 }}
-								options={[
-									{ value: 'critical', label: t('auditFindings.severityCritical') },
-									{ value: 'high', label: t('auditFindings.severityHigh') },
-									{ value: 'medium', label: t('auditFindings.severityMedium') },
-									{ value: 'low', label: t('auditFindings.severityLow') },
-								]}
-								value={filterSeverity}
-								onChange={setFilterSeverity}
-							/>
-						</Space>
-					}
-				>
-					<DataTable
-						rowKey="id"
-						columns={columns}
-						dataSource={items}
-						loading={isLoading}
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps || 10);
-							},
-						}}
-						scroll={{ x: 900 }}
-					/>
-				</Card>
+			<Card
+				title={t('auditFindings.listTitle')}
+				extra={
+					<Space>
+						<Select
+							placeholder={t('auditFindings.filterStatus')}
+							allowClear
+							style={{ width: 120 }}
+							options={[
+								{ value: 'open', label: t('auditFindings.statusOpen') },
+								{ value: 'in_progress', label: t('auditFindings.statusInProgress') },
+								{ value: 'resolved', label: t('auditFindings.statusResolved') },
+								{ value: 'accepted', label: t('auditFindings.statusAccepted') },
+							]}
+							value={filterStatus}
+							onChange={setFilterStatus}
+						/>
+						<Select
+							placeholder={t('auditFindings.filterSeverity')}
+							allowClear
+							style={{ width: 120 }}
+							options={[
+								{ value: 'critical', label: t('auditFindings.severityCritical') },
+								{ value: 'high', label: t('auditFindings.severityHigh') },
+								{ value: 'medium', label: t('auditFindings.severityMedium') },
+								{ value: 'low', label: t('auditFindings.severityLow') },
+							]}
+							value={filterSeverity}
+							onChange={setFilterSeverity}
+						/>
+					</Space>
+				}
+			>
+				<DataTable
+					rowKey="id"
+					columns={columns}
+					dataSource={items}
+					loading={isLoading}
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps || 10);
+						},
+					}}
+					scroll={{ x: 900 }}
+				/>
+			</Card>
 
-				<Drawer
-					title={`${t('auditFindings.detailTitle')} — ${detail?.id}`}
-					size="md"
-					open={drawerVisible}
-					onClose={() => setDrawerVisible(false)}
-				>
-					<Spin spinning={detailLoading}>
-						{detail && (
-							<>
-								<Descriptions column={1} bordered className="mb-6">
-									<Descriptions.Item label={t('auditFindings.columnId')}>
-										{detail.id}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnTitle')}>
-										{detail.title}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('anomalies.columnDescription')}>
-										{detail.description || '-'}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnSeverity')}>
-										<Tag color={severityMap[detail.severity]?.color}>
-											{severityMap[detail.severity]?.label}
-										</Tag>
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnStatus')}>
-										<Badge
-											status={statusMap[detail.status]?.color as any}
-											text={statusMap[detail.status]?.label}
-										/>
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnFramework')}>
-										{frameworkMap[detail.framework || ''] || detail.framework}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnControl')}>
-										{detail.controlId || '-'}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.detailAssignee')}>
-										{detail.assignedTo || '-'}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('auditFindings.columnDueDate')}>
-										{detail.dueDate ? new Date(detail.dueDate).toLocaleDateString() : '-'}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('archives.columnCreatedAt')}>
-										{new Date(detail.createdAt).toLocaleString()}
-									</Descriptions.Item>
-								</Descriptions>
+			<Drawer
+				title={`${t('auditFindings.detailTitle')} — ${detail?.id}`}
+				size="md"
+				open={drawerVisible}
+				onClose={() => setDrawerVisible(false)}
+			>
+				<Spin spinning={detailLoading}>
+					{detail && (
+						<>
+							<Descriptions column={1} bordered className="mb-6">
+								<Descriptions.Item label={t('auditFindings.columnId')}>
+									{detail.id}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnTitle')}>
+									{detail.title}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('anomalies.columnDescription')}>
+									{detail.description || '-'}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnSeverity')}>
+									<Tag color={severityMap[detail.severity]?.color}>
+										{severityMap[detail.severity]?.label}
+									</Tag>
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnStatus')}>
+									<Badge
+										status={statusMap[detail.status]?.color as any}
+										text={statusMap[detail.status]?.label}
+									/>
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnFramework')}>
+									{frameworkMap[detail.framework || ''] || detail.framework}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnControl')}>
+									{detail.controlId || '-'}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.detailAssignee')}>
+									{detail.assignedTo || '-'}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('auditFindings.columnDueDate')}>
+									{detail.dueDate ? new Date(detail.dueDate).toLocaleDateString() : '-'}
+								</Descriptions.Item>
+								<Descriptions.Item label={t('archives.columnCreatedAt')}>
+									{new Date(detail.createdAt).toLocaleString()}
+								</Descriptions.Item>
+							</Descriptions>
 
-								{detail.status !== 'resolved' && detail.status !== 'accepted' && (
+							{detail.status !== 'resolved' && detail.status !== 'accepted' && (
+								<Can denyAuditor>
 									<Card title={t('auditFindings.updateStatusTitle')} size="small">
 										<Form layout="vertical" onFinish={handleUpdate}>
 											<Form.Item
@@ -342,12 +342,12 @@ export default function AuditFindingsPage() {
 											</Form.Item>
 										</Form>
 									</Card>
-								)}
-							</>
-						)}
-					</Spin>
-				</Drawer>
-			</div>
-		</Can>
+								</Can>
+							)}
+						</>
+					)}
+				</Spin>
+			</Drawer>
+		</div>
 	);
 }

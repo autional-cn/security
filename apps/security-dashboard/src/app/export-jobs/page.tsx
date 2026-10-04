@@ -180,96 +180,96 @@ export default function ExportJobsPage() {
 	];
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<ConsolePageHeader
-					title={t('exportJobs.title')}
-					actions={
-						<>
-							<Space>
+		<div>
+			<ConsolePageHeader
+				title={t('exportJobs.title')}
+				actions={
+					<>
+						<Space>
+							<Can denyAuditor>
 								<Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateVisible(true)}>
 									{t('exportJobs.newJob')}
 								</Button>
-							</Space>
-						</>
-					}
+							</Can>
+						</Space>
+					</>
+				}
+			/>
+
+			<Spin spinning={isLoading}>
+				<DataTable
+					columns={columns}
+					dataSource={items}
+					rowKey="jobId"
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps);
+						},
+					}}
+					locale={{ emptyText: <Empty description={t('exportJobs.empty')} /> }}
 				/>
+			</Spin>
 
-				<Spin spinning={isLoading}>
-					<DataTable
-						columns={columns}
-						dataSource={items}
-						rowKey="jobId"
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps);
-							},
-						}}
-						locale={{ emptyText: <Empty description={t('exportJobs.empty')} /> }}
-					/>
-				</Spin>
-
-				<Modal
-					title={t('exportJobs.createModalTitle')}
-					open={createVisible}
-					onCancel={() => setCreateVisible(false)}
-					onOk={() => createForm.submit()}
-					confirmLoading={creating}
-				>
-					<Form form={createForm} layout="vertical" onFinish={handleCreate}>
-						<Form.Item
-							name="format"
-							label={t('exportJobs.createFormatLabel')}
-							rules={[{ required: true }]}
-							initialValue="csv"
-						>
-							<Select
-								options={[
-									{ label: 'CSV', value: 'csv' },
-									{ label: 'JSON', value: 'json' },
-								]}
-							/>
-						</Form.Item>
-						<Form.Item name="startDate" label={t('exportJobs.createStartDateLabel')}>
-							<DatePicker style={{ width: '100%' }} placeholder="YYYY-MM-DD" />
-						</Form.Item>
-						<Form.Item name="endDate" label={t('exportJobs.createEndDateLabel')}>
-							<DatePicker style={{ width: '100%' }} placeholder="YYYY-MM-DD" />
-						</Form.Item>
-						{/* S-18：移除「租户ID」死字段（值从未上送；后端恒按调用上下文租户导出） */}
-						{/* S-21：补筛选条件（复用 audit-logs 过滤契约） */}
-						<Form.Item name="level" label={t('exportJobs.createLevelLabel')}>
-							<Select
-								allowClear
-								placeholder={t('exportJobs.createFilterOptional')}
-								options={(['info', 'warning', 'error', 'critical'] as const).map((v) => ({
-									label: levelLabel(t, v),
-									value: v,
-								}))}
-							/>
-						</Form.Item>
-						<Form.Item name="statusClass" label={t('exportJobs.createStatusClassLabel')}>
-							<Select
-								allowClear
-								placeholder={t('exportJobs.createFilterOptional')}
-								options={[
-									{ label: t('status.success'), value: 'success' },
-									{ label: t('status.failure'), value: 'failure' },
-								]}
-							/>
-						</Form.Item>
-						<Form.Item name="keyword" label={t('exportJobs.createKeywordLabel')}>
-							<Input placeholder={t('auditLogs.keywordPlaceholder')} />
-						</Form.Item>
-					</Form>
-				</Modal>
-			</div>
-		</Can>
+			<Modal
+				title={t('exportJobs.createModalTitle')}
+				open={createVisible}
+				onCancel={() => setCreateVisible(false)}
+				onOk={() => createForm.submit()}
+				confirmLoading={creating}
+			>
+				<Form form={createForm} layout="vertical" onFinish={handleCreate}>
+					<Form.Item
+						name="format"
+						label={t('exportJobs.createFormatLabel')}
+						rules={[{ required: true }]}
+						initialValue="csv"
+					>
+						<Select
+							options={[
+								{ label: 'CSV', value: 'csv' },
+								{ label: 'JSON', value: 'json' },
+							]}
+						/>
+					</Form.Item>
+					<Form.Item name="startDate" label={t('exportJobs.createStartDateLabel')}>
+						<DatePicker style={{ width: '100%' }} placeholder="YYYY-MM-DD" />
+					</Form.Item>
+					<Form.Item name="endDate" label={t('exportJobs.createEndDateLabel')}>
+						<DatePicker style={{ width: '100%' }} placeholder="YYYY-MM-DD" />
+					</Form.Item>
+					{/* S-18：移除「租户ID」死字段（值从未上送；后端恒按调用上下文租户导出） */}
+					{/* S-21：补筛选条件（复用 audit-logs 过滤契约） */}
+					<Form.Item name="level" label={t('exportJobs.createLevelLabel')}>
+						<Select
+							allowClear
+							placeholder={t('exportJobs.createFilterOptional')}
+							options={(['info', 'warning', 'error', 'critical'] as const).map((v) => ({
+								label: levelLabel(t, v),
+								value: v,
+							}))}
+						/>
+					</Form.Item>
+					<Form.Item name="statusClass" label={t('exportJobs.createStatusClassLabel')}>
+						<Select
+							allowClear
+							placeholder={t('exportJobs.createFilterOptional')}
+							options={[
+								{ label: t('status.success'), value: 'success' },
+								{ label: t('status.failure'), value: 'failure' },
+							]}
+						/>
+					</Form.Item>
+					<Form.Item name="keyword" label={t('exportJobs.createKeywordLabel')}>
+						<Input placeholder={t('auditLogs.keywordPlaceholder')} />
+					</Form.Item>
+				</Form>
+			</Modal>
+		</div>
 	);
 }

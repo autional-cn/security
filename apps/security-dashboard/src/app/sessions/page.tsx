@@ -107,137 +107,137 @@ export default function SessionsPage() {
 			width: 120,
 			fixed: 'right',
 			render: (_: any, record: SessionItem) => (
-				<Button
-					size="small"
-					danger
-					icon={<StopOutlined />}
-					onClick={() => handleTerminate(record.id)}
-				>
-					{t('sessions.terminate')}
-				</Button>
+				<Can denyAuditor>
+					<Button
+						size="small"
+						danger
+						icon={<StopOutlined />}
+						onClick={() => handleTerminate(record.id)}
+					>
+						{t('sessions.terminate')}
+					</Button>
+				</Can>
 			),
 		},
 	];
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<ConsolePageHeader
-					title={t('sessions.title')}
-					actions={
-						<>
-							<Button
-								icon={<ReloadOutlined />}
-								onClick={() => {
-									refetch();
-									refetchActive();
-								}}
-							>
-								{t('common.refresh')}
-							</Button>
-						</>
-					}
-				/>
-
-				{queryFailed && (
-					<Alert
-						variant="danger"
-						title={t('sessions.fetchFailed')}
-						className="mb-4"
-						action={
-							<Button
-								size="small"
-								onClick={() => {
-									refetch();
-									refetchActive();
-								}}
-							>
-								{t('common.retry')}
-							</Button>
-						}
-					 />
-				)}
-
-				<Row gutter={[16, 16]} className="mb-4">
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title={t('sessions.activeSessions')}
-								value={activeError ? '--' : activeCount}
-								prefix={<ClusterOutlined className="text-info" />}
-							/>
-						</Card>
-					</Col>
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title={<span>{t('sessions.highRiskSessions')}<PageScopeHint /></span>}
-								value={sessionsError ? '--' : highRiskCount}
-								prefix={<StopOutlined className="text-danger" />}
-							/>
-						</Card>
-					</Col>
-					<Col xs={24} sm={8}>
-						<Card>
-							<Statistic
-								title={t('sessions.totalSessions')}
-								value={sessionsError ? '--' : total}
-								prefix={<ClusterOutlined className="text-info" />}
-							/>
-						</Card>
-					</Col>
-				</Row>
-
-				<Card className="mb-4">
-					<Space>
-						<Input
-							placeholder={t('sessions.searchPlaceholder')}
-							value={keyword}
-							onChange={(e) => setKeyword(e.target.value)}
-							style={{ width: 280 }}
-							onPressEnter={() => setPage(1)}
-						/>
-						<Button type="primary" icon={<SearchOutlined />} onClick={() => setPage(1)}>
-							{t('common.search')}
-						</Button>
+		<div>
+			<ConsolePageHeader
+				title={t('sessions.title')}
+				actions={
+					<>
 						<Button
+							icon={<ReloadOutlined />}
 							onClick={() => {
-								setKeyword('');
-								setPage(1);
+								refetch();
+								refetchActive();
 							}}
 						>
-							{t('common.reset')}
+							{t('common.refresh')}
 						</Button>
-					</Space>
-				</Card>
+					</>
+				}
+			/>
 
-				<Spin spinning={isLoading}>
-					<DataTable
-						columns={columns}
-						dataSource={items}
-						rowKey="id"
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps);
-							},
-						}}
-						scroll={{ x: 1400 }}
-						locale={{
-							emptyText: (
-								<Empty
-									description={sessionsError ? t('sessions.fetchFailed') : t('sessions.empty')}
-								/>
-							),
-						}}
+			{queryFailed && (
+				<Alert
+					variant="danger"
+					title={t('sessions.fetchFailed')}
+					className="mb-4"
+					action={
+						<Button
+							size="small"
+							onClick={() => {
+								refetch();
+								refetchActive();
+							}}
+						>
+							{t('common.retry')}
+						</Button>
+					}
+				 />
+			)}
+
+			<Row gutter={[16, 16]} className="mb-4">
+				<Col xs={24} sm={8}>
+					<Card>
+						<Statistic
+							title={t('sessions.activeSessions')}
+							value={activeError ? '--' : activeCount}
+							prefix={<ClusterOutlined className="text-info" />}
+						/>
+					</Card>
+				</Col>
+				<Col xs={24} sm={8}>
+					<Card>
+						<Statistic
+							title={<span>{t('sessions.highRiskSessions')}<PageScopeHint /></span>}
+							value={sessionsError ? '--' : highRiskCount}
+							prefix={<StopOutlined className="text-danger" />}
+						/>
+					</Card>
+				</Col>
+				<Col xs={24} sm={8}>
+					<Card>
+						<Statistic
+							title={t('sessions.totalSessions')}
+							value={sessionsError ? '--' : total}
+							prefix={<ClusterOutlined className="text-info" />}
+						/>
+					</Card>
+				</Col>
+			</Row>
+
+			<Card className="mb-4">
+				<Space>
+					<Input
+						placeholder={t('sessions.searchPlaceholder')}
+						value={keyword}
+						onChange={(e) => setKeyword(e.target.value)}
+						style={{ width: 280 }}
+						onPressEnter={() => setPage(1)}
 					/>
-				</Spin>
-			</div>
-		</Can>
+					<Button type="primary" icon={<SearchOutlined />} onClick={() => setPage(1)}>
+						{t('common.search')}
+					</Button>
+					<Button
+						onClick={() => {
+							setKeyword('');
+							setPage(1);
+						}}
+					>
+						{t('common.reset')}
+					</Button>
+				</Space>
+			</Card>
+
+			<Spin spinning={isLoading}>
+				<DataTable
+					columns={columns}
+					dataSource={items}
+					rowKey="id"
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps);
+						},
+					}}
+					scroll={{ x: 1400 }}
+					locale={{
+						emptyText: (
+							<Empty
+								description={sessionsError ? t('sessions.fetchFailed') : t('sessions.empty')}
+							/>
+						),
+					}}
+				/>
+			</Spin>
+		</div>
 	);
 }

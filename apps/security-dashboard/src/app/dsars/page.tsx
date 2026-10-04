@@ -128,161 +128,161 @@ export default function DSARsPage() {
 	const selectedItem = items.find((i) => i.id === selectedId);
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<Title level={3}>{t('dsars.title')}</Title>
-				<Text type="secondary">{t('dsars.subtitle')}</Text>
+		<div>
+			<Title level={3}>{t('dsars.title')}</Title>
+			<Text type="secondary">{t('dsars.subtitle')}</Text>
 
-				<Row gutter={16} className="mt-4 mb-4">
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('dsars.statPending')}<PageScopeHint /></span>}
-								value={pendingCount}
-								valueStyle={{ color: 'var(--color-warning)' }}
-								prefix={<FileSearchOutlined />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('dsars.statProcessing')}<PageScopeHint /></span>}
-								value={processingCount}
-								valueStyle={{ color: 'var(--color-info)' }}
-								prefix={<SyncOutlined spin />}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic
-								title={<span>{t('dsars.statTodayNew')}<PageScopeHint /></span>}
-								value={
-									items.filter((i) => {
-										const d = new Date(i.createdAt);
-										const today = new Date();
-										return d.toDateString() === today.toDateString();
-									}).length
-								}
-							/>
-						</Card>
-					</Col>
-					<Col span={6}>
-						<Card>
-							<Statistic title={t('dsars.statTotal')} value={total} />
-						</Card>
-					</Col>
-				</Row>
+			<Row gutter={16} className="mt-4 mb-4">
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('dsars.statPending')}<PageScopeHint /></span>}
+							value={pendingCount}
+							valueStyle={{ color: 'var(--color-warning)' }}
+							prefix={<FileSearchOutlined />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('dsars.statProcessing')}<PageScopeHint /></span>}
+							value={processingCount}
+							valueStyle={{ color: 'var(--color-info)' }}
+							prefix={<SyncOutlined spin />}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic
+							title={<span>{t('dsars.statTodayNew')}<PageScopeHint /></span>}
+							value={
+								items.filter((i) => {
+									const d = new Date(i.createdAt);
+									const today = new Date();
+									return d.toDateString() === today.toDateString();
+								}).length
+							}
+						/>
+					</Card>
+				</Col>
+				<Col span={6}>
+					<Card>
+						<Statistic title={t('dsars.statTotal')} value={total} />
+					</Card>
+				</Col>
+			</Row>
 
-				<Card
-					title={t('dsars.listTitle')}
-					extra={
-						<Space>
-							<Select
-								placeholder={t('dsars.filterStatus')}
-								allowClear
-								style={{ width: 120 }}
-								options={[
-									{ value: 'pending', label: t('dsars.statusPending') },
-									{ value: 'processing', label: t('dsars.statusProcessing') },
-									{ value: 'completed', label: t('dsars.statusCompleted') },
-									{ value: 'rejected', label: t('dsars.statusRejected') },
-								]}
-								value={filterStatus}
-								onChange={setFilterStatus}
-							/>
-							<Select
-								placeholder={t('dsars.filterType')}
-								allowClear
-								style={{ width: 140 }}
-								options={[
-									{ value: 'access', label: t('dsars.typeAccess') },
-									{ value: 'deletion', label: t('dsars.typeDeletion') },
-									{ value: 'portability', label: t('dsars.typePortability') },
-									{ value: 'rectification', label: t('dsars.typeRectification') },
-								]}
-								value={filterType}
-								onChange={setFilterType}
-							/>
-						</Space>
-					}
-				>
-					<DataTable
-						rowKey="id"
-						columns={columns}
-						dataSource={items}
-						loading={isLoading}
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps || 10);
-							},
-						}}
-						scroll={{ x: 800 }}
-					/>
-				</Card>
+			<Card
+				title={t('dsars.listTitle')}
+				extra={
+					<Space>
+						<Select
+							placeholder={t('dsars.filterStatus')}
+							allowClear
+							style={{ width: 120 }}
+							options={[
+								{ value: 'pending', label: t('dsars.statusPending') },
+								{ value: 'processing', label: t('dsars.statusProcessing') },
+								{ value: 'completed', label: t('dsars.statusCompleted') },
+								{ value: 'rejected', label: t('dsars.statusRejected') },
+							]}
+							value={filterStatus}
+							onChange={setFilterStatus}
+						/>
+						<Select
+							placeholder={t('dsars.filterType')}
+							allowClear
+							style={{ width: 140 }}
+							options={[
+								{ value: 'access', label: t('dsars.typeAccess') },
+								{ value: 'deletion', label: t('dsars.typeDeletion') },
+								{ value: 'portability', label: t('dsars.typePortability') },
+								{ value: 'rectification', label: t('dsars.typeRectification') },
+							]}
+							value={filterType}
+							onChange={setFilterType}
+						/>
+					</Space>
+				}
+			>
+				<DataTable
+					rowKey="id"
+					columns={columns}
+					dataSource={items}
+					loading={isLoading}
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps || 10);
+						},
+					}}
+					scroll={{ x: 800 }}
+				/>
+			</Card>
 
-				<Drawer
-					title={`${t('dsars.detailTitle')} — ${selectedId}`}
-					size="md"
-					open={drawerVisible}
-					onClose={() => setDrawerVisible(false)}
-				>
-					<Spin spinning={detailLoading}>
-						{detailData?.detail && (
-							<Descriptions column={1} bordered className="mb-6">
-								<Descriptions.Item label={t('dsars.columnId')}>
-									{(detailData.detail as any).id}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('dsars.columnUserId')}>
-									{(detailData.detail as any).userId}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('dsars.columnType')}>
-									{typeMap[(detailData.detail as any).type] || (detailData.detail as any).type}
-								</Descriptions.Item>
+			<Drawer
+				title={`${t('dsars.detailTitle')} — ${selectedId}`}
+				size="md"
+				open={drawerVisible}
+				onClose={() => setDrawerVisible(false)}
+			>
+				<Spin spinning={detailLoading}>
+					{detailData?.detail && (
+						<Descriptions column={1} bordered className="mb-6">
+							<Descriptions.Item label={t('dsars.columnId')}>
+								{(detailData.detail as any).id}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('dsars.columnUserId')}>
+								{(detailData.detail as any).userId}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('dsars.columnType')}>
+								{typeMap[(detailData.detail as any).type] || (detailData.detail as any).type}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('dsars.columnStatus')}>
+								<Tag color={statusMap[(detailData.detail as any).status]?.color}>
+									{statusMap[(detailData.detail as any).status]?.label}
+								</Tag>
+							</Descriptions.Item>
+							<Descriptions.Item label={t('dsars.columnCreatedAt')}>
+								{new Date((detailData.detail as any).createdAt).toLocaleString()}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('archives.columnCompletedAt')}>
+								{(detailData.detail as any).completedAt
+									? new Date((detailData.detail as any).completedAt).toLocaleString()
+									: '-'}
+							</Descriptions.Item>
+						</Descriptions>
+					)}
+
+					{detailData?.status && (
+						<Card title={t('dsars.detailStatusTrack')} size="small" className="mb-6">
+							<Descriptions column={1}>
 								<Descriptions.Item label={t('dsars.columnStatus')}>
-									<Tag color={statusMap[(detailData.detail as any).status]?.color}>
-										{statusMap[(detailData.detail as any).status]?.label}
-									</Tag>
+									{(detailData.status as any).status}
 								</Descriptions.Item>
 								<Descriptions.Item label={t('dsars.columnCreatedAt')}>
-									{new Date((detailData.detail as any).createdAt).toLocaleString()}
+									{new Date((detailData.status as any).createdAt).toLocaleString()}
 								</Descriptions.Item>
 								<Descriptions.Item label={t('archives.columnCompletedAt')}>
-									{(detailData.detail as any).completedAt
-										? new Date((detailData.detail as any).completedAt).toLocaleString()
+									{(detailData.status as any).completedAt
+										? new Date((detailData.status as any).completedAt).toLocaleString()
 										: '-'}
 								</Descriptions.Item>
 							</Descriptions>
-						)}
+						</Card>
+					)}
 
-						{detailData?.status && (
-							<Card title={t('dsars.detailStatusTrack')} size="small" className="mb-6">
-								<Descriptions column={1}>
-									<Descriptions.Item label={t('dsars.columnStatus')}>
-										{(detailData.status as any).status}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('dsars.columnCreatedAt')}>
-										{new Date((detailData.status as any).createdAt).toLocaleString()}
-									</Descriptions.Item>
-									<Descriptions.Item label={t('archives.columnCompletedAt')}>
-										{(detailData.status as any).completedAt
-											? new Date((detailData.status as any).completedAt).toLocaleString()
-											: '-'}
-									</Descriptions.Item>
-								</Descriptions>
-							</Card>
-						)}
-
-						{selectedItem &&
-							selectedItem.status !== 'completed' &&
-							selectedItem.status !== 'rejected' && (
+					{selectedItem &&
+						selectedItem.status !== 'completed' &&
+						selectedItem.status !== 'rejected' && (
+							<Can denyAuditor>
 								<Card title={t('dsars.updateStatusTitle')} size="small">
 									<Form layout="vertical" onFinish={handleUpdateStatus}>
 										<Form.Item
@@ -316,10 +316,10 @@ export default function DSARsPage() {
 										</Form.Item>
 									</Form>
 								</Card>
-							)}
-					</Spin>
-				</Drawer>
-			</div>
-		</Can>
+							</Can>
+						)}
+				</Spin>
+			</Drawer>
+		</div>
 	);
 }

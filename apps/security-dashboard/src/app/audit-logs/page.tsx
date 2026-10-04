@@ -234,80 +234,80 @@ export default function AuditLogsPage() {
 	];
 
 	return (
-		<Can denyAuditor>
-			<div>
-				<ConsolePageHeader title={t('auditLogs.title')} />
+		<div>
+			<ConsolePageHeader title={t('auditLogs.title')} />
 
-				<Card className="mb-4">
-					<Space direction="vertical" className="w-full" size="middle">
-						<Segmented options={quickRanges} value={quickRange} onChange={(v) => handleQuickRange(v as string)} />
-						<Space wrap>
-							<Input
-								placeholder={t('auditLogs.keywordPlaceholder')}
-								value={keywordDraft}
-								onChange={(e) => setKeywordDraft(e.target.value)}
-								style={{ width: 200 }}
-								onPressEnter={handleSearch}
-							/>
-							<Select
-								placeholder={t('auditLogs.filterLevel')}
-								allowClear
-								value={filters.level || undefined}
-								onChange={(v) => {
-									setFilters({ ...filters, level: v });
-									setPage(1);
-								}}
-								style={{ width: 120 }}
-								options={(['info', 'warning', 'error', 'critical'] as const).map((v) => ({
-									label: levelLabel(t, v),
-									value: v,
-								}))}
-							/>
-							<Select
-								placeholder={t('auditLogs.filterStatus')}
-								allowClear
-								value={filters.statusClass || undefined}
-								onChange={(v) => {
-									setFilters({ ...filters, statusClass: v });
-									setPage(1);
-								}}
-								style={{ width: 120 }}
-								options={[
-									{ label: t('status.success'), value: 'success' },
-									{ label: t('status.failure'), value: 'failure' },
-								]}
-							/>
-							<DatePicker
-								placeholder={t('auditLogs.startTime')}
-								value={filters.startTime ? dayjs(filters.startTime * 1000) : null}
-								onChange={(d) => {
-									setFilters({ ...filters, startTime: d ? toEpochSeconds(d) : undefined });
-									setPage(1);
-								}}
-							/>
-							<DatePicker
-								placeholder={t('auditLogs.endTime')}
-								value={filters.endTime ? dayjs(filters.endTime * 1000) : null}
-								onChange={(d) => {
-									setFilters({ ...filters, endTime: d ? toEpochSeconds(d) : undefined });
-									setPage(1);
-								}}
-							/>
-							<Tooltip title={searchDirty ? '' : t('auditLogs.searchUnchanged')}>
-								<span>
-									<Button
-										type="primary"
-										icon={<SearchOutlined />}
-										onClick={handleSearch}
-										disabled={!searchDirty}
-									>
-										{t('common.search')}
-									</Button>
-								</span>
-							</Tooltip>
-							<Button icon={<ReloadOutlined />} onClick={handleReset}>
-								{t('common.reset')}
-							</Button>
+			<Card className="mb-4">
+				<Space direction="vertical" className="w-full" size="middle">
+					<Segmented options={quickRanges} value={quickRange} onChange={(v) => handleQuickRange(v as string)} />
+					<Space wrap>
+						<Input
+							placeholder={t('auditLogs.keywordPlaceholder')}
+							value={keywordDraft}
+							onChange={(e) => setKeywordDraft(e.target.value)}
+							style={{ width: 200 }}
+							onPressEnter={handleSearch}
+						/>
+						<Select
+							placeholder={t('auditLogs.filterLevel')}
+							allowClear
+							value={filters.level || undefined}
+							onChange={(v) => {
+								setFilters({ ...filters, level: v });
+								setPage(1);
+							}}
+							style={{ width: 120 }}
+							options={(['info', 'warning', 'error', 'critical'] as const).map((v) => ({
+								label: levelLabel(t, v),
+								value: v,
+							}))}
+						/>
+						<Select
+							placeholder={t('auditLogs.filterStatus')}
+							allowClear
+							value={filters.statusClass || undefined}
+							onChange={(v) => {
+								setFilters({ ...filters, statusClass: v });
+								setPage(1);
+							}}
+							style={{ width: 120 }}
+							options={[
+								{ label: t('status.success'), value: 'success' },
+								{ label: t('status.failure'), value: 'failure' },
+							]}
+						/>
+						<DatePicker
+							placeholder={t('auditLogs.startTime')}
+							value={filters.startTime ? dayjs(filters.startTime * 1000) : null}
+							onChange={(d) => {
+								setFilters({ ...filters, startTime: d ? toEpochSeconds(d) : undefined });
+								setPage(1);
+							}}
+						/>
+						<DatePicker
+							placeholder={t('auditLogs.endTime')}
+							value={filters.endTime ? dayjs(filters.endTime * 1000) : null}
+							onChange={(d) => {
+								setFilters({ ...filters, endTime: d ? toEpochSeconds(d) : undefined });
+								setPage(1);
+							}}
+						/>
+						<Tooltip title={searchDirty ? '' : t('auditLogs.searchUnchanged')}>
+							<span>
+								<Button
+									type="primary"
+									icon={<SearchOutlined />}
+									onClick={handleSearch}
+									disabled={!searchDirty}
+								>
+									{t('common.search')}
+								</Button>
+							</span>
+						</Tooltip>
+						<Button icon={<ReloadOutlined />} onClick={handleReset}>
+							{t('common.reset')}
+						</Button>
+						<Can denyAuditor>
 							<Button
 								icon={<ExportOutlined />}
 								onClick={handleExport}
@@ -315,94 +315,94 @@ export default function AuditLogsPage() {
 							>
 								{t('common.export')}
 							</Button>
-						</Space>
+						</Can>
 					</Space>
-				</Card>
+				</Space>
+			</Card>
 
-				<Spin spinning={isLoading}>
-					<DataTable
-						columns={columns}
-						dataSource={items}
-						rowKey="id"
-						pagination={{
-							current: page,
-							pageSize,
-							total,
-							showSizeChanger: true,
-							showTotal: (cnt) => t('common.total', { count: cnt }),
-							onChange: (p, ps) => {
-								setPage(p);
-								setPageSize(ps);
-							},
-						}}
-						scroll={{ x: 1200 }}
-						locale={{ emptyText: <Empty description={t('auditLogs.empty')} /> }}
-					/>
+			<Spin spinning={isLoading}>
+				<DataTable
+					columns={columns}
+					dataSource={items}
+					rowKey="id"
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						showSizeChanger: true,
+						showTotal: (cnt) => t('common.total', { count: cnt }),
+						onChange: (p, ps) => {
+							setPage(p);
+							setPageSize(ps);
+						},
+					}}
+					scroll={{ x: 1200 }}
+					locale={{ emptyText: <Empty description={t('auditLogs.empty')} /> }}
+				/>
+			</Spin>
+
+			<Drawer
+				title={t('auditLogs.detailTitle')}
+				size="md"
+				open={drawerVisible}
+				onClose={handleDrawerClose}
+				destroyOnHidden
+			>
+				<Spin spinning={detailLoading}>
+					{detail && (
+						<Descriptions bordered column={1} size="small">
+							<Descriptions.Item label={t('auditLogs.detailId')}>
+								{(detail as any).id}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailTime')}>
+								{(detail as any).timestamp
+									? dayjs((detail as any).timestamp).format('YYYY-MM-DD HH:mm:ss')
+									: '-'}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailTenantId')}>
+								{(detail as any).tenantId}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailOperator')}>
+								<UserIdentity userId={(detail as any).operatorId} />
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailOperatorType')}>
+								{(detail as any).operatorType}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailModule')}>
+								{(detail as any).module}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailAction')}>
+								{(detail as any).action}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailStatus')}>
+								{renderStatusTag((detail as any).status)}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailLevel')}>
+								<Tag color={levelColor((detail as any).level)}>
+									{levelLabel(t, (detail as any).level)}
+								</Tag>
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailIp')}>
+								{(detail as any).ip || '-'}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailDuration')}>
+								{(detail as any).duration} ms
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailSequence')}>
+								{(detail as any).sequence}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailMessage')}>
+								{(detail as any).message}
+							</Descriptions.Item>
+							<Descriptions.Item label={t('auditLogs.detailMetadata')}>
+								<pre className="bg-neutral-50 p-2 rounded text-xs overflow-auto max-h-60">
+									{JSON.stringify((detail as any).metadata || {}, null, 2)}
+								</pre>
+							</Descriptions.Item>
+						</Descriptions>
+					)}
 				</Spin>
-
-				<Drawer
-					title={t('auditLogs.detailTitle')}
-					size="md"
-					open={drawerVisible}
-					onClose={handleDrawerClose}
-					destroyOnHidden
-				>
-					<Spin spinning={detailLoading}>
-						{detail && (
-							<Descriptions bordered column={1} size="small">
-								<Descriptions.Item label={t('auditLogs.detailId')}>
-									{(detail as any).id}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailTime')}>
-									{(detail as any).timestamp
-										? dayjs((detail as any).timestamp).format('YYYY-MM-DD HH:mm:ss')
-										: '-'}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailTenantId')}>
-									{(detail as any).tenantId}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailOperator')}>
-									<UserIdentity userId={(detail as any).operatorId} />
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailOperatorType')}>
-									{(detail as any).operatorType}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailModule')}>
-									{(detail as any).module}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailAction')}>
-									{(detail as any).action}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailStatus')}>
-									{renderStatusTag((detail as any).status)}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailLevel')}>
-									<Tag color={levelColor((detail as any).level)}>
-										{levelLabel(t, (detail as any).level)}
-									</Tag>
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailIp')}>
-									{(detail as any).ip || '-'}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailDuration')}>
-									{(detail as any).duration} ms
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailSequence')}>
-									{(detail as any).sequence}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailMessage')}>
-									{(detail as any).message}
-								</Descriptions.Item>
-								<Descriptions.Item label={t('auditLogs.detailMetadata')}>
-									<pre className="bg-neutral-50 p-2 rounded text-xs overflow-auto max-h-60">
-										{JSON.stringify((detail as any).metadata || {}, null, 2)}
-									</pre>
-								</Descriptions.Item>
-							</Descriptions>
-						)}
-					</Spin>
-				</Drawer>
-			</div>
-		</Can>
+			</Drawer>
+		</div>
 	);
 }
