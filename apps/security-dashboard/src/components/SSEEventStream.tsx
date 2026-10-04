@@ -4,7 +4,13 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { notification } from '@/lib/antd-app';
 import { Badge } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
-import { getAccessToken, getRefreshToken, loginWithTokens, logout } from '@autional-cn/shared';
+import {
+	getAccessToken,
+	getRefreshToken,
+	loginWithTokens,
+	logout,
+	getAUTH_PAGES_URL,
+} from '@autional-cn/shared';
 import { authRefreshPost } from '@autional-cn/shared/generated/api';
 import { useTranslation } from 'react-i18next';
 
@@ -79,7 +85,9 @@ export default function SSEEventStream() {
 					connect();
 					return;
 				}
-				logout(`/login?redirect=${encodeURIComponent(window.location.href)}`);
+				// U350 接通后复查落点：本站无 /login 路由（此前相对路径接通即 404）；
+				// 改走 auth 站入口路由（?redirect= 由入口三分支解析租户并发起登录，成功后原路返回）。
+				logout(`${getAUTH_PAGES_URL()}/login?redirect=${encodeURIComponent(window.location.href)}`);
 				return;
 			}
 
