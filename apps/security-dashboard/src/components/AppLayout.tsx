@@ -208,11 +208,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 			mobileOpen={mobileOpen}
 			onMobileClose={() => setMobileOpen(false)}
 			closeLabel={t('nav.closeMenu', '关闭菜单')}
-			contentClassName="p-6"
 		>
-			<div className="min-h-[calc(100vh-112px)] rounded-lg bg-[var(--color-bg-surface)] p-6">
-				{children}
-			</div>
+			{children}
 		</AppShell>
 	);
 }
