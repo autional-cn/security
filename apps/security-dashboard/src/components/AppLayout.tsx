@@ -4,25 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-	DashboardOutlined,
-	FileSearchOutlined,
-	WarningOutlined,
-	FileProtectOutlined,
-	ClusterOutlined,
-	FileTextOutlined,
-	SettingOutlined,
-	MenuFoldOutlined,
-	MenuUnfoldOutlined,
-	SecurityScanOutlined,
-	ReloadOutlined,
-	SafetyOutlined,
-	SafetyCertificateOutlined,
-	FileZipOutlined,
-	FileDoneOutlined,
-	ApiOutlined,
-	FundOutlined,
-	BugOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	FileArchive,
+	FileLock,
+	FileSearch,
+	FileText,
+	LayoutDashboard,
+	PanelLeftClose,
+	PanelLeftOpen,
+	Plug,
+	RefreshCw,
+	Settings,
+	Shield,
+} from 'lucide-react';
 import { Layout, Menu, Button, Typography, Breadcrumb } from 'antd';
 import { useAuth, useLogout, usePortalCatalog, useTenantSlug } from '@autional-cn/shared';
 import { AppShell, LanguageSwitcher, PortalSwitcher, ThemeToggle, UserMenu } from '@autional-cn/ui';
@@ -58,10 +52,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	}, [isAuthenticated, t]);
 
 	const menuItems = [
-		{ key: '/', icon: <DashboardOutlined />, label: t('nav.overview') },
+		{ key: '/', icon: <LayoutDashboard size="1em" />, label: t('nav.overview') },
 		{
 			key: 'audit',
-			icon: <FileSearchOutlined />,
+			icon: <FileSearch size="1em" />,
 			label: t('nav.auditAndTracking'),
 			children: [
 				{ key: '/audit-logs', label: t('nav.auditLogs') },
@@ -71,7 +65,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		},
 		{
 			key: 'threats',
-			icon: <WarningOutlined />,
+			icon: <AlertTriangle size="1em" />,
 			label: t('nav.threatDetection'),
 			children: [
 				{ key: '/risk-dashboard', label: t('nav.riskDashboard') },
@@ -82,7 +76,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		},
 		{
 			key: 'identity',
-			icon: <ApiOutlined />,
+			icon: <Plug size="1em" />,
 			label: t('nav.identityCenter', 'Identity Center'),
 			children: [
 				{ key: '/nhi', label: t('nav.nhi', 'NHI Monitoring') },
@@ -91,7 +85,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		},
 		{
 			key: 'compliance',
-			icon: <FileProtectOutlined />,
+			icon: <FileLock size="1em" />,
 			label: t('nav.complianceCenter'),
 			children: [
 				{ key: '/compliance', label: t('nav.complianceDashboard') },
@@ -103,24 +97,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		},
 		{
 			key: 'archives',
-			icon: <FileZipOutlined />,
+			icon: <FileArchive size="1em" />,
 			label: t('nav.archiveMgmt'),
 			children: [{ key: '/archives', label: t('nav.archives') }],
 		},
 		{
 			key: 'reports',
-			icon: <FileTextOutlined />,
+			icon: <FileText size="1em" />,
 			label: t('nav.reportCenter'),
 			children: [
 				{ key: '/reports', label: t('nav.reports') },
 				{ key: '/notifications/delivery-stats', label: t('nav.deliveryStats') },
 			],
 		},
-		{ key: '/settings', icon: <SettingOutlined />, label: t('nav.settings') },
+		{ key: '/settings', icon: <Settings size="1em" />, label: t('nav.settings') },
 	];
 
 	function buildBreadcrumbs(): Array<{ title: React.ReactNode }> {
-		const crumbs: Array<{ title: React.ReactNode }> = [{ title: <DashboardOutlined /> }];
+		const crumbs: Array<{ title: React.ReactNode }> = [{ title: <LayoutDashboard size="1em" /> }];
 		const pathMap: Record<string, string> = {
 			'/': t('bc.overview'),
 			'/audit-logs': t('bc.auditLogs'),
@@ -155,7 +149,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 						t('app.titleShort')
 					) : (
 						<>
-							<SecurityScanOutlined /> {t('app.title')}
+							<Shield size="1em" /> {t('app.title')}
 						</>
 					)}
 				</span>
@@ -183,14 +177,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 					<Button
 						type="text"
 						className="lg:hidden"
-						icon={<MenuUnfoldOutlined />}
+						icon={<PanelLeftOpen size="1em" />}
 						onClick={() => setMobileOpen(true)}
 						aria-label={t('nav.openMenu', '打开菜单')}
 					/>
 					<Button
 						type="text"
 						className="hidden lg:inline-flex"
-						icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+						icon={collapsed ? <PanelLeftOpen size="1em" /> : <PanelLeftClose size="1em" />}
 						onClick={() => setCollapsed(!collapsed)}
 					/>
 					<Breadcrumb items={buildBreadcrumbs()} />
@@ -204,7 +198,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 					<ThemeToggle />
 					<Button
 						type="text"
-						icon={<ReloadOutlined />}
+						icon={<RefreshCw size="1em" />}
 						onClick={() => window.location.reload()}
 						title={t('common.refresh')}
 					/>

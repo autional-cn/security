@@ -4,12 +4,11 @@ import React, { useState } from 'react';
 import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import { Card, Tag, Button, Space, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic, Spin } from 'antd';
 import {
-	EyeOutlined,
-	CheckCircleOutlined,
-	CloseCircleOutlined,
-	SyncOutlined,
-	FileSearchOutlined,
-} from '@ant-design/icons';
+	CheckCircle2,
+	Eye,
+	FileSearch,
+	RefreshCw,
+} from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { useDSARs, useDSARDetail, useUpdateDSAR } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
@@ -118,7 +117,7 @@ export default function DSARsPage() {
 			width: 100,
 			fixed: 'right',
 			render: (_, record) => (
-				<Button size="small" icon={<EyeOutlined />} onClick={() => openDetail(record)}>
+				<Button size="small" icon={<Eye size="1em" />} onClick={() => openDetail(record)}>
 					{t('common.view')}
 				</Button>
 			),
@@ -139,7 +138,7 @@ export default function DSARsPage() {
 							title={<span>{t('dsars.statPending')}<PageScopeHint /></span>}
 							value={pendingCount}
 							valueStyle={{ color: 'var(--color-warning)' }}
-							prefix={<FileSearchOutlined />}
+							prefix={<FileSearch size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -149,7 +148,7 @@ export default function DSARsPage() {
 							title={<span>{t('dsars.statProcessing')}<PageScopeHint /></span>}
 							value={processingCount}
 							valueStyle={{ color: 'var(--color-info)' }}
-							prefix={<SyncOutlined spin />}
+							prefix={<RefreshCw size="1em" className="animate-spin" />}
 						/>
 					</Card>
 				</Col>
@@ -309,7 +308,7 @@ export default function DSARsPage() {
 												type="primary"
 												htmlType="submit"
 												loading={updateLoading}
-												icon={<CheckCircleOutlined />}
+												icon={<CheckCircle2 size="1em" />}
 											>
 												{t('dsars.updateSubmit')}
 											</Button>

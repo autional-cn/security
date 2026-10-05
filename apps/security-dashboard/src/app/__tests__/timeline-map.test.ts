@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import {
-	AuditOutlined,
-	DesktopOutlined,
-	KeyOutlined,
-	LoginOutlined,
-	MobileOutlined,
-	SyncOutlined,
-	TeamOutlined,
-	UnorderedListOutlined,
-} from '@ant-design/icons';
+	ClipboardCheck,
+	KeyRound,
+	List,
+	LogIn,
+	Monitor,
+	RefreshCw,
+	Smartphone,
+	Users,
+} from 'lucide-react';
 import { eventActionLabel, eventMessage, eventStyle, normalizeAction } from '@/lib/timeline';
 
 // S-72 回归：真实 action 值域（大小写/分隔符混杂）下的归一、图标/颜色、文案与消息映射
@@ -65,15 +65,15 @@ describe('eventActionLabel（S-72 动作名文案）', () => {
 
 describe('eventStyle（S-72 图标/颜色按关键词家族）', () => {
 	it('实测 8 值域图案区分', () => {
-		expect(eventStyle('auth.login_success').Icon).toBe(LoginOutlined);
-		expect(eventStyle('LOGIN').Icon).toBe(LoginOutlined);
-		expect(eventStyle('TOKEN_REFRESH').Icon).toBe(SyncOutlined);
-		expect(eventStyle('PASSWORD_REGISTER').Icon).toBe(KeyOutlined);
-		expect(eventStyle('device.fingerprint.recorded').Icon).toBe(MobileOutlined);
-		expect(eventStyle('session.created').Icon).toBe(DesktopOutlined);
-		expect(eventStyle('authorize_post').Icon).toBe(AuditOutlined);
-		expect(eventStyle('admin_list').Icon).toBe(UnorderedListOutlined);
-		expect(eventStyle('user.assign_roles').Icon).toBe(TeamOutlined);
+		expect(eventStyle('auth.login_success').Icon).toBe(LogIn);
+		expect(eventStyle('LOGIN').Icon).toBe(LogIn);
+		expect(eventStyle('TOKEN_REFRESH').Icon).toBe(RefreshCw);
+		expect(eventStyle('PASSWORD_REGISTER').Icon).toBe(KeyRound);
+		expect(eventStyle('device.fingerprint.recorded').Icon).toBe(Smartphone);
+		expect(eventStyle('session.created').Icon).toBe(Monitor);
+		expect(eventStyle('authorize_post').Icon).toBe(ClipboardCheck);
+		expect(eventStyle('admin_list').Icon).toBe(List);
+		expect(eventStyle('user.assign_roles').Icon).toBe(Users);
 	});
 
 	it('失败/异常类红色告警，未知回落灰', () => {

@@ -6,13 +6,13 @@ import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Tabs, Descriptions, Tooltip, Typography } from 'antd';
 import {
-	CheckCircleOutlined,
-	CloseCircleOutlined,
-	ReloadOutlined,
-	SafetyCertificateOutlined,
-	FileSearchOutlined,
-	ClusterOutlined,
-} from '@ant-design/icons';
+	BadgeCheck,
+	CheckCircle2,
+	FileSearch,
+	Network,
+	RefreshCw,
+	XCircle,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useAuth } from '@autional-cn/shared';
@@ -126,11 +126,11 @@ export default function HashChainPage() {
 				v === undefined ? (
 					'-'
 				) : v ? (
-					<Tag color="success" icon={<CheckCircleOutlined />}>
+					<Tag color="success" icon={<CheckCircle2 size="1em" />}>
 						{t('hashChain.statusValid')}
 					</Tag>
 				) : (
-					<Tag color="error" icon={<CloseCircleOutlined />}>
+					<Tag color="error" icon={<XCircle size="1em" />}>
 						{t('hashChain.statusAbnormal')}
 					</Tag>
 				),
@@ -186,9 +186,9 @@ export default function HashChainPage() {
 							}
 							prefix={
 								chain?.isValid === false ? (
-									<CloseCircleOutlined className="text-danger" />
+									<XCircle size="1em" className="text-danger" />
 								) : (
-									<CheckCircleOutlined className="text-success" />
+									<CheckCircle2 size="1em" className="text-success" />
 								)
 							}
 						/>
@@ -199,7 +199,7 @@ export default function HashChainPage() {
 						<Statistic
 							title={t('hashChain.statLogCount')}
 							value={chain?.logCount ?? '-'}
-							prefix={<SafetyCertificateOutlined className="text-info" />}
+							prefix={<BadgeCheck size="1em" className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -220,7 +220,7 @@ export default function HashChainPage() {
 					<Typography.Text type="secondary">
 						{t('hashChain.currentTenant', { tenant: currentTenantId || '-' })}
 					</Typography.Text>
-					<Button icon={<ReloadOutlined />} loading={isFetching} onClick={handleRefresh}>
+					<Button icon={<RefreshCw size="1em" />} loading={isFetching} onClick={handleRefresh}>
 						{t('hashChain.refreshBtn')}
 					</Button>
 				</Space>
@@ -245,7 +245,7 @@ export default function HashChainPage() {
 					<Card
 						title={t('hashChain.merkleRootTitle')}
 						extra={
-							<Button icon={<ReloadOutlined />} loading={merkleLoading} onClick={fetchMerkleRoot}>
+							<Button icon={<RefreshCw size="1em" />} loading={merkleLoading} onClick={fetchMerkleRoot}>
 								{t('hashChain.merkleFetchBtn')}
 							</Button>
 						}
@@ -265,7 +265,7 @@ export default function HashChainPage() {
 							/>
 							<Button
 								type="primary"
-								icon={<FileSearchOutlined />}
+								icon={<FileSearch size="1em" />}
 								loading={proofMutation.isPending}
 								onClick={fetchMerkleProof}
 							>
@@ -317,7 +317,7 @@ export default function HashChainPage() {
 			<Alert
 				variant="info"
 				title={t('hashChain.merkleAlertTitle')}
-				icon={<ClusterOutlined />}
+				icon={<Network size="1em" />}
 			>
 				{t('hashChain.merkleAlertDescription')}
 			</Alert>

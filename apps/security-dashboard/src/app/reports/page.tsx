@@ -5,11 +5,10 @@ import { DataTable } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Select, Button, Spin, Empty, Tag, Row, Col, Statistic, List, Space, Progress } from 'antd';
 import {
-	FileTextOutlined,
-	WarningOutlined,
-	SafetyCertificateOutlined,
-	ReloadOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	BadgeCheck,
+	FileText,
+} from 'lucide-react';
 import { useSecurityReport, useComplianceReport } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
 import { severityColor, severityLabel } from '@/lib/enums';
@@ -90,7 +89,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statTotalEvents')}
 										value={securityReport.summary?.totalEvents || 0}
-										prefix={<FileTextOutlined className="text-info" />}
+										prefix={<FileText size="1em" className="text-info" />}
 									/>
 								</Card>
 							</Col>
@@ -99,7 +98,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statFailedLogins')}
 										value={securityReport.summary?.failedLogins || 0}
-										prefix={<WarningOutlined className="text-warning" />}
+										prefix={<AlertTriangle size="1em" className="text-warning" />}
 									/>
 								</Card>
 							</Col>
@@ -108,7 +107,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.statAnomaliesDetected')}
 										value={securityReport.summary?.anomaliesDetected || 0}
-										prefix={<WarningOutlined className="text-danger" />}
+										prefix={<AlertTriangle size="1em" className="text-danger" />}
 									/>
 								</Card>
 							</Col>
@@ -166,7 +165,7 @@ export default function ReportsPage() {
 									<Statistic
 										title={t('reports.complianceStandard')}
 										value={complianceReport.standard || standard}
-										prefix={<SafetyCertificateOutlined className="text-info" />}
+										prefix={<BadgeCheck size="1em" className="text-info" />}
 									/>
 								</Card>
 							</Col>

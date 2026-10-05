@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { Card, Tag, Button, Spin, Empty, Space, Badge, Modal, Form, Select, DatePicker, Input, Progress, Tooltip } from 'antd';
-import { DownloadOutlined, PlusOutlined } from '@ant-design/icons';
+import { Download, Plus } from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useExportJobs, useDownloadExport } from '@/hooks/use-security-queries';
@@ -167,7 +167,7 @@ export default function ExportJobsPage() {
 				<Space size="small">
 					<Button
 						size="small"
-						icon={<DownloadOutlined />}
+						icon={<Download size="1em" />}
 						loading={downloadingId === record.jobId}
 						onClick={() => record.jobId && handleDownload(record.jobId)}
 						disabled={record.status !== 'completed'}
@@ -187,7 +187,7 @@ export default function ExportJobsPage() {
 					<>
 						<Space>
 							<Can denyAuditor>
-								<Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateVisible(true)}>
+								<Button type="primary" icon={<Plus size="1em" />} onClick={() => setCreateVisible(true)}>
 									{t('exportJobs.newJob')}
 								</Button>
 							</Can>

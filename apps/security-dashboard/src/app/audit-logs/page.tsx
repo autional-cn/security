@@ -5,7 +5,7 @@ import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Input, Select, DatePicker, Button, Tag, Spin, Empty, Space, Descriptions, Segmented, Tooltip } from 'antd';
-import { SearchOutlined, ReloadOutlined, ExportOutlined } from '@ant-design/icons';
+import { ExternalLink, RefreshCw, Search } from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useAuditLogs, useAuditLogDetail, useCreateExportJob } from '@/hooks/use-audit-logs';
@@ -296,7 +296,7 @@ export default function AuditLogsPage() {
 							<span>
 								<Button
 									type="primary"
-									icon={<SearchOutlined />}
+									icon={<Search size="1em" />}
 									onClick={handleSearch}
 									disabled={!searchDirty}
 								>
@@ -304,12 +304,12 @@ export default function AuditLogsPage() {
 								</Button>
 							</span>
 						</Tooltip>
-						<Button icon={<ReloadOutlined />} onClick={handleReset}>
+						<Button icon={<RefreshCw size="1em" />} onClick={handleReset}>
 							{t('common.reset')}
 						</Button>
 						<Can denyAuditor>
 							<Button
-								icon={<ExportOutlined />}
+								icon={<ExternalLink size="1em" />}
 								onClick={handleExport}
 								loading={exportMutation.isPending}
 							>

@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import { Card, Tag, Button, Space, Descriptions, message, Typography, Row, Col, Statistic, Select, Spin } from 'antd';
 import {
-	EyeOutlined,
-	FilePdfOutlined,
-	FileImageOutlined,
-	FileTextOutlined,
-	FileUnknownOutlined,
-	SyncOutlined,
-	LinkOutlined,
-} from '@ant-design/icons';
+	Eye,
+	FileImage,
+	FileQuestion,
+	FileText,
+	FileType,
+	Link2,
+} from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { useEvidence, useEvidenceDetail } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
@@ -63,12 +62,12 @@ export default function EvidencePage() {
 	const total = (data as any)?.total || 0;
 
 	function getFileIcon(url?: string) {
-		if (!url) return <FileUnknownOutlined />;
+		if (!url) return <FileQuestion size="1em" />;
 		const ext = url.split('.').pop()?.toLowerCase();
-		if (ext === 'pdf') return <FilePdfOutlined className="text-danger" />;
+		if (ext === 'pdf') return <FileType size="1em" className="text-danger" />;
 		if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || ''))
-			return <FileImageOutlined className="text-info" />;
-		return <FileTextOutlined className="text-neutral-600" />;
+			return <FileImage size="1em" className="text-info" />;
+		return <FileText size="1em" className="text-neutral-600" />;
 	}
 
 	const openDetail = (record: EvidenceItem) => {
@@ -105,13 +104,13 @@ export default function EvidencePage() {
 			fixed: 'right',
 			render: (_, record) => (
 				<Space>
-					<Button size="small" icon={<EyeOutlined />} onClick={() => openDetail(record)}>
+					<Button size="small" icon={<Eye size="1em" />} onClick={() => openDetail(record)}>
 						{t('common.view')}
 					</Button>
 					{record.fileUrl && (
 						<Button
 							size="small"
-							icon={<LinkOutlined />}
+							icon={<Link2 size="1em" />}
 							href={record.fileUrl}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -138,7 +137,7 @@ export default function EvidencePage() {
 						<Statistic
 							title={t('evidence.statTotal')}
 							value={total}
-							prefix={<FileTextOutlined />}
+							prefix={<FileText size="1em" />}
 						/>
 					</Card>
 				</Col>

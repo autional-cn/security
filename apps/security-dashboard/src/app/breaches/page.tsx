@@ -4,12 +4,11 @@ import React, { useState } from 'react';
 import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import { Card, Tag, Button, Space, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic } from 'antd';
 import {
-	EyeOutlined,
-	CheckCircleOutlined,
-	WarningOutlined,
-	ExclamationCircleOutlined,
-	SyncOutlined,
-} from '@ant-design/icons';
+	AlertCircle,
+	AlertTriangle,
+	CheckCircle2,
+	Eye,
+} from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import { useBreachNotifications, useUpdateBreach } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
@@ -134,7 +133,7 @@ export default function BreachesPage() {
 			width: 100,
 			fixed: 'right',
 			render: (_, record) => (
-				<Button size="small" icon={<EyeOutlined />} onClick={() => openDetail(record)}>
+				<Button size="small" icon={<Eye size="1em" />} onClick={() => openDetail(record)}>
 					{t('common.view')}
 				</Button>
 			),
@@ -153,7 +152,7 @@ export default function BreachesPage() {
 							title={<span>{t('breaches.statOpen')}<PageScopeHint /></span>}
 							value={openCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
-							prefix={<ExclamationCircleOutlined />}
+							prefix={<AlertCircle size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -163,7 +162,7 @@ export default function BreachesPage() {
 							title={<span>{t('breaches.statCritical')}<PageScopeHint /></span>}
 							value={criticalCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
-							prefix={<WarningOutlined />}
+							prefix={<AlertTriangle size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -323,7 +322,7 @@ export default function BreachesPage() {
 												type="primary"
 												htmlType="submit"
 												loading={updateLoading}
-												icon={<CheckCircleOutlined />}
+												icon={<CheckCircle2 size="1em" />}
 											>
 												{t('breaches.updateSubmit')}
 											</Button>

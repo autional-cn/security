@@ -6,7 +6,7 @@ import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Pagination, Spin, Tag, Timeline } from 'antd';
-import { ProfileOutlined, SafetyOutlined, WarningOutlined } from '@ant-design/icons';
+import { AlertTriangle, ShieldCheck, UserCircle } from 'lucide-react';
 import { useTenantSlug } from '@autional-cn/shared';
 import { getSecurityUserTimeline } from '@/lib/api';
 import { formatTimelineTime, normalizeTimestamp } from '@/lib/format';
@@ -105,7 +105,7 @@ export default function UserSecurityTimelinePage() {
 				actions={
 					id ? (
 						<Link to={`/${slug ?? ''}/users/${id}/profile`}>
-							<Button icon={<ProfileOutlined />}>{t('usersTimeline.viewProfile')}</Button>
+							<Button icon={<UserCircle size="1em" />}>{t('usersTimeline.viewProfile')}</Button>
 						</Link>
 					) : undefined
 				}
@@ -114,7 +114,7 @@ export default function UserSecurityTimelinePage() {
 			<Card
 				title={
 					<span>
-						<SafetyOutlined className="mr-2" />
+						<ShieldCheck size="1em" className="mr-2" />
 						{t('usersTimeline.eventTimeline')}
 					</span>
 				}
@@ -132,7 +132,7 @@ export default function UserSecurityTimelinePage() {
 								return {
 									key: evt.id || String(i),
 									color,
-									dot: <Icon />,
+									dot: <Icon size="1em" />,
 									label: <span className="text-xs text-neutral-600">{formatTimelineTime(time)}</span>,
 									children: (
 										<div>
@@ -171,7 +171,7 @@ export default function UserSecurityTimelinePage() {
 			<Card
 				title={
 					<span>
-						<WarningOutlined className="mr-2" />
+						<AlertTriangle size="1em" className="mr-2" />
 						{t('usersTimeline.anomalies')}
 					</span>
 				}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { Card, Row, Col, Statistic, Tag, Spin, Tooltip, Button } from 'antd';
-import { WarningOutlined, SafetyOutlined, AlertOutlined, RiseOutlined } from '@ant-design/icons';
+import { AlertTriangle, ShieldAlert, ShieldCheck, TrendingUp } from 'lucide-react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { getRiskDashboard } from '@/lib/api';
@@ -149,7 +149,7 @@ export default function RiskDashboardPage() {
 			<Row gutter={16} style={{ marginBottom: 24 }}>
 				<Col span={6}>
 					<Card>
-						<Statistic title="今日事件" value={data?.todayTotal || 0} prefix={<AlertOutlined />} />
+						<Statistic title="今日事件" value={data?.todayTotal || 0} prefix={<ShieldAlert size="1em" />} />
 					</Card>
 				</Col>
 				<Col span={6}>
@@ -158,7 +158,7 @@ export default function RiskDashboardPage() {
 							title="严重事件（今日）"
 							value={criticalCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
-							prefix={<WarningOutlined />}
+							prefix={<AlertTriangle size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -168,7 +168,7 @@ export default function RiskDashboardPage() {
 							title="高风险事件（今日）"
 							value={highCount}
 							valueStyle={{ color: '#fa8c16' }}
-							prefix={<RiseOutlined />}
+							prefix={<TrendingUp size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -177,7 +177,7 @@ export default function RiskDashboardPage() {
 						<Statistic
 							title="评分档位（今日）"
 							value={data?.scoreRanges.length || 0}
-							prefix={<SafetyOutlined />}
+							prefix={<ShieldCheck size="1em" />}
 						/>
 					</Card>
 				</Col>

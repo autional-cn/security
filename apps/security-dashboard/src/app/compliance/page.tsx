@@ -6,15 +6,15 @@ import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Tag, Spin, Empty, Progress, Row, Col, Statistic, Tabs, Badge } from 'antd';
 import {
-	SafetyCertificateOutlined,
-	CheckCircleOutlined,
-	CloseCircleOutlined,
-	ExclamationCircleOutlined,
-	FileTextOutlined,
-	GlobalOutlined,
-	DatabaseOutlined,
-	BugOutlined,
-} from '@ant-design/icons';
+	AlertCircle,
+	BadgeCheck,
+	Bug,
+	CheckCircle2,
+	Database,
+	FileText,
+	Globe,
+	XCircle,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import {
@@ -96,7 +96,7 @@ export default function CompliancePage() {
 			key: 'overview',
 			label: (
 				<span>
-					<SafetyCertificateOutlined /> {t('compliance.overviewTab')}
+					<BadgeCheck size="1em" /> {t('compliance.overviewTab')}
 				</span>
 			),
 			children: compliance ? (
@@ -146,11 +146,11 @@ export default function CompliancePage() {
 									}
 									prefix={
 										(compliance as any).overallStatus === 'compliant' ? (
-											<CheckCircleOutlined className="text-success" />
+											<CheckCircle2 size="1em" className="text-success" />
 										) : (compliance as any).overallStatus === 'evaluation_error' ? (
-											<ExclamationCircleOutlined className="text-warning" />
+											<AlertCircle size="1em" className="text-warning" />
 										) : (compliance as any).overallStatus === 'non_compliant' ? (
-											<CloseCircleOutlined className="text-danger" />
+											<XCircle size="1em" className="text-danger" />
 										) : undefined
 									}
 								/>
@@ -162,7 +162,7 @@ export default function CompliancePage() {
 									<Statistic
 										title={t('compliance.checksPassed')}
 										value={`${passedCount} / ${totalChecks}`}
-										prefix={<FileTextOutlined className="text-info" />}
+										prefix={<FileText size="1em" className="text-info" />}
 									/>
 								</Card>
 							</Col>
@@ -204,7 +204,7 @@ export default function CompliancePage() {
 			key: 'dsar',
 			label: (
 				<span>
-					<GlobalOutlined /> {t('compliance.dsarTab')}
+					<Globe size="1em" /> {t('compliance.dsarTab')}
 				</span>
 			),
 			children: (
@@ -235,7 +235,7 @@ export default function CompliancePage() {
 			key: 'retention',
 			label: (
 				<span>
-					<DatabaseOutlined /> {t('compliance.retentionTab')}
+					<Database size="1em" /> {t('compliance.retentionTab')}
 				</span>
 			),
 			children: (
@@ -267,7 +267,7 @@ export default function CompliancePage() {
 			key: 'iso',
 			label: (
 				<span>
-					<SafetyCertificateOutlined /> {t('compliance.isoTab')}
+					<BadgeCheck size="1em" /> {t('compliance.isoTab')}
 				</span>
 			),
 			children: (
@@ -298,7 +298,7 @@ export default function CompliancePage() {
 			key: 'sox',
 			label: (
 				<span>
-					<FileTextOutlined /> {t('compliance.soxTab')}
+					<FileText size="1em" /> {t('compliance.soxTab')}
 				</span>
 			),
 			children: (
@@ -345,7 +345,7 @@ export default function CompliancePage() {
 			key: 'pentest',
 			label: (
 				<span>
-					<BugOutlined /> {t('compliance.pentestTab')}
+					<Bug size="1em" /> {t('compliance.pentestTab')}
 				</span>
 			),
 			children: (

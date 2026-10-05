@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from 'react-router';
 import { notification } from '@/lib/antd-app';
 import { Badge, Popover } from 'antd';
-import { ThunderboltOutlined } from '@ant-design/icons';
+import { Zap } from 'lucide-react';
 import {
 	getAccessToken,
 	getRefreshToken,
@@ -151,9 +151,8 @@ export default function SSEEventStream() {
 									message: t('sse.realtimeEvent'),
 									description: data.message,
 									icon: (
-										<ThunderboltOutlined
-											style={{ color: data.severity === 'critical' ? 'var(--color-danger)' : 'var(--color-warning)' }}
-										/>
+										<Zap size="1em"
+											style={{ color: data.severity === 'critical' ? 'var(--color-danger)' : 'var(--color-warning)' }} />
 									),
 									placement: 'bottomRight',
 								});
@@ -238,10 +237,12 @@ export default function SSEEventStream() {
 					overflowCount={99}
 					style={{ backgroundColor: connected ? 'var(--color-success)' : 'var(--color-neutral-300)' }}
 				>
-					<ThunderboltOutlined
-						style={{ color: connected ? 'var(--color-success)' : 'var(--color-neutral-300)', fontSize: 16 }}
-						title={connected ? t('sse.connected') : t('sse.disconnected')}
-					/>
+					<Zap
+						size={16}
+						style={{ color: connected ? 'var(--color-success)' : 'var(--color-neutral-300)' }}
+					>
+						<title>{connected ? t('sse.connected') : t('sse.disconnected')}</title>
+					</Zap>
 				</Badge>
 			</span>
 		</Popover>

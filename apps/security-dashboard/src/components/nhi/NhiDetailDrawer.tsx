@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Tabs, Spin, Descriptions, Tag, Empty } from 'antd';
-import { SafetyOutlined } from '@ant-design/icons';
+import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAgentById, useRobotById, useDeviceById } from '@/hooks/use-security-queries';
 import { Alert } from '@autional-cn/ui';
@@ -178,7 +178,7 @@ export default function NhiDetailDrawer({
 			key: 'overview',
 			label: (
 				<span>
-					<SafetyOutlined /> {t('nhi.overviewTab', 'Overview')}
+					<ShieldCheck size="1em" /> {t('nhi.overviewTab', 'Overview')}
 				</span>
 			),
 			children: renderOverview(),

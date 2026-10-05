@@ -6,15 +6,15 @@ import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Select, Tag, Button, Spin, Empty, Space, Row, Col, Statistic, Descriptions, Modal, Tooltip } from 'antd';
 import {
-	WarningOutlined,
-	CheckCircleOutlined,
-	ReloadOutlined,
-	BellOutlined,
-	RiseOutlined,
-	StopOutlined,
-	UserSwitchOutlined,
-	EyeOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	Ban,
+	Bell,
+	CheckCircle2,
+	Eye,
+	RefreshCw,
+	TrendingUp,
+	UserCheck,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useAlerts, useUpdateAlertStatus, useAssignAlert, useAdminUsers } from '@/hooks/use-security-queries';
@@ -200,7 +200,7 @@ export default function AlertsPage() {
 			render: (_: any, record: AlertItem) => (
 				<Space size="small">
 					<Tooltip title={t('alerts.actionDetail')}>
-						<Button size="small" icon={<EyeOutlined />} onClick={() => openDetail(record)}>
+						<Button size="small" icon={<Eye size="1em" />} onClick={() => openDetail(record)}>
 							{t('alerts.actionDetail')}
 						</Button>
 					</Tooltip>
@@ -208,17 +208,17 @@ export default function AlertsPage() {
 						{record.status === 'open' && (
 							<>
 								<Button size="small" onClick={() => handleAction(record.id, 'acknowledge')}>
-									<CheckCircleOutlined /> {t('alerts.actionAcknowledge')}
+									<CheckCircle2 size="1em" /> {t('alerts.actionAcknowledge')}
 								</Button>
 								<Button size="small" onClick={() => handleAction(record.id, 'escalate')}>
-									<RiseOutlined /> {t('alerts.actionEscalate')}
+									<TrendingUp size="1em" /> {t('alerts.actionEscalate')}
 								</Button>
 							</>
 						)}
 						{record.status === 'acknowledged' && (
 							<>
 								<Button size="small" onClick={() => handleAction(record.id, 'escalate')}>
-									<RiseOutlined /> {t('alerts.actionEscalate')}
+									<TrendingUp size="1em" /> {t('alerts.actionEscalate')}
 								</Button>
 								<Button
 									size="small"
@@ -240,10 +240,10 @@ export default function AlertsPage() {
 						)}
 						{(record.status === 'open' || record.status === 'acknowledged') && (
 							<Button size="small" danger onClick={() => handleAction(record.id, 'dismiss')}>
-								<StopOutlined /> {t('alerts.actionDismiss')}
+								<Ban size="1em" /> {t('alerts.actionDismiss')}
 							</Button>
 						)}
-						<Button size="small" icon={<UserSwitchOutlined />} onClick={() => openAssign(record)}>
+						<Button size="small" icon={<UserCheck size="1em" />} onClick={() => openAssign(record)}>
 							{t('alerts.actionAssign')}
 						</Button>
 					</Can>
@@ -255,10 +255,10 @@ export default function AlertsPage() {
 	return (
 		<div>
 			<ConsolePageHeader
-				title={<><BellOutlined className="mr-2" /> {t('alerts.title')}</>}
+				title={<><Bell size="1em" className="mr-2" /> {t('alerts.title')}</>}
 				actions={
 					<>
-						<Button icon={<ReloadOutlined />} onClick={() => refetch()}>
+						<Button icon={<RefreshCw size="1em" />} onClick={() => refetch()}>
 							{t('common.refresh')}
 						</Button>
 					</>
@@ -271,7 +271,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={<span>{t('alerts.statsOpen')}<PageScopeHint /></span>}
 							value={stats.open}
-							prefix={<WarningOutlined className="text-danger" />}
+							prefix={<AlertTriangle size="1em" className="text-danger" />}
 							valueStyle={{ color: stats.open > 0 ? 'var(--color-danger-text)' : undefined }}
 						/>
 					</Card>
@@ -281,7 +281,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={<span>{t('alerts.statsAcknowledged')}<PageScopeHint /></span>}
 							value={stats.acknowledged}
-							prefix={<CheckCircleOutlined className="text-info" />}
+							prefix={<CheckCircle2 size="1em" className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -290,7 +290,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={<span>{t('alerts.statsEscalated')}<PageScopeHint /></span>}
 							value={stats.escalated}
-							prefix={<RiseOutlined className="text-warning" />}
+							prefix={<TrendingUp size="1em" className="text-warning" />}
 						/>
 					</Card>
 				</Col>
@@ -299,7 +299,7 @@ export default function AlertsPage() {
 						<Statistic
 							title={<span>{t('alerts.statsResolvedToday')}<PageScopeHint /></span>}
 							value={stats.resolvedToday}
-							prefix={<CheckCircleOutlined className="text-success" />}
+							prefix={<CheckCircle2 size="1em" className="text-success" />}
 						/>
 					</Card>
 				</Col>
@@ -401,17 +401,17 @@ export default function AlertsPage() {
 											type="primary"
 											onClick={() => handleAction(selectedAlert.id, 'acknowledge')}
 										>
-											<CheckCircleOutlined /> {t('alerts.actionAcknowledge')}
+											<CheckCircle2 size="1em" /> {t('alerts.actionAcknowledge')}
 										</Button>
 										<Button onClick={() => handleAction(selectedAlert.id, 'escalate')}>
-											<RiseOutlined /> {t('alerts.actionEscalate')}
+											<TrendingUp size="1em" /> {t('alerts.actionEscalate')}
 										</Button>
 									</>
 								)}
 								{selectedAlert.status === 'acknowledged' && (
 									<>
 										<Button onClick={() => handleAction(selectedAlert.id, 'escalate')}>
-											<RiseOutlined /> {t('alerts.actionEscalate')}
+											<TrendingUp size="1em" /> {t('alerts.actionEscalate')}
 										</Button>
 										<Button
 											type="primary"
@@ -428,10 +428,10 @@ export default function AlertsPage() {
 								)}
 								{(selectedAlert.status === 'open' || selectedAlert.status === 'acknowledged') && (
 									<Button danger onClick={() => handleAction(selectedAlert.id, 'dismiss')}>
-										<StopOutlined /> {t('alerts.actionDismiss')}
+										<Ban size="1em" /> {t('alerts.actionDismiss')}
 									</Button>
 								)}
-								<Button icon={<UserSwitchOutlined />} onClick={() => openAssign(selectedAlert)}>
+								<Button icon={<UserCheck size="1em" />} onClick={() => openAssign(selectedAlert)}>
 									{t('alerts.actionAssign')}
 								</Button>
 							</Can>

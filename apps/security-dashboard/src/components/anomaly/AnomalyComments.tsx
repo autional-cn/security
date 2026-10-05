@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { List, Input, Button, Avatar, Empty } from 'antd';
-import { SendOutlined, UserOutlined } from '@ant-design/icons';
+import { Send, User } from 'lucide-react';
 import dayjs from 'dayjs';
 import { addAnomalyComment } from '@/lib/api.generated';
 import { message } from '@/lib/antd-app';
@@ -62,7 +62,7 @@ export default function AnomalyComments({
 				<Can denyAuditor>
 					<Button
 						type="primary"
-						icon={<SendOutlined />}
+						icon={<Send size="1em" />}
 						loading={submitting}
 						onClick={handleSubmit}
 						className="self-end"
@@ -82,7 +82,7 @@ export default function AnomalyComments({
 							<List.Item.Meta
 								avatar={
 									<Avatar
-										icon={<UserOutlined />}
+										icon={<User size="1em" />}
 										style={{ backgroundColor: 'var(--color-brand)' }}
 									/>
 								}

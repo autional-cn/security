@@ -3,13 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Spin, Descriptions, Tag, Timeline, List, Badge, Empty, Card, Statistic, Row, Col } from 'antd';
 import {
-	FileSearchOutlined,
-	WarningOutlined,
-	LinkOutlined,
-	CommentOutlined,
-	SafetyOutlined,
-	ClusterOutlined,
-} from '@ant-design/icons';
+	FileSearch,
+	Link2,
+	MessageSquare,
+	Network,
+	ShieldCheck,
+} from 'lucide-react';
 import dayjs from 'dayjs';
 import { getAnomalyById, getAnomalyTimeline, getRelatedAnomalies } from '@/lib/api.generated';
 import { message } from '@/lib/antd-app';
@@ -240,7 +239,7 @@ export default function AnomalyDetailDrawer({
 								<Statistic
 									title={t('anomalies.totalEvents')}
 									value={context.totalEvents || 0}
-									prefix={<FileSearchOutlined />}
+									prefix={<FileSearch size="1em" />}
 								/>
 							</Card>
 						</Col>
@@ -249,7 +248,7 @@ export default function AnomalyDetailDrawer({
 								<Statistic
 									title={t('anomalies.uniqueDevices')}
 									value={context.uniqueDevices || 0}
-									prefix={<ClusterOutlined />}
+									prefix={<Network size="1em" />}
 								/>
 							</Card>
 						</Col>
@@ -290,7 +289,7 @@ export default function AnomalyDetailDrawer({
 								</span>
 							),
 							color: evt.level === 'error' ? 'red' : evt.level === 'warning' ? 'orange' : 'blue',
-							dot: <FileSearchOutlined />,
+							dot: <FileSearch size="1em" />,
 							children: (
 								<div>
 									<div className="text-sm font-medium">{evt.action}</div>
@@ -351,7 +350,7 @@ export default function AnomalyDetailDrawer({
 			key: 'overview',
 			label: (
 				<span>
-					<SafetyOutlined /> {t('anomalies.overviewTab')}
+					<ShieldCheck size="1em" /> {t('anomalies.overviewTab')}
 				</span>
 			),
 			children: renderOverview(),
@@ -360,7 +359,7 @@ export default function AnomalyDetailDrawer({
 			key: 'timeline',
 			label: (
 				<span>
-					<FileSearchOutlined /> {t('anomalies.timelineTab')}
+					<FileSearch size="1em" /> {t('anomalies.timelineTab')}
 				</span>
 			),
 			children: renderTimeline(),
@@ -369,7 +368,7 @@ export default function AnomalyDetailDrawer({
 			key: 'related',
 			label: (
 				<span>
-					<LinkOutlined /> {t('anomalies.relatedTab')} ({related.length})
+					<Link2 size="1em" /> {t('anomalies.relatedTab')} ({related.length})
 				</span>
 			),
 			children: renderRelated(),
@@ -378,7 +377,7 @@ export default function AnomalyDetailDrawer({
 			key: 'comments',
 			label: (
 				<span>
-					<CommentOutlined /> {t('anomalies.commentsTab')} ({detail?.comments?.length || 0})
+					<MessageSquare size="1em" /> {t('anomalies.commentsTab')} ({detail?.comments?.length || 0})
 				</span>
 			),
 			children: anomalyId ? (

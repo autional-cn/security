@@ -7,14 +7,13 @@ import { Link, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Row, Col, Statistic, Descriptions, Badge, Spin, Tag } from 'antd';
 import {
-	HistoryOutlined,
-	SafetyOutlined,
-	MobileOutlined,
-	DesktopOutlined,
-	ClockCircleOutlined,
-	WarningOutlined,
-	LockOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	Clock,
+	History,
+	Lock,
+	ShieldCheck,
+	Smartphone,
+} from 'lucide-react';
 import { useTenantSlug } from '@autional-cn/shared';
 import { getSecurityUserProfile } from '@/lib/api';
 import { UserIdentity } from '@/components/UserIdentity';
@@ -150,7 +149,7 @@ export default function UserSecurityProfilePage() {
 				actions={
 					id ? (
 						<Link to={`/${slug ?? ''}/users/${id}/timeline`}>
-							<Button icon={<HistoryOutlined />}>{t('usersProfile.viewTimeline')}</Button>
+							<Button icon={<History size="1em" />}>{t('usersProfile.viewTimeline')}</Button>
 						</Link>
 					) : undefined
 				}
@@ -172,7 +171,7 @@ export default function UserSecurityProfilePage() {
 					<Card
 						title={
 							<span>
-								<SafetyOutlined className="mr-2" />
+								<ShieldCheck size="1em" className="mr-2" />
 								{t('usersProfile.securityStatus')}
 							</span>
 						}
@@ -224,7 +223,7 @@ export default function UserSecurityProfilePage() {
 					<Card
 						title={
 							<span>
-								<WarningOutlined className="mr-2" />
+								<AlertTriangle size="1em" className="mr-2" />
 								{t('usersProfile.anomalyCount')}
 							</span>
 						}
@@ -243,7 +242,7 @@ export default function UserSecurityProfilePage() {
 					<Card
 						title={
 							<span>
-								<MobileOutlined className="mr-2" />
+								<Smartphone size="1em" className="mr-2" />
 								{t('usersProfile.devices')}
 							</span>
 						}
@@ -271,7 +270,7 @@ export default function UserSecurityProfilePage() {
 					<Card
 						title={
 							<span>
-								<ClockCircleOutlined className="mr-2" />
+								<Clock size="1em" className="mr-2" />
 								{t('usersProfile.activeSessions')}
 							</span>
 						}
@@ -301,7 +300,7 @@ export default function UserSecurityProfilePage() {
 					<Card
 						title={
 							<span>
-								<LockOutlined className="mr-2" />
+								<Lock size="1em" className="mr-2" />
 								{t('usersProfile.passwordPolicy')}
 							</span>
 						}

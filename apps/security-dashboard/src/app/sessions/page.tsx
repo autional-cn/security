@@ -6,12 +6,12 @@ import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { Alert, ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Button, Tag, Spin, Empty, Space, Row, Col, Statistic, Input, Modal } from 'antd';
 import {
-	ClusterOutlined,
-	StopOutlined,
-	SearchOutlined,
-	ReloadOutlined,
-	ExclamationCircleOutlined,
-} from '@ant-design/icons';
+	AlertCircle,
+	Ban,
+	Network,
+	RefreshCw,
+	Search,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useSessions, useActiveSessions, useTerminateSession } from '@/hooks/use-security-queries';
@@ -53,7 +53,7 @@ export default function SessionsPage() {
 	const handleTerminate = async (id: string) => {
 		Modal.confirm({
 			title: t('sessions.confirmTitle'),
-			icon: <ExclamationCircleOutlined />,
+			icon: <AlertCircle size="1em" />,
 			content: t('sessions.confirmContent'),
 			okText: t('sessions.confirmOk'),
 			cancelText: t('common.cancel'),
@@ -111,7 +111,7 @@ export default function SessionsPage() {
 					<Button
 						size="small"
 						danger
-						icon={<StopOutlined />}
+						icon={<Ban size="1em" />}
 						onClick={() => handleTerminate(record.id)}
 					>
 						{t('sessions.terminate')}
@@ -128,7 +128,7 @@ export default function SessionsPage() {
 				actions={
 					<>
 						<Button
-							icon={<ReloadOutlined />}
+							icon={<RefreshCw size="1em" />}
 							onClick={() => {
 								refetch();
 								refetchActive();
@@ -165,7 +165,7 @@ export default function SessionsPage() {
 						<Statistic
 							title={t('sessions.activeSessions')}
 							value={activeError ? '--' : activeCount}
-							prefix={<ClusterOutlined className="text-info" />}
+							prefix={<Network size="1em" className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -174,7 +174,7 @@ export default function SessionsPage() {
 						<Statistic
 							title={<span>{t('sessions.highRiskSessions')}<PageScopeHint /></span>}
 							value={sessionsError ? '--' : highRiskCount}
-							prefix={<StopOutlined className="text-danger" />}
+							prefix={<Ban size="1em" className="text-danger" />}
 						/>
 					</Card>
 				</Col>
@@ -183,7 +183,7 @@ export default function SessionsPage() {
 						<Statistic
 							title={t('sessions.totalSessions')}
 							value={sessionsError ? '--' : total}
-							prefix={<ClusterOutlined className="text-info" />}
+							prefix={<Network size="1em" className="text-info" />}
 						/>
 					</Card>
 				</Col>
@@ -198,7 +198,7 @@ export default function SessionsPage() {
 						style={{ width: 280 }}
 						onPressEnter={() => setPage(1)}
 					/>
-					<Button type="primary" icon={<SearchOutlined />} onClick={() => setPage(1)}>
+					<Button type="primary" icon={<Search size="1em" />} onClick={() => setPage(1)}>
 						{t('common.search')}
 					</Button>
 					<Button

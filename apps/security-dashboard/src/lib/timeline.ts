@@ -11,23 +11,23 @@
 
 import type { ComponentType } from 'react';
 import {
-	AuditOutlined,
-	DesktopOutlined,
-	FileTextOutlined,
-	KeyOutlined,
-	LoginOutlined,
-	LogoutOutlined,
-	MobileOutlined,
-	SafetyCertificateOutlined,
-	SecurityScanOutlined,
-	SyncOutlined,
-	TeamOutlined,
-	UnorderedListOutlined,
-	WarningOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	BadgeCheck,
+	ClipboardCheck,
+	FileText,
+	KeyRound,
+	List,
+	LogIn,
+	LogOut,
+	Monitor,
+	RefreshCw,
+	Shield,
+	Smartphone,
+	Users,
+} from 'lucide-react';
 
 type TFn = (key: string, options?: Record<string, unknown>) => string;
-type IconComponent = ComponentType;
+type IconComponent = ComponentType<{ size?: string | number; className?: string }>;
 
 export function normalizeAction(action?: string | null): string {
 	if (!action) return '';
@@ -64,23 +64,23 @@ export function eventActionLabel(t: TFn, action?: string | null): string {
 
 // 关键词规则（顺序即优先级，先命中先得）
 const STYLE_RULES: Array<{ test: RegExp; Icon: IconComponent; color: string }> = [
-	{ test: /anomaly/, Icon: WarningOutlined, color: 'red' },
-	{ test: /fail/, Icon: WarningOutlined, color: 'red' },
-	{ test: /logout/, Icon: LogoutOutlined, color: 'gray' },
-	{ test: /login/, Icon: LoginOutlined, color: 'green' },
-	{ test: /password/, Icon: KeyOutlined, color: 'orange' },
-	{ test: /(mfa|otp|2fa)/, Icon: SafetyCertificateOutlined, color: 'blue' },
-	{ test: /(token|refresh)/, Icon: SyncOutlined, color: 'blue' },
-	{ test: /(device|fingerprint)/, Icon: MobileOutlined, color: 'purple' },
-	{ test: /session/, Icon: DesktopOutlined, color: 'cyan' },
-	{ test: /(role|assign)/, Icon: TeamOutlined, color: 'purple' },
-	{ test: /authorize/, Icon: AuditOutlined, color: 'cyan' },
-	{ test: /scan/, Icon: SecurityScanOutlined, color: 'cyan' },
-	{ test: /(list|admin)/, Icon: UnorderedListOutlined, color: 'gray' },
+	{ test: /anomaly/, Icon: AlertTriangle, color: 'red' },
+	{ test: /fail/, Icon: AlertTriangle, color: 'red' },
+	{ test: /logout/, Icon: LogOut, color: 'gray' },
+	{ test: /login/, Icon: LogIn, color: 'green' },
+	{ test: /password/, Icon: KeyRound, color: 'orange' },
+	{ test: /(mfa|otp|2fa)/, Icon: BadgeCheck, color: 'blue' },
+	{ test: /(token|refresh)/, Icon: RefreshCw, color: 'blue' },
+	{ test: /(device|fingerprint)/, Icon: Smartphone, color: 'purple' },
+	{ test: /session/, Icon: Monitor, color: 'cyan' },
+	{ test: /(role|assign)/, Icon: Users, color: 'purple' },
+	{ test: /authorize/, Icon: ClipboardCheck, color: 'cyan' },
+	{ test: /scan/, Icon: Shield, color: 'cyan' },
+	{ test: /(list|admin)/, Icon: List, color: 'gray' },
 ];
 
 const DEFAULT_STYLE: { Icon: IconComponent; color: string } = {
-	Icon: FileTextOutlined,
+	Icon: FileText,
 	color: 'gray',
 };
 

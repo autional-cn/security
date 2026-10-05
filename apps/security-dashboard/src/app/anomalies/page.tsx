@@ -6,11 +6,11 @@ import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Select, Tag, Button, Spin, Empty, Space, Badge, Row, Col, Statistic, Segmented } from 'antd';
 import {
-	WarningOutlined,
-	CheckCircleOutlined,
-	ExclamationCircleOutlined,
-	ReloadOutlined,
-} from '@ant-design/icons';
+	AlertCircle,
+	AlertTriangle,
+	CheckCircle2,
+	RefreshCw,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import { useAnomalies, useUpdateAnomalyStatus } from '@/hooks/use-security-queries';
@@ -222,7 +222,7 @@ export default function AnomaliesPage() {
 				title={t('anomalies.title')}
 				actions={
 					<>
-						<Button icon={<ReloadOutlined />} onClick={() => refetch()}>
+						<Button icon={<RefreshCw size="1em" />} onClick={() => refetch()}>
 							{t('common.refresh')}
 						</Button>
 					</>
@@ -235,7 +235,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={<span>{t('anomalies.statsOpen')}<PageScopeHint /></span>}
 							value={stats.open}
-							prefix={<WarningOutlined className="text-danger" />}
+							prefix={<AlertTriangle size="1em" className="text-danger" />}
 						/>
 					</Card>
 				</Col>
@@ -244,7 +244,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={<span>{t('anomalies.statsInvestigating')}<PageScopeHint /></span>}
 							value={stats.investigating}
-							prefix={<ExclamationCircleOutlined className="text-warning" />}
+							prefix={<AlertCircle size="1em" className="text-warning" />}
 						/>
 					</Card>
 				</Col>
@@ -253,7 +253,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={<span>{t('anomalies.statsResolved')}<PageScopeHint /></span>}
 							value={stats.resolved}
-							prefix={<CheckCircleOutlined className="text-success" />}
+							prefix={<CheckCircle2 size="1em" className="text-success" />}
 						/>
 					</Card>
 				</Col>
@@ -262,7 +262,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={<span>{t('anomalies.statsCritical')}<PageScopeHint /></span>}
 							value={stats.critical}
-							prefix={<WarningOutlined className="text-purple-500" />}
+							prefix={<AlertTriangle size="1em" className="text-purple-500" />}
 						/>
 					</Card>
 				</Col>

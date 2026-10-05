@@ -3,20 +3,20 @@
 import React, { useMemo } from 'react';
 import { Card, Col, Row, Statistic, List, Tag, Empty, Spin, Progress, Badge, Timeline, Button, Skeleton } from 'antd';
 import {
-	FileSearchOutlined,
-	WarningOutlined,
-	SafetyCertificateOutlined,
-	ClusterOutlined,
-	CheckCircleOutlined,
-	CloseCircleOutlined,
-	ExclamationCircleOutlined,
-	CloudServerOutlined,
-	ApiOutlined,
-	ThunderboltOutlined,
-	RadarChartOutlined,
-	FileTextOutlined,
-	QuestionCircleOutlined,
-} from '@ant-design/icons';
+	AlertCircle,
+	AlertTriangle,
+	BadgeCheck,
+	CheckCircle2,
+	Cloud,
+	FileSearch,
+	FileText,
+	HelpCircle,
+	Network,
+	Plug,
+	Radar,
+	XCircle,
+	Zap,
+} from 'lucide-react';
 import {
 	LineChart,
 	Line,
@@ -114,10 +114,10 @@ const SEVERITY_COLORS: Record<string, string> = {
 	low: 'var(--color-primary-700)',
 };
 const EVENT_TYPE_CONFIG: Record<string, { color: string; icon: React.ReactNode }> = {
-	anomaly: { color: 'red', icon: <WarningOutlined /> },
-	audit: { color: 'blue', icon: <FileTextOutlined /> },
-	compliance: { color: 'green', icon: <SafetyCertificateOutlined /> },
-	session: { color: 'cyan', icon: <ClusterOutlined /> },
+	anomaly: { color: 'red', icon: <AlertTriangle size="1em" /> },
+	audit: { color: 'blue', icon: <FileText size="1em" /> },
+	compliance: { color: 'green', icon: <BadgeCheck size="1em" /> },
+	session: { color: 'cyan', icon: <Network size="1em" /> },
 };
 
 export default function OverviewPage() {
@@ -275,7 +275,7 @@ export default function OverviewPage() {
 								<Statistic
 									title={t('overview.totalAuditLogs')}
 									value={stats.totalLogs}
-									prefix={<FileSearchOutlined className="text-info" />}
+									prefix={<FileSearch size="1em" className="text-info" />}
 								/>
 							</Card>
 						</Link>
@@ -286,7 +286,7 @@ export default function OverviewPage() {
 								<Statistic
 									title={t('overview.pendingAnomalies')}
 									value={stats.openAnomalies}
-									prefix={<WarningOutlined className="text-warning" />}
+									prefix={<AlertTriangle size="1em" className="text-warning" />}
 									valueStyle={{ color: stats.openAnomalies > 0 ? '#f97316' : undefined }}
 								/>
 							</Card>
@@ -298,7 +298,7 @@ export default function OverviewPage() {
 								<Statistic
 									title={t('overview.activeSessions')}
 									value={stats.activeSessions}
-									prefix={<ClusterOutlined className="text-info" />}
+									prefix={<Network size="1em" className="text-info" />}
 								/>
 							</Card>
 						</Link>
@@ -308,7 +308,7 @@ export default function OverviewPage() {
 							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.complianceScore')}</span>
-									<SafetyCertificateOutlined className="text-success" />
+									<BadgeCheck size="1em" className="text-success" />
 								</div>
 								{stats.complianceScore != null ? (
 									<Progress
@@ -339,11 +339,11 @@ export default function OverviewPage() {
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.hashChainIntegrity')}</span>
 									{stats.hashChainValid === null ? (
-										<QuestionCircleOutlined className="text-neutral-500" />
+										<HelpCircle size="1em" className="text-neutral-500" />
 									) : stats.hashChainValid ? (
-										<CheckCircleOutlined className="text-success" />
+										<CheckCircle2 size="1em" className="text-success" />
 									) : (
-										<CloseCircleOutlined className="text-danger" />
+										<XCircle size="1em" className="text-danger" />
 									)}
 								</div>
 								<div className="text-base font-semibold">
@@ -368,7 +368,7 @@ export default function OverviewPage() {
 							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.riskLevel')}</span>
-									<ExclamationCircleOutlined className="text-danger" />
+									<AlertCircle size="1em" className="text-danger" />
 								</div>
 								<div className="text-base font-semibold">
 									{stats.criticalAlerts > 0 ? (
@@ -515,28 +515,28 @@ export default function OverviewPage() {
 							<div className="space-y-3">
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<CloudServerOutlined className="text-info" />
+										<Cloud size="1em" className="text-info" />
 										<span className="text-sm">{t('overview.emailAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<ThunderboltOutlined className="text-warning" />
+										<Zap size="1em" className="text-warning" />
 										<span className="text-sm">{t('overview.smsAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<ApiOutlined className="text-purple-500" />
+										<Plug size="1em" className="text-purple-500" />
 										<span className="text-sm">{t('overview.siemPush')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>
 								</div>
 								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<RadarChartOutlined className="text-info" />
+										<Radar size="1em" className="text-info" />
 										<span className="text-sm">{t('overview.webhook')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>

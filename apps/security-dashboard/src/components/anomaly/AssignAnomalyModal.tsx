@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Modal, Select, Button, Spin } from 'antd';
-import { UserSwitchOutlined } from '@ant-design/icons';
+import { UserCheck } from 'lucide-react';
 import { assignAnomaly } from '@/lib/api.generated';
 import { Can } from '@/components/Can';
 import { message } from '@/lib/antd-app';
@@ -73,7 +73,7 @@ export default function AssignAnomalyModal({
 		<Modal
 			title={
 				<span>
-					<UserSwitchOutlined className="mr-2" />
+					<UserCheck size="1em" className="mr-2" />
 					{t('anomalies.assignModalTitle')}
 				</span>
 			}

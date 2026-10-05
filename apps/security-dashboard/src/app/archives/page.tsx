@@ -3,12 +3,12 @@
 import React, { useState } from 'react';
 import { Card, Button, Space, message, Typography, Row, Col, Statistic, Modal, Form, DatePicker, Timeline } from 'antd';
 import {
-	HistoryOutlined,
-	SafetyOutlined,
-	FileZipOutlined,
-	SyncOutlined,
-	PlayCircleOutlined,
-} from '@ant-design/icons';
+	FileArchive,
+	History,
+	Play,
+	RefreshCw,
+	ShieldCheck,
+} from 'lucide-react';
 import { useAuth } from '@autional-cn/shared';
 import { useArchiveStatus, useTriggerArchive, useHashChain } from '@/hooks/use-security-queries';
 import { useTranslation } from 'react-i18next';
@@ -74,7 +74,7 @@ export default function ArchivesPage() {
 											}
 										: undefined
 								}
-								prefix={<FileZipOutlined />}
+								prefix={<FileArchive size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -84,7 +84,7 @@ export default function ArchivesPage() {
 								title={t('archives.statRetentionDays')}
 								value={archiveStatus?.days ?? '-'}
 								suffix={archiveStatus ? t('archives.daysUnit') : undefined}
-								prefix={<HistoryOutlined />}
+								prefix={<History size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -99,7 +99,7 @@ export default function ArchivesPage() {
 											? new Date(archiveStatus.lastArchive).toLocaleString()
 											: t('archives.neverArchived')
 								}
-								prefix={<SyncOutlined />}
+								prefix={<RefreshCw size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -109,7 +109,7 @@ export default function ArchivesPage() {
 								title={t('archives.statVerificationPassed')}
 								value={chain?.isValid === undefined ? '-' : chain.isValid ? 1 : 0}
 								valueStyle={{ color: 'var(--color-success)' }}
-								prefix={<SafetyOutlined />}
+								prefix={<ShieldCheck size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -122,7 +122,7 @@ export default function ArchivesPage() {
 					action={
 						<Button
 							type="primary"
-							icon={<PlayCircleOutlined />}
+							icon={<Play size="1em" />}
 							onClick={() => setModalVisible(true)}
 						>
 							{t('archives.triggerArchive')}
@@ -186,7 +186,7 @@ export default function ArchivesPage() {
 									type="primary"
 									htmlType="submit"
 									loading={triggerLoading}
-									icon={<PlayCircleOutlined />}
+									icon={<Play size="1em" />}
 								>
 									{t('archives.confirmTrigger')}
 								</Button>

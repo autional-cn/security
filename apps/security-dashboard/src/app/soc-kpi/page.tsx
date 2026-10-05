@@ -4,7 +4,7 @@ import React from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { ConsolePageHeader } from '@autional-cn/ui';
 import { Card, Row, Col, Statistic, Spin } from 'antd';
-import { ClockCircleOutlined, AlertOutlined, WarningOutlined } from '@ant-design/icons';
+import { AlertTriangle, Clock, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuditStats, useAnomalies, useAlerts } from '@/hooks/use-security-queries';
 
@@ -24,21 +24,21 @@ export default function SocKpiPage() {
 			key: 'totalLogs',
 			title: t('socKpi.totalLogs', 'Total Logs'),
 			value: stats?.totalLogs ?? stats?.total ?? 0,
-			icon: <ClockCircleOutlined />,
+			icon: <Clock size="1em" />,
 			color: '#1677ff',
 		},
 		{
 			key: 'totalAnomalies',
 			title: t('socKpi.totalAnomalies', 'Total Anomalies'),
 			value: anomalyCount,
-			icon: <WarningOutlined />,
+			icon: <AlertTriangle size="1em" />,
 			color: '#fa8c16',
 		},
 		{
 			key: 'totalAlerts',
 			title: t('socKpi.totalAlerts', 'Total Alerts'),
 			value: alertCount,
-			icon: <AlertOutlined />,
+			icon: <ShieldAlert size="1em" />,
 			color: 'var(--color-danger)',
 		},
 	];

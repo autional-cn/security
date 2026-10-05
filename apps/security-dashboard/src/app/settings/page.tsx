@@ -5,15 +5,14 @@ import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { Card, Form, Input, Button, Switch, Select, Skeleton, Tabs, Space, Tag, Modal, Spin, Descriptions, Badge, Empty } from 'antd';
 import {
-	SaveOutlined,
-	PlusOutlined,
-	EditOutlined,
-	DeleteOutlined,
-	ApiOutlined,
-	ThunderboltOutlined,
-	SettingOutlined,
-	DatabaseOutlined,
-} from '@ant-design/icons';
+	Database,
+	Pencil,
+	Plug,
+	Plus,
+	Save,
+	Settings,
+	Trash2,
+} from 'lucide-react';
 
 import dayjs from 'dayjs';
 import {
@@ -143,7 +142,7 @@ function LocalSettingsTab() {
 				</Form.Item>
 			</Card>
 			<div className="flex justify-end">
-				<Button type="primary" icon={<SaveOutlined />} loading={saving} htmlType="submit">
+				<Button type="primary" icon={<Save size="1em" />} loading={saving} htmlType="submit">
 					{t('settings.saveLocal')}
 				</Button>
 			</div>
@@ -195,7 +194,7 @@ function RetentionPolicyTab() {
 					<Card
 						title={t('settings.currentRetention')}
 						extra={
-							<Button icon={<EditOutlined />} onClick={openEdit}>
+							<Button icon={<Pencil size="1em" />} onClick={openEdit}>
 								{t('settings.edit')}
 							</Button>
 						}
@@ -408,7 +407,7 @@ function SiemConnectorsTab() {
 			width: 200,
 			render: (_: any, record: SIEMConnectorResponse) => (
 				<Space size="small">
-					<Button size="small" icon={<EditOutlined />} onClick={() => openEdit(record)}>
+					<Button size="small" icon={<Pencil size="1em" />} onClick={() => openEdit(record)}>
 						{t('settings.edit')}
 					</Button>
 					<Button
@@ -421,7 +420,7 @@ function SiemConnectorsTab() {
 					<Button
 						size="small"
 						danger
-						icon={<DeleteOutlined />}
+						icon={<Trash2 size="1em" />}
 						onClick={() => handleDelete(record)}
 					>
 						{t('common.delete')}
@@ -434,7 +433,7 @@ function SiemConnectorsTab() {
 	return (
 		<div>
 			<div className="flex justify-end mb-4">
-				<Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+				<Button type="primary" icon={<Plus size="1em" />} onClick={openCreate}>
 					{t('settings.newConnector')}
 				</Button>
 			</div>
@@ -509,7 +508,7 @@ export default function SettingsPage() {
 			key: 'local',
 			label: (
 				<span>
-					<SettingOutlined /> {t('settings.local')}
+					<Settings size="1em" /> {t('settings.local')}
 				</span>
 			),
 			children: <LocalSettingsTab />,
@@ -518,7 +517,7 @@ export default function SettingsPage() {
 			key: 'retention',
 			label: (
 				<span>
-					<DatabaseOutlined /> {t('settings.dataRetention')}
+					<Database size="1em" /> {t('settings.dataRetention')}
 				</span>
 			),
 			children: (
@@ -539,7 +538,7 @@ export default function SettingsPage() {
 			key: 'siem',
 			label: (
 				<span>
-					<ApiOutlined /> {t('settings.siemConnectors')}
+					<Plug size="1em" /> {t('settings.siemConnectors')}
 				</span>
 			),
 			children: (

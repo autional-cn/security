@@ -4,12 +4,11 @@ import React, { useState } from 'react';
 import { DataTable, Drawer } from '@autional-cn/ui/antd';
 import { Card, Tag, Button, Space, Descriptions, Form, Select, Input, message, Typography, Badge, Row, Col, Statistic, Spin } from 'antd';
 import {
-	EyeOutlined,
-	CheckCircleOutlined,
-	WarningOutlined,
-	FileSearchOutlined,
-	SyncOutlined,
-} from '@ant-design/icons';
+	AlertTriangle,
+	CheckCircle2,
+	Eye,
+	FileSearch,
+} from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import {
 	useAuditFindings,
@@ -157,7 +156,7 @@ export default function AuditFindingsPage() {
 			width: 100,
 			fixed: 'right',
 			render: (_, record) => (
-				<Button size="small" icon={<EyeOutlined />} onClick={() => openDetail(record)}>
+				<Button size="small" icon={<Eye size="1em" />} onClick={() => openDetail(record)}>
 					{t('common.view')}
 				</Button>
 			),
@@ -176,7 +175,7 @@ export default function AuditFindingsPage() {
 							title={<span>{t('auditFindings.statOpen')}<PageScopeHint /></span>}
 							value={openCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
-							prefix={<WarningOutlined />}
+							prefix={<AlertTriangle size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -186,7 +185,7 @@ export default function AuditFindingsPage() {
 							title={<span>{t('auditFindings.statOverdue')}<PageScopeHint /></span>}
 							value={overdueCount}
 							valueStyle={{ color: 'var(--color-danger-text)' }}
-							prefix={<FileSearchOutlined />}
+							prefix={<FileSearch size="1em" />}
 						/>
 					</Card>
 				</Col>
@@ -335,7 +334,7 @@ export default function AuditFindingsPage() {
 													type="primary"
 													htmlType="submit"
 													loading={updateLoading}
-													icon={<CheckCircleOutlined />}
+													icon={<CheckCircle2 size="1em" />}
 												>
 													{t('auditFindings.updateSubmit')}
 												</Button>

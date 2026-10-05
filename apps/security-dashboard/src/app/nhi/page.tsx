@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { DataTable } from '@autional-cn/ui/antd';
 import { Card, Row, Col, Statistic, Tag, Tabs, Button, Popconfirm, message } from 'antd';
 import {
-	RobotOutlined,
-	WifiOutlined,
-	ApiOutlined,
-	CheckCircleOutlined,
-	CloseCircleOutlined,
-	SyncOutlined,
-	MinusCircleOutlined,
-} from '@ant-design/icons';
+	Bot,
+	CheckCircle2,
+	MinusCircle,
+	Plug,
+	RefreshCw,
+	Wifi,
+	XCircle,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
 	useAgents,
@@ -41,15 +41,15 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
-	active: <CheckCircleOutlined />,
-	provisioning: <SyncOutlined spin />,
-	rotating: <SyncOutlined spin />,
-	revoked: <CloseCircleOutlined />,
-	commissioning: <SyncOutlined spin />,
-	degraded: <MinusCircleOutlined />,
-	decommissioned: <CloseCircleOutlined />,
-	unpaired: <MinusCircleOutlined />,
-	transferring: <SyncOutlined spin />,
+	active: <CheckCircle2 size="1em" />,
+	provisioning: <RefreshCw size="1em" className="animate-spin" />,
+	rotating: <RefreshCw size="1em" className="animate-spin" />,
+	revoked: <XCircle size="1em" />,
+	commissioning: <RefreshCw size="1em" className="animate-spin" />,
+	degraded: <MinusCircle size="1em" />,
+	decommissioned: <XCircle size="1em" />,
+	unpaired: <MinusCircle size="1em" />,
+	transferring: <RefreshCw size="1em" className="animate-spin" />,
 };
 
 function AgentTable({ onViewDetail }: { onViewDetail: (record: any) => void }) {
@@ -376,7 +376,7 @@ export default function NhiPage() {
 							<Statistic
 								title={t('nhi.totalAgents', 'Total Agents')}
 								value={agentCount}
-								prefix={<ApiOutlined />}
+								prefix={<Plug size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -386,7 +386,7 @@ export default function NhiPage() {
 								title={t('nhi.activeAgents', 'Active Agents')}
 								value={agentActive}
 								valueStyle={{ color: 'var(--color-success)' }}
-								prefix={<CheckCircleOutlined />}
+								prefix={<CheckCircle2 size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -395,7 +395,7 @@ export default function NhiPage() {
 							<Statistic
 								title={t('nhi.totalRobots', 'Total Robots')}
 								value={robotCount}
-								prefix={<RobotOutlined />}
+								prefix={<Bot size="1em" />}
 							/>
 						</Card>
 					</Col>
@@ -404,7 +404,7 @@ export default function NhiPage() {
 							<Statistic
 								title={t('nhi.totalDevices', 'Total Devices')}
 								value={iotCount}
-								prefix={<WifiOutlined />}
+								prefix={<Wifi size="1em" />}
 							/>
 						</Card>
 					</Col>
