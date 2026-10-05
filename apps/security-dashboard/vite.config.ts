@@ -62,7 +62,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router'],
-          'vendor-ui': ['antd', '@ant-design/icons'],
+          'vendor-ui': ['antd', '@ant-design/icons', 'lucide-react'],
           'vendor-charts': ['recharts'],
           'vendor-query': ['@tanstack/react-query'],
           'vendor-i18n': ['i18next', 'react-i18next'],
