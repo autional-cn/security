@@ -489,7 +489,7 @@ export default function OverviewPage() {
 										{serviceStatuses.map((svc: any) => (
 											<div
 												key={svc.name}
-												className="flex flex-col items-center p-2 rounded border border-neutral-200 hover:bg-neutral-50 transition-colors"
+												className="flex flex-col items-center p-2 rounded-xs border border-neutral-200 hover:bg-neutral-50 transition-colors"
 											>
 												<div
 													className={`w-3 h-3 rounded-full mb-2 ${serviceStatusColor(svc.status)}`}
@@ -513,28 +513,28 @@ export default function OverviewPage() {
 					<Col xs={24} lg={8}>
 						<Card title={t('overview.alertChannelStatus')} className="h-full">
 							<div className="space-y-3">
-								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
+								<div className="flex items-center justify-between p-2 rounded-xs border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<Cloud size="1em" className="text-info" />
 										<span className="text-sm">{t('overview.emailAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
+								<div className="flex items-center justify-between p-2 rounded-xs border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<Zap size="1em" className="text-warning" />
 										<span className="text-sm">{t('overview.smsAlert')}</span>
 									</div>
 									<Tag color="success">{t('overview.healthy')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
+								<div className="flex items-center justify-between p-2 rounded-xs border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<Plug size="1em" className="text-purple-500" />
 										<span className="text-sm">{t('overview.siemPush')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>
 								</div>
-								<div className="flex items-center justify-between p-2 rounded border border-neutral-200">
+								<div className="flex items-center justify-between p-2 rounded-xs border border-neutral-200">
 									<div className="flex items-center gap-2">
 										<Radar size="1em" className="text-info" />
 										<span className="text-sm">{t('overview.webhook')}</span>
