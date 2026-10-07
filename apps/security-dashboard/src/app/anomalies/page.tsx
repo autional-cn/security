@@ -262,7 +262,7 @@ export default function AnomaliesPage() {
 						<Statistic
 							title={<span>{t('anomalies.statsCritical')}<PageScopeHint /></span>}
 							value={stats.critical}
-							prefix={<AlertTriangle size="1em" className="text-purple-500" />}
+							prefix={<AlertTriangle size="1em" className="text-chart-7" />}
 						/>
 					</Card>
 				</Col>

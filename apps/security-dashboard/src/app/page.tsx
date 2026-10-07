@@ -529,7 +529,7 @@ export default function OverviewPage() {
 								</div>
 								<div className="flex items-center justify-between p-2 rounded-xs border border-neutral-200">
 									<div className="flex items-center gap-2">
-										<Plug size="1em" className="text-purple-500" />
+										<Plug size="1em" className="text-chart-7" />
 										<span className="text-sm">{t('overview.siemPush')}</span>
 									</div>
 									<Tag color="default">{t('overview.notConfigured')}</Tag>
