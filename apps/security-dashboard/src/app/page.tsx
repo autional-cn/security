@@ -271,7 +271,7 @@ export default function OverviewPage() {
 					{/* S-73（fix-security-w5）：统计卡接对应路由（原全页零 pointer/零 href） */}
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/audit-logs`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<Statistic
 									title={t('overview.totalAuditLogs')}
 									value={stats.totalLogs}
@@ -282,7 +282,7 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/anomalies`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<Statistic
 									title={t('overview.pendingAnomalies')}
 									value={stats.openAnomalies}
@@ -294,7 +294,7 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/sessions`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<Statistic
 									title={t('overview.activeSessions')}
 									value={stats.activeSessions}
@@ -305,7 +305,7 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/compliance`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.complianceScore')}</span>
 									<BadgeCheck size="1em" className="text-success" />
@@ -335,7 +335,7 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/hash-chain`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.hashChainIntegrity')}</span>
 									{stats.hashChainValid === null ? (
@@ -365,7 +365,7 @@ export default function OverviewPage() {
 					</Col>
 					<Col xs={24} sm={12} lg={4}>
 						<Link to={`/${slug ?? ''}/risk-dashboard`} className="block h-full">
-							<Card className="cursor-pointer h-full transition-shadow hover:shadow-md">
+							<Card className="cursor-pointer h-full transition-shadow hover:shadow-card">
 								<div className="flex items-center justify-between mb-2">
 									<span className="text-sm text-neutral-600">{t('overview.riskLevel')}</span>
 									<AlertCircle size="1em" className="text-danger" />
