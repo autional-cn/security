@@ -42,7 +42,7 @@ import { useHashChain, useComplianceSelfScore } from '@/hooks/use-security-queri
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional/shared';
-import { Alert, ConsolePageHeader } from '@autional/ui';
+import { Alert, AppPageHeader } from '@autional/ui';
 import { UserIdentity } from '@/components/UserIdentity';
 import { anomalyDescription } from '@/lib/anomaly';
 import { anomalyTypeLabel, severityColor, severityLabel } from '@/lib/enums';
@@ -264,7 +264,7 @@ export default function OverviewPage() {
 
 	return (
 		<div>
-			<ConsolePageHeader title={t('overview.title')} />
+			<AppPageHeader title={t('overview.title')} />
 
 			<Spin spinning={loading}>
 				<Row gutter={[16, 16]}>

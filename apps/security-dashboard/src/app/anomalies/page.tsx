@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { DataTable } from '@autional/ui/antd';
 import type { DataTableColumns } from '@autional/ui/antd';
-import { ConsolePageHeader } from '@autional/ui';
+import { AppPageHeader } from '@autional/ui';
 import { Card, Select, Tag, Button, Spin, Empty, Space, Badge, Row, Col, Statistic, Segmented } from 'antd';
 import {
 	AlertCircle,
@@ -218,7 +218,7 @@ export default function AnomaliesPage() {
 
 	return (
 		<div>
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('anomalies.title')}
 				actions={
 					<>
