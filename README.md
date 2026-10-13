@@ -1,3 +1,5 @@
+> **本仓库已归档**（只读）：源码与后续开发已迁移至 [github.com/autional/security](https://github.com/autional/security)；线上服务见 [security.autional.cn](https://security.autional.cn)。
+
 # Autional 安全中心
 
 **域名**：[security.autional.cn](https://security.autional.cn)
